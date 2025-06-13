@@ -9,6 +9,11 @@ spring:
 #    config:
 #      uri: http://localhost:8888
 #      enabled: true
+  security:
+    user:
+      name: admin
+      password: password
+      roles: ADMIN
 
 
 management:

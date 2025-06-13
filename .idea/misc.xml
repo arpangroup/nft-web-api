@@ -11,6 +11,7 @@
         <option value="$PROJECT_DIR$/income-service/pom.xml" />
         <option value="$PROJECT_DIR$/nft-app/pom.xml" />
         <option value="$PROJECT_DIR$/notification-service/pom.xml" />
+        <option value="$PROJECT_DIR$/nft-core/pom.xml" />
       </list>
     </option>
   </component>
