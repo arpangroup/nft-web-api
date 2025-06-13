@@ -5,12 +5,12 @@
 
 	<parent>
 		<groupId>com.trustai</groupId>
-		<artifactId>nft-backend-api</artifactId>
+		<artifactId>nft-web-api</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>user-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>user-service</name>
 	<description>Demo project for Spring Boot</description>
 
@@ -23,6 +23,19 @@
 			<artifactId>common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Spring CLoud Config [Step1]-->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+		<!-- ./Spring CLoud Config [Step1]-->
 
 		<!--<dependency>
 			<groupId>org.springframework.boot</groupId>
