@@ -36,6 +36,8 @@ public class ConfigService {
         ConfigProperty config = new ConfigProperty(request.getKey(), request.getValue(), request.getEnumValues());
         config.setApplication(request.getApplication());
         config.setProfile(request.getProfile());
+        config.setLabel(request.getLabel());
+        config.setInfo(request.getInfo());
         config = repository.save(config);
         configMap.put(config.getKey(), config.getValue());
         return config;

@@ -5,7 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "config_properties")
+@Table(
+        name = "config_properties",
+        uniqueConstraints = @UniqueConstraint(
+                name = "UK_config_key_app_profile",
+                columnNames = {"config_key", "application", "profile"}
+        )
+)
 @Data
 @NoArgsConstructor
 public class ConfigProperty {
@@ -14,20 +20,26 @@ public class ConfigProperty {
     private Long id;
 
     //@Id
-    @Column(name = "config_key")
+    @Column(name = "config_key", nullable = false)
     private String key;
     @Column(name = "config_value")
     private String value;
 
+    @Column(nullable = false)
+    private String application;
+    @Column(nullable = false)
+    private String profile;
+
+    private String label;
+
+
     @Column(name = "value_type") // optional
     private String valueType;
 
-    private String application;
-    private String profile;
-    private String label;
-
     @Column(name = "enum_values") // comma-separated
     private String enumValues;
+
+    private String info;
 
     public ConfigProperty(String key, Object value) {
         this.key = key;

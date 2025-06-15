@@ -21,6 +21,7 @@
             <button id="reloadConfig" class="add-button" onclick="loadConfigs()">🔄 Reload Config</button>
           </div>
         </div>
+        <input type="text" id="configSearch" placeholder="🔍 Search config keys..." oninput="filterConfigs()"/>
         <div id="configContainer"></div>
         <button onclick="updateConfigs();" class="update-button">Update Configs</button>
       </section>
@@ -66,6 +67,16 @@
             <input type="text" name="profile" value="dev" disabled>
           </label>
 
+
+          <label>
+            Label:
+            <input type="text" name="label" value="">
+          </label>
+          <label>
+            Info:
+            <input type="text" name="info" value="">
+          </label>
+
           <!--<label>
             Enum Values:
             <input type="text" name="enumValues" disabled>
@@ -98,7 +109,7 @@
   </div>
   <!-- ./Config Sidebar -->
 
-  <script src="config.js"></script>
+  <script src="configv1.js"></script>
 </body>
 
 </html>
