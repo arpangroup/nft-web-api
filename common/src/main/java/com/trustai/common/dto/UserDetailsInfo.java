@@ -1,6 +1,5 @@
 package com.trustai.common.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,24 +12,28 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL) // Only this field will be excluded if null
-public class UserInfo {
+public class UserDetailsInfo {
     private Long id;
     private String username;
+    private String firstname;
+    private String lastname;
     private String email;
-    // Balance
+    private String phone;
+
+    // Balance Related
     private BigDecimal walletBalance;
     private BigDecimal profitBalance;
-    // Referral
-    private String referralCode;
-    //Status:
-    private String accountStatus;
-    private String kycStatus;
-    //Date:
-    private LocalDateTime createdAt;
 
-    public UserInfo(Long id, String username) {
-        this.id = id;
-        this.username = username;
-    }
+    // Referral & User Hierarchy Related:
+    private String referralCode;
+    private UserInfo referrer;
+    private int rank;
+
+    // Kyc
+    private KycInfo kyc;
+
+    // Status
+    private AccountStatus accountStatus;
+
+    private LocalDateTime createdAt;
 }

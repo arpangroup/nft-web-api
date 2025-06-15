@@ -7,11 +7,11 @@
 		<groupId>com.trustai</groupId>
 		<artifactId>nft-web-api</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 
 	<artifactId>common</artifactId>
+	<packaging>jar</packaging>
 
 
 	<properties>
@@ -52,7 +52,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -80,6 +79,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<classifier>exe</classifier>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>

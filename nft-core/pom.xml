@@ -13,6 +13,7 @@
 	<artifactId>nft-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>nft-core</name>
+	<packaging>jar</packaging>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -23,6 +24,12 @@
 		<spring-cloud.version>2025.0.0</spring-cloud.version>
 	</properties>
 	<dependencies>
+
+		<dependency>
+			<groupId>com.trustai</groupId>
+			<artifactId>user-service</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
 		<!-- Spring Boot Web Starter:
 		 - Enables Spring MVC: @Controller, @RestController, @RequestMapping, etc.
@@ -36,6 +43,13 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<!-- ./Spring Boot Web Starter -->
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
 
 
 		<!-- Spring CLoud Config [Step1]-->
@@ -57,17 +71,17 @@
 		</dependency>
 		<!-- ./Actuator -->
 
-		<dependency>
+		<!--<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+		</dependency>-->
 
 
-		<!--<dependency>
+		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
-		</dependency>-->
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -112,24 +126,25 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<!--<annotationProcessorPaths>
+					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
 						</path>
-					</annotationProcessorPaths>-->
+					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<!--<excludes>
+					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
 						</exclude>
-					</excludes>-->
+					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>
