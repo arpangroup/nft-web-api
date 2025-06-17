@@ -1,5 +1,6 @@
 package com.trustai.user_service.user.dto;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.ToString;
@@ -26,6 +27,7 @@ public class RegistrationRequest {
 
 //    @Email(message = "Invalid email format")
 //    @Pattern(regexp = "^$|^.+$", message = "Email must not be only whitespace")
+//    @Column(unique = true)
     private String email; // required|string|email|unique
 
 //    @Pattern(regexp = "^$|^[0-9]{10}$", message = "mobile number must be exactly 10 digits") // Mobile number must be exactly 10 digits if provided
