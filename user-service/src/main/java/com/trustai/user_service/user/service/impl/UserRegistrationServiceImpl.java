@@ -5,7 +5,7 @@ import com.trustai.common.event.UserRegisteredEvent;
 import com.trustai.user_service.user.dto.RegistrationRequest;
 import com.trustai.user_service.user.entity.User;
 import com.trustai.user_service.user.mapper.UserMapper;
-import com.trustai.user_service.user.service.RegistrationService;
+import com.trustai.user_service.user.service.UserRegistrationService;
 import com.trustai.user_service.user.validation.RegistrationRequestValidatorTemplate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class RegistrationServiceImpl implements RegistrationService {
-    private final UserServiceImpl userService;
+public class UserRegistrationServiceImpl implements UserRegistrationService {
+    private final UserProfileServiceImpl userService;
     private final RegistrationRequestValidatorTemplate requestValidatorTemplate;
     private final UserMapper userMapper;
     private final ApplicationEventPublisher publisher;

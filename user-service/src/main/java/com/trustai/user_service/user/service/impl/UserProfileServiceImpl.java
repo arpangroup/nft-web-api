@@ -5,7 +5,7 @@ import com.trustai.user_service.user.entity.Kyc;
 import com.trustai.user_service.user.entity.User;
 import com.trustai.user_service.user.exception.IdNotFoundException;
 import com.trustai.user_service.user.repository.UserRepository;
-import com.trustai.user_service.user.service.UserService;
+import com.trustai.user_service.user.service.UserProfileService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ When a new user registers, bonuses can be propagated upwards through the referra
 @Primary
 @RequiredArgsConstructor
 @Slf4j
-public class UserServiceImpl implements UserService {
+public class UserProfileServiceImpl implements UserProfileService {
     private final UserRepository userRepository;
 //    private final TransactionService transactionService;
 //    private final DepositService depositService;
@@ -83,20 +83,20 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-    @Override
-    public List<User> getUserByIds(List<Long> userIds) {
-        return userRepository.findByIdIn(userIds);
-    }
+//    @Override
+//    public List<User> getUserByIds(List<Long> userIds) {
+//        return userRepository.findByIdIn(userIds);
+//    }
 
     @Override
     public User getUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(()-> new IdNotFoundException("userId: " + userId + " not found"));
     }
 
-    @Override
-    public User getUserByReferralCode(String referralCode) {
-        return userRepository.findByReferralCode(referralCode).orElseThrow(() -> new IdNotFoundException("invalid referralCode"));
-    }
+//    @Override
+//    public User getUserByReferralCode(String referralCode) {
+//        return userRepository.findByReferralCode(referralCode).orElseThrow(() -> new IdNotFoundException("invalid referralCode"));
+//    }
 
     @Override
     @Transactional

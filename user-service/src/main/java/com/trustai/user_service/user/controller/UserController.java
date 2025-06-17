@@ -1,6 +1,5 @@
 package com.trustai.user_service.user.controller;
 
-import com.trustai.common.controller.BaseRestController;
 import com.trustai.common.dto.UserInfo;
 import com.trustai.user_service.user.dto.RegistrationRequest;
 import com.trustai.user_service.user.entity.User;
@@ -8,8 +7,8 @@ import com.trustai.user_service.user.exception.IdNotFoundException;
 import com.trustai.user_service.user.exception.InvalidRequestException;
 import com.trustai.user_service.user.mapper.UserMapper;
 import com.trustai.user_service.user.repository.UserRepository;
-import com.trustai.user_service.user.service.RegistrationService;
-import com.trustai.user_service.user.service.UserService;
+import com.trustai.user_service.user.service.UserRegistrationService;
+import com.trustai.user_service.user.service.UserProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +23,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
-    private final UserService userService;
-    private final RegistrationService registrationService;
+    private final UserProfileService userService;
+    private final UserRegistrationService registrationService;
     private final UserMapper mapper;
     private final UserRepository userRepository;
 

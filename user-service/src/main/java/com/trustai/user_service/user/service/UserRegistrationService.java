@@ -4,6 +4,6 @@ import com.trustai.user_service.user.dto.RegistrationRequest;
 import com.trustai.user_service.user.entity.User;
 import org.springframework.lang.NonNull;
 
-public interface RegistrationService {
+public interface UserRegistrationService {
     User registerUser(@NonNull RegistrationRequest request);
 }
