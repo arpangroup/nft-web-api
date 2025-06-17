@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import java.math.BigDecimal;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.trustai.user_service"})
+@ComponentScan(basePackages = {"com.trustai.*"})
 public class NftCoreApplication implements CommandLineRunner {
 	@Autowired UserRepository userRepository;
 

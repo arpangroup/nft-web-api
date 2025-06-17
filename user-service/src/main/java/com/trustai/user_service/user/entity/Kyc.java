@@ -37,11 +37,16 @@ public class Kyc {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    private EpaStatus addressVerification = EpaStatus.UNVERIFIED;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     public KycStatus status = KycStatus.PENDING;
     // ########################### Status #############################
 
 
     private String kycRejectionReason;
+    private Long approver;
 
 
     public enum EpaStatus {

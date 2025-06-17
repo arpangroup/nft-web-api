@@ -1,0 +1,20 @@
+package com.trustai.user_service.user.dto;
+
+import com.trustai.user_service.user.entity.Kyc;
+import lombok.Data;
+import lombok.ToString;
+
+import java.util.List;
+
+@Data
+@ToString
+public class KycUpdateRequest {
+    private String email;
+    private String phone;
+    private String address;
+
+    private String birthdate;
+    private String gender;
+
+    private List<KycDocumentRequest> documents;
+}

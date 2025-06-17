@@ -18,6 +18,8 @@ public interface UserService {
     User getUserById(Long userId);
     User getUserByReferralCode(String referralCode);
 
+
+
     /**
      * This method is required for bonus-service to apply various bonus
      */
