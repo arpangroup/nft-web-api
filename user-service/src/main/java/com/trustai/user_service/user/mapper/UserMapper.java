@@ -99,8 +99,4 @@ public class UserMapper {
     public User mapTo(UserInfoOld info) {
         return null;
     }
-
-    public User mapTo(RegistrationRequest request) {
-        return new User(request.getUsername());
-    }
 }

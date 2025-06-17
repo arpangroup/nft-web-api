@@ -7,7 +7,7 @@ import com.trustai.user_service.user.exception.IdNotFoundException;
 import com.trustai.user_service.user.exception.InvalidRequestException;
 import com.trustai.user_service.user.mapper.UserMapper;
 import com.trustai.user_service.user.repository.UserRepository;
-import com.trustai.user_service.user.service.UserRegistrationService;
+import com.trustai.user_service.user.service.RegistrationService;
 import com.trustai.user_service.user.service.UserProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import java.util.Map;
 @Slf4j
 public class UserController {
     private final UserProfileService userService;
-    private final UserRegistrationService registrationService;
+    private final RegistrationService registrationService;
     private final UserMapper mapper;
     private final UserRepository userRepository;
 
