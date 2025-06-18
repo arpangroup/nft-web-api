@@ -1,8 +1,10 @@
-package com.trustai.user_service.user.exception;
+package com.trustai.nft_app.exception;
 
 
 import com.trustai.common.dto.ErrorField;
 import com.trustai.common.dto.ErrorResponse;
+import com.trustai.user_service.user.exception.AuthenticationException;
+import com.trustai.user_service.user.exception.UserCreateException;
 import com.trustai.user_service.user.exception.base.UserValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -124,6 +126,34 @@ public class UserGlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation Exception",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest request) {
+        log.error(ex.getMessage());
+        ex.printStackTrace();
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "IllegalArgument Exception",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex, HttpServletRequest request) {
+        log.error(ex.getMessage());
+        ex.printStackTrace();
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Authentication Exception",
                 ex.getMessage(),
                 request.getRequestURI()
         );

@@ -21,7 +21,7 @@ public class User {
     private String lastname;
     private String password;
     private String email;
-    private String phone;
+    private String mobile;
 
     // Balance Related
     @Column(name = "wallet_balance", precision = 19, scale = 4)
@@ -52,15 +52,21 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    public Status depositStatus = Status.ACTIVE;
+    public Status depositStatus = Status.DISABLED;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    public Status withdrawStatus = Status.ACTIVE;
+    public Status withdrawStatus = Status.DISABLED;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    public Status sendMoneyStatus = Status.ACTIVE;
+    public Status sendMoneyStatus = Status.DISABLED;
+
+
+    private boolean emailVerified;
+    private boolean mobileVerified;
+    private String oauthProvider; // e.g., "GOOGLE", "GITHUB"
+    private String oauthId;
 
 
     /*

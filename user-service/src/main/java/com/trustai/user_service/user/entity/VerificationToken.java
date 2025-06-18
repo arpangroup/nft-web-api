@@ -28,7 +28,7 @@ public class VerificationToken {
     private String target; // email or mobile
 
     @Column(nullable = false, length = 10)
-    private String verificationCode;
+    private String code;
 
     private String token; //UUID string <--Required for Email Link Verification
 

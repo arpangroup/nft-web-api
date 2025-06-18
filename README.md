@@ -1,4 +1,7 @@
 
+````bash
+ mvn clean install -DskipTests
+````
 
 ## ✅ Final Project Structure
 ````scss

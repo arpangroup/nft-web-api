@@ -1,4 +1,4 @@
-package com.trustai.user_service.user.controller;
+package com.trustai.user_service.auth.controller;
 
 import com.trustai.user_service.user.dto.*;
 import lombok.RequiredArgsConstructor;

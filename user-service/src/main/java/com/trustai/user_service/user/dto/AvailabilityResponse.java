@@ -8,4 +8,5 @@ import lombok.NoArgsConstructor;
 public class AvailabilityResponse {
     private boolean usernameAvailable;
     private boolean emailAvailable;
+    private boolean mobileAvailable;
 }
