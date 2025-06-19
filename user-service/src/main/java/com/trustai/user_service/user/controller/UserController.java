@@ -4,6 +4,7 @@ import com.trustai.user_service.user.entity.User;
 import com.trustai.user_service.user.mapper.UserMapper;
 import com.trustai.user_service.user.repository.UserRepository;
 import com.trustai.user_service.auth.service.RegistrationService;
+import com.trustai.user_service.user.service.UserAccountService;
 import com.trustai.user_service.user.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import java.util.Map;
 @Slf4j
 public class UserController {
     private final UserProfileService userService;
+    private final UserAccountService userAccountService;
     private final RegistrationService registrationService;
     private final UserMapper mapper;
     private final UserRepository userRepository;
@@ -50,6 +52,22 @@ public class UserController {
     public ResponseEntity<?> registerUser() {
         //addDummyUsers();
         return ResponseEntity.ok(Map.of("result", "success"));
+    }
+
+    @PutMapping("/{userId}/account-status")
+    public ResponseEntity<User> updateAccountStatus(@PathVariable Long userId, @RequestParam User.AccountStatus status) {
+        User user = userAccountService.updateAccountStatus(userId, status);
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/{userId}/transaction-status")
+    public ResponseEntity<User> updateTransactionStatus(@PathVariable Long userId,
+                                        @RequestParam(required = false) User.TransactionStatus depositStatus,
+                                        @RequestParam(required = false) User.TransactionStatus withdrawStatus,
+                                        @RequestParam(required = false) User.TransactionStatus sendMoneyStatus
+    ) {
+        User user =  userAccountService.updateTransactionStatus(userId, depositStatus, withdrawStatus, sendMoneyStatus);
+        return ResponseEntity.ok(user);
     }
 
     /*private void addDummyUsers() {

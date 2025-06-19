@@ -52,15 +52,15 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    public Status depositStatus = Status.DISABLED;
+    public TransactionStatus depositStatus = TransactionStatus.DISABLED;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    public Status withdrawStatus = Status.DISABLED;
+    public TransactionStatus withdrawStatus = TransactionStatus.DISABLED;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    public Status sendMoneyStatus = Status.DISABLED;
+    public TransactionStatus sendMoneyStatus = TransactionStatus.DISABLED;
 
 
     private boolean emailVerified;
@@ -143,8 +143,8 @@ public class User {
         INACTIVE        // User hasn’t used the service in a long time
     }
 
-    public enum Status {
-        ACTIVE,
+    public enum TransactionStatus {
+        ENABLED,
         DISABLED,
     }
 }

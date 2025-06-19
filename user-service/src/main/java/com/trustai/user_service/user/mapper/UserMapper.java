@@ -1,7 +1,6 @@
 package com.trustai.user_service.user.mapper;
 
 import com.trustai.common.dto.*;
-import com.trustai.user_service.user.dto.RegistrationRequest;
 import com.trustai.user_service.user.entity.Kyc;
 import com.trustai.user_service.user.entity.User;
 import com.trustai.user_service.user.ustil.PhoneMaskingUtil;
@@ -71,9 +70,9 @@ public class UserMapper {
         return AccountStatus.builder()
                 .isAccountActive(user.getAccountStatus() == User.AccountStatus.ACTIVE)
                 .isKycVerified(user.getKycInfo().status == Kyc.KycStatus.VERIFIED)
-                .isDepositEnabled(user.depositStatus == User.Status.ACTIVE)
-                .isWithdrawEnabled(user.withdrawStatus == User.Status.ACTIVE)
-                .isSendMoneyEnabled(user.sendMoneyStatus == User.Status.ACTIVE)
+                .isDepositEnabled(user.depositStatus == User.TransactionStatus.DISABLED)
+                .isWithdrawEnabled(user.withdrawStatus == User.TransactionStatus.DISABLED)
+                .isSendMoneyEnabled(user.sendMoneyStatus == User.TransactionStatus.DISABLED)
                 .accountStatus(user.accountStatus.name())
                 .kycStatus(user.getKycInfo().status.name())
                 .emailVerifyStatus(user.getKycInfo().getEmailVerifyStatus().name())
