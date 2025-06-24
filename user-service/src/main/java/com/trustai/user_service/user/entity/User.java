@@ -136,7 +136,6 @@ public class User {
                    |
                     --> DISABLED
 
-
      */
     public enum AccountStatus {
         ACTIVE,         // User is active and allowed to use the system
