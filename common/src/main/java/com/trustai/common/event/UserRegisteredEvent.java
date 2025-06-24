@@ -11,9 +11,14 @@ public class UserRegisteredEvent {
     private Long referrerId;
     private TriggerType triggerType;
 
-    public UserRegisteredEvent(Long refereeId, Long referrerId, TriggerType triggerType) {
+    /*public UserRegisteredEvent(Long refereeId, Long referrerId, TriggerType triggerType) {
         this.refereeId = refereeId;
         this.referrerId = referrerId;
         this.triggerType = triggerType;
+    }*/
+
+    public UserRegisteredEvent(Long refereeId, Long referrerId) {
+        this.refereeId = refereeId;
+        this.referrerId = referrerId;
     }
 }

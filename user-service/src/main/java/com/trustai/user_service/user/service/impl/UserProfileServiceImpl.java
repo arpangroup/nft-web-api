@@ -23,8 +23,7 @@ When a new user registers, bonuses can be propagated upwards through the referra
     Direct Bonus: The referrer receives a direct bonus when a new user registers using their referral code
     Community Team Rebate: Calculate rebates based on the users level and propagate them upwards.
  */
-@Service("userServiceImpl")
-@Primary
+@Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserProfileServiceImpl implements UserProfileService {

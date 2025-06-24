@@ -34,6 +34,7 @@ public class UserMapper {
                 // Referral:
                 .referralCode(user.getReferralCode())
                 // Status:
+                .isActive(user.getAccountStatus() == User.AccountStatus.ACTIVE)
                 .accountStatus(user.getAccountStatus().name())
                 .kycStatus(user.getKycInfo().getStatus().name())
                 // AuditLog

@@ -1,6 +1,5 @@
-package com.trustai.user_service.user.dto;
+package com.trustai.user_service.auth.request;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.ToString;

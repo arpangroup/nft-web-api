@@ -24,6 +24,7 @@ public class UserInfo {
     // Referral
     private String referralCode;
     //Status:
+    private boolean isActive;
     private String accountStatus;
     private String kycStatus;
     //Date:
@@ -33,4 +34,5 @@ public class UserInfo {
         this.id = id;
         this.username = username;
     }
+
 }

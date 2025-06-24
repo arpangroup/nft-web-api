@@ -1,76 +1,70 @@
-package com.trustai.user_service.user.controller;
+package com.trustai.user_service.controller;
 
-import com.trustai.user_service.user.entity.User;
-import com.trustai.user_service.user.mapper.UserMapper;
-import com.trustai.user_service.user.repository.UserRepository;
+import com.trustai.user_service.auth.request.CompleteRegistrationRequest;
+import com.trustai.user_service.auth.request.InitiateRegistrationRequest;
+import com.trustai.user_service.auth.request.RegistrationRequest;
+import com.trustai.user_service.auth.request.VerifyEmailRequest;
 import com.trustai.user_service.auth.service.RegistrationService;
-import com.trustai.user_service.user.service.UserAccountService;
-import com.trustai.user_service.user.service.UserProfileService;
+import com.trustai.user_service.user.entity.User;
+import com.trustai.user_service.user.exception.IdNotFoundException;
+import com.trustai.user_service.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/register")
 @RequiredArgsConstructor
 @Slf4j
-public class UserController {
-    private final UserProfileService userService;
-    private final UserAccountService userAccountService;
+public class RegistrationController {
     private final RegistrationService registrationService;
-    private final UserMapper mapper;
+    private final HttpServletRequest servletRequest;
     private final UserRepository userRepository;
 
-    @GetMapping
-    public ResponseEntity<List<User>> users() {
-        return ResponseEntity.ok(userService.getUsers());
+    @PostMapping("/initiate")
+    public ResponseEntity<?> initiate(@RequestBody InitiateRegistrationRequest request) {
+        registrationService.initiateRegistration(request, servletRequest);
+        return ResponseEntity.ok("OTP sent to email");
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserInfo(@PathVariable Long userId) {
-        log.info("getUserInfo for User ID: {}......", userId);
-        return ResponseEntity.ok(userService.getUserById(userId));
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> verifyEmail(@RequestBody VerifyEmailRequest request) {
+        registrationService.verifyEmail(request);
+        return ResponseEntity.ok("Email verified");
     }
 
-    @PatchMapping("/{userId}")
-    public ResponseEntity<User> updateUserInfo(@PathVariable Long userId, @RequestBody Map<String, Object> fieldsToUpdate) {
-        log.info("updateUserInfo for User ID: {}, fieldsToUpdate: {}......", userId, fieldsToUpdate);
-        return ResponseEntity.ok(userService.updateUser(userId, fieldsToUpdate));
+    @PostMapping("/complete")
+    public ResponseEntity<?> complete(@RequestBody CompleteRegistrationRequest request) {
+        registrationService.completeRegistration(request);
+        return ResponseEntity.ok("Registration complete");
     }
 
-    /*@PostMapping("/register")
-    public ResponseEntity<UserInfo> registerUser(@Valid @RequestBody RegistrationRequest request) throws InvalidRequestException {
-        User user = registrationService.registerUser(request);
-        return ResponseEntity.ok(mapper.mapTo(user));
-    }*/
+    @PostMapping("/direct")
+    public ResponseEntity<?> directRegister(@Valid @RequestBody RegistrationRequest request) {
+        User user = new User(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        user.setFirstname(request.getFirstname());
+        user.setLastname(request.getLastname());
+        user.setEmail(request.getEmail());
+        user.setMobile(request.getEmail());
 
-    @GetMapping("/add-users")
-    public ResponseEntity<?> registerUser() {
-        //addDummyUsers();
+        registrationService.directRegister(user, request.getReferralCode());
+        return ResponseEntity.ok("Registration complete");
+    }
+
+    @PostMapping("/add-users")
+    public ResponseEntity<?> registerDummyUser() {
+        addDummyUsers();
         return ResponseEntity.ok(Map.of("result", "success"));
     }
 
-    @PutMapping("/{userId}/account-status")
-    public ResponseEntity<User> updateAccountStatus(@PathVariable Long userId, @RequestParam User.AccountStatus status) {
-        User user = userAccountService.updateAccountStatus(userId, status);
-        return ResponseEntity.ok(user);
-    }
-
-    @PutMapping("/{userId}/transaction-status")
-    public ResponseEntity<User> updateTransactionStatus(@PathVariable Long userId,
-                                        @RequestParam(required = false) User.TransactionStatus depositStatus,
-                                        @RequestParam(required = false) User.TransactionStatus withdrawStatus,
-                                        @RequestParam(required = false) User.TransactionStatus sendMoneyStatus
-    ) {
-        User user =  userAccountService.updateTransactionStatus(userId, depositStatus, withdrawStatus, sendMoneyStatus);
-        return ResponseEntity.ok(user);
-    }
-
-    /*private void addDummyUsers() {
+    private void addDummyUsers() {
         User root = userRepository.findById(1L).orElseThrow(()-> new IdNotFoundException("root userId not found"));
 
         User user1 = registerUser(new User("user1"), root.getReferralCode());
@@ -113,14 +107,9 @@ public class UserController {
 
         User x2_1 = registerUser(new User("x2_1"), x2.getReferralCode());
         User x2_2 = registerUser(new User("x2_2"), x2.getReferralCode());
-    }*/
+    }
 
-    /*private User registerUser(User user, final String referralCode) throws InvalidRequestException {
-        //return userService.createUser(user, referralCode);
-
-        RegistrationRequest request = new RegistrationRequest();
-        request.setUsername(user.getUsername());
-        request.setReferralCode(referralCode);
-        return registrationService.registerUser(request);
-    }*/
+    private User registerUser(User user, final String referralCode){
+        return registrationService.directRegister(user, referralCode);
+    }
 }

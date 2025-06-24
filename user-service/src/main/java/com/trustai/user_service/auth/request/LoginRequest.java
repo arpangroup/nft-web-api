@@ -1,4 +1,4 @@
-package com.trustai.user_service.user.dto;
+package com.trustai.user_service.auth.request;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

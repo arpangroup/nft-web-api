@@ -1,5 +1,7 @@
-package com.trustai.user_service.auth.controller;
+package com.trustai.user_service.controller;
 
+import com.trustai.user_service.auth.request.LoginRequest;
+import com.trustai.user_service.auth.request.RegistrationRequest;
 import com.trustai.user_service.user.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
