@@ -1,5 +1,8 @@
 package com.trustai.user_service.controller;
 
+import com.trustai.common.dto.UserDetailsInfo;
+import com.trustai.common.dto.UserInfo;
+import com.trustai.user_service.user.dto.PasswordUpdateRequest;
 import com.trustai.user_service.user.entity.User;
 import com.trustai.user_service.user.mapper.UserMapper;
 import com.trustai.user_service.user.repository.UserRepository;
@@ -8,9 +11,12 @@ import com.trustai.user_service.user.service.UserAccountService;
 import com.trustai.user_service.user.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Map;
 
@@ -25,15 +31,32 @@ public class UserController {
     private final UserMapper mapper;
     private final UserRepository userRepository;
 
+    /*@GetMapping
+    public ResponseEntity<List<UserInfo>> users(
+            @RequestParam User.AccountStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        List<User> users = userService.getUsers();
+        List<UserInfo> userInfoList = users.stream().map(mapper::mapTo).toList();
+        return ResponseEntity.ok(userInfoList);
+    }*/
+
     @GetMapping
-    public ResponseEntity<List<User>> users() {
-        return ResponseEntity.ok(userService.getUsers());
+    public ResponseEntity<Page<UserInfo>> users(
+            @RequestParam(required = false) User.AccountStatus status,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+        Page<UserInfo> paginatedUsers = userService.getUsers(status, page, size);
+        return ResponseEntity.ok(paginatedUsers);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserInfo(@PathVariable Long userId) {
+    public ResponseEntity<UserDetailsInfo> getUserInfoDetails(@PathVariable Long userId) {
         log.info("getUserInfo for User ID: {}......", userId);
-        return ResponseEntity.ok(userService.getUserById(userId));
+        User user = userService.getUserById(userId);
+        return ResponseEntity.ok(mapper.mapToDetails(user));
     }
 
     @PatchMapping("/{userId}")
@@ -56,6 +79,21 @@ public class UserController {
     ) {
         User user =  userAccountService.updateTransactionStatus(userId, depositStatus, withdrawStatus, sendMoneyStatus);
         return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/{userId}/update-password")
+    public ResponseEntity<Void> updatePassword(@PathVariable Long userId, @RequestBody PasswordUpdateRequest passwordUpdateRequest) {
+        log.info("Updating password for user ID: {}", userId);
+        boolean success = userService.updatePassword(
+                userId,
+                passwordUpdateRequest.getOldPassword(),
+                passwordUpdateRequest.getNewPassword()
+        );
+
+        if (!success) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // or UNAUTHORIZED if applicable
+        }
+        return ResponseEntity.ok().build(); // 200 OK if successful
     }
 
 }

@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 public class AccountStatus {
     private boolean isAccountActive;
     private boolean isKycVerified;
+    private boolean isEmailVerified;
+    private boolean isPhoneVerified;
+
     private boolean isDepositEnabled;
     private boolean isWithdrawEnabled;
     private boolean isSendMoneyEnabled;

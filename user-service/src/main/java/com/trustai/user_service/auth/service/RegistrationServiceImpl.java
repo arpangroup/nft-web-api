@@ -141,6 +141,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         Kyc kyc = new Kyc();
         kyc.setEmail(user.getEmail());
         kyc.setPhone(user.getMobile());
+        kyc.setFirstname(user.getUsername());
         user.setKycInfo(kyc);
 
         return doRegister(user, referralCode);

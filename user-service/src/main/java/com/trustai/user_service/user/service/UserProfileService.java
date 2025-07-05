@@ -1,7 +1,9 @@
 package com.trustai.user_service.user.service;
 
 
+import com.trustai.common.dto.UserInfo;
 import com.trustai.user_service.user.entity.User;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,7 +15,10 @@ public interface UserProfileService {
     User updateUser(User user);
     User updateUserRank(Long userId, int newRank);
     List<User> getUsers();
+    List<User> getUsers(User.AccountStatus status);
+    Page<UserInfo> getUsers(User.AccountStatus status, Integer page, Integer size);
     User getUserById(Long userId);
+    boolean updatePassword(Long userId, String oldPassword, String newPassword);
 
 
     /**

@@ -6,6 +6,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class KycInfo {
+    private Long kycId;
+
     private String email;
     private String phone;
     private String address;

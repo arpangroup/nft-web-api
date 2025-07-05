@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL) // Only this field will be excluded if null
+//@JsonInclude(JsonInclude.Include.NON_NULL) // Only this field will be excluded if null
 public class UserInfo {
     private Long id;
     private String username;
