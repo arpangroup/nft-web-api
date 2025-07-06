@@ -43,9 +43,10 @@ public class Transaction {
     @Setter
     private String remarks;
 
-    @Column(nullable = true)
     @Setter
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TransactionStatus status = TransactionStatus.PENDING;
 
     @Column(nullable = true)
     @Setter
@@ -54,6 +55,11 @@ public class Transaction {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionType txnType;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Setter
+    private TransactionGateway gateway;
 
     @Column(nullable = true)
     @Setter
@@ -67,10 +73,35 @@ public class Transaction {
         this.txnDate = LocalDateTime.now();
     }
 
-    public static enum TransactionStatus {
+    public enum TransactionStatus {
         PENDING,
-        COMPLETED,
+        SUCCESS,
         FAILED,
-        CANCELLED
+        CANCELLED;
+
+        public static TransactionStatus fromString(String input) {
+            for (TransactionStatus gateway : TransactionStatus.values()) {
+                if (gateway.name().equalsIgnoreCase(input)) {
+                    return gateway;
+                }
+            }
+            throw new IllegalArgumentException("Invalid TransactionStatus: " + input);
+        }
+    }
+
+    public enum TransactionGateway {
+        WITHDRAWAL,
+        SYSTEM,
+        BINANCE,
+        COINBASE;
+
+        public static TransactionGateway fromString(String input) {
+            for (TransactionGateway gateway : TransactionGateway.values()) {
+                if (gateway.name().equalsIgnoreCase(input)) {
+                    return gateway;
+                }
+            }
+            throw new IllegalArgumentException("Invalid TransactionGateway: " + input);
+        }
     }
 }

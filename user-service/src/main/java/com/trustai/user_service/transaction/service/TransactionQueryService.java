@@ -5,7 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface TransactionQueryService {
-    Page<Transaction> getTransactions(Pageable pageable);
+    Page<Transaction> getTransactions(Transaction.TransactionStatus status, Integer page, Integer size);
+    Page<Transaction> getProfits(Integer page, Integer size);
     Page<Transaction> getTransactionsByUserId(Long userId, Pageable pageable);
     Boolean hasDepositTransaction(Long userId);
 }

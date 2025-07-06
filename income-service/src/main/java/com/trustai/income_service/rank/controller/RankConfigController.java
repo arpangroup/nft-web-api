@@ -1,4 +1,4 @@
-package com.trustai.income_service.controller;
+package com.trustai.income_service.rank.controller;
 
 import com.trustai.income_service.rank.dto.RankConfigDto;
 import com.trustai.income_service.rank.repository.RankConfigRepository;

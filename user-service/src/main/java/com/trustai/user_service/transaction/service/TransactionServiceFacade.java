@@ -41,8 +41,12 @@ public class TransactionServiceFacade {
     private final RefundService refundService;
 
 
-    public Page<Transaction> getTransactions(Pageable pageable) {
-        return transactionQueryService.getTransactions(pageable);
+    Page<Transaction> getTransactions(Transaction.TransactionStatus status, Integer page, Integer size) {
+        return transactionQueryService.getTransactions(status, page, size);
+    }
+
+    Page<Transaction> getProfits(Transaction.TransactionStatus status, Integer page, Integer size) {
+        return transactionQueryService.getProfits(page, size);
     }
 
     public Page<Transaction> getTransactionsByUserId(Long userId, Pageable pageable) {
