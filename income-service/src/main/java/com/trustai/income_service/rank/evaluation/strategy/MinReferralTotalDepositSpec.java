@@ -1,3 +1,4 @@
+/*
 package com.trustai.income_service.rank.evaluation.strategy;
 
 import com.trustai.income_service.rank.entity.RankConfig;
@@ -14,3 +15,4 @@ public class MinReferralTotalDepositSpec implements RankSpecification {
                 .compareTo(config.getMinReferralTotalDeposit()) >= 0;
     }
 }
+*/

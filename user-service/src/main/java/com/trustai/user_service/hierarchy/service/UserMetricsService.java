@@ -11,6 +11,7 @@ import com.trustai.user_service.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,13 +42,15 @@ public class UserMetricsService {
                 .totalTeamSize(teamSize)
                 .build();
 
+        BigDecimal totalDeposit = depositService.getTotalDeposit(userId);
+
         return UserMetrics.builder()
                 .directReferrals(depthCounts.getOrDefault(1, 0L).intValue())
                 .userHierarchyStats(stats)
-                .totalDeposit(depositService.getTotalDeposit(userId))
-                //.totalInvestment()
-                .walletBalance(user.getWalletBalance())
-                //.totalEarnings()
+                .totalDeposit(totalDeposit == null ? BigDecimal.ZERO : totalDeposit)
+                .totalInvestment(BigDecimal.ZERO)
+                .walletBalance(user.getWalletBalance() != null ? user.getWalletBalance() : BigDecimal.ZERO)
+                .totalEarnings(BigDecimal.ZERO)
                 .build();
     }
 }

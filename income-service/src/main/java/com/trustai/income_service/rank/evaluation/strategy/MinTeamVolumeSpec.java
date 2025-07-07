@@ -1,3 +1,4 @@
+/*
 package com.trustai.income_service.rank.evaluation.strategy;
 
 import com.trustai.income_service.rank.entity.RankConfig;
@@ -17,3 +18,4 @@ public class MinTeamVolumeSpec implements RankSpecification {
         return teamVolume.compareTo(BigDecimal.valueOf(config.getMinTeamVolume())) >= 0;
     }
 }
+*/

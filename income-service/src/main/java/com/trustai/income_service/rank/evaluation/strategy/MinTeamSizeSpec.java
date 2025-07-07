@@ -1,3 +1,4 @@
+/*
 package com.trustai.income_service.rank.evaluation.strategy;
 
 import com.trustai.income_service.rank.entity.RankConfig;
@@ -15,3 +16,4 @@ public class MinTeamSizeSpec implements RankSpecification {
         return teamSize >= config.getMinTeamSize();
     }
 }
+*/
