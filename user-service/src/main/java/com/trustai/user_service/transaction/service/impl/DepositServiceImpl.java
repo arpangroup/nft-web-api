@@ -19,4 +19,9 @@ public class DepositServiceImpl implements DepositService {
     public Transaction depositManual(long userId, long depositor, BigDecimal amount, String remarks) {
         return null;
     }
+
+    @Override
+    public BigDecimal getTotalDeposit(long userId) {
+        return null;
+    }
 }

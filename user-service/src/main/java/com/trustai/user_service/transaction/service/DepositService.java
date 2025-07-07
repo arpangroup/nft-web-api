@@ -39,4 +39,5 @@ public interface DepositService {
      */
     Transaction depositManual(long userId, long depositor, @NonNull BigDecimal amount, String remarks);
 
+    BigDecimal getTotalDeposit(long userId);
 }
