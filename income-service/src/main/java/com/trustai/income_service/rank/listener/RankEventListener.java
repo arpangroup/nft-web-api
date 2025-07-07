@@ -37,6 +37,7 @@ public class RankEventListener {
     private void evaluateRank(User user) {
         rankEvaluator.evaluate(user).ifPresent(rank -> {
             user.setRankCode(rank.getCode());
+            userService.updateUserRank(user.getId(), rank.getCode());
             //userService.save(user);
         });
     }
