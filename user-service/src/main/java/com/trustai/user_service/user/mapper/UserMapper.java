@@ -57,7 +57,7 @@ public class UserMapper {
                 // Referral:
                 .referralCode(user.getReferralCode())
                 .referrer(referrer == null ? null : new UserInfo(referrer.getId(), referrer.getUsername()))
-                .rank(user.getRank())
+                .rankCode(user.getRankCode())
                 // KYC:
                 .kyc(convert(user.getKycInfo()))
                 // Status:

@@ -82,9 +82,9 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public User updateUserRank(Long userId, int newRank) {
+    public User updateUserRank(Long userId, String newRankCode) {
         User user = userRepository.findById(userId).orElseThrow(()-> new IdNotFoundException("userId: " + userId + " not found"));
-        user.setRank(newRank);
+        user.setRankCode(newRankCode);
         return user;
     }
 

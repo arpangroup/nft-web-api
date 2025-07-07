@@ -27,7 +27,7 @@ public class UserDetailsInfo {
     // Referral & User Hierarchy Related:
     private String referralCode;
     private UserInfo referrer;
-    private int rank;
+    private String rankCode;
 
     // Kyc
     private KycInfo kyc;

@@ -91,7 +91,7 @@ public class UserHierarchyServiceImplV1 implements UserHierarchyService {
         User user = userMap.get(userId);
         if (user == null || currentLevel > maxLevel) return null;
 
-        UserTreeNode node = new UserTreeNode(user.getId(), user.getUsername(), user.getWalletBalance(), user.getRank());
+        UserTreeNode node = new UserTreeNode(user.getId(), user.getUsername(), user.getWalletBalance(), user.getRankCode());
 
         List<Long> childrenIds = childrenMap.getOrDefault(userId, Collections.emptyList());
         for (Long childId : childrenIds) {

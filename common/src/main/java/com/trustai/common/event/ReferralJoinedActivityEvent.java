@@ -10,4 +10,8 @@ public class ReferralJoinedActivityEvent extends UserActivityEvent {
         super(source, referrerId, "REFERRAL_JOINED");
         this.newReferralUserId = newReferralUserId;
     }
+
+    public Long getReferrerId() {
+        return super.getUserId();
+    }
 }

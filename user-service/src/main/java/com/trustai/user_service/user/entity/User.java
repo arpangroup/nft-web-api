@@ -41,8 +41,8 @@ public class User {
     @JoinColumn(name = "referrer_id", referencedColumnName = "id")
     private User referrer;
 
-    @Column(name = "rank_level")
-    private int rank = 1;
+    @Column(name = "rank_code", nullable = true)
+    private String rankCode;
 
     // KycInfo..................
     @OneToOne(optional = false, cascade = CascadeType.ALL) // Makes the association required (not null)
@@ -117,15 +117,15 @@ public class User {
         this.setAccountStatus(AccountStatus.PENDING);
     }
 
-    public User(String username, int rank, BigDecimal walletBalance) {
+    public User(String username, String rankCode, BigDecimal walletBalance) {
         this(username);
-        this.rank = rank;
+        this.rankCode = rankCode;
         this.walletBalance = walletBalance;
         this.setAccountStatus(AccountStatus.PENDING);
     }
 
-    public User(Long id, String username, int rank, BigDecimal walletBalance) {
-        this(username, rank, walletBalance);
+    public User(Long id, String username, String rankCode, BigDecimal walletBalance) {
+        this(username, rankCode, walletBalance);
         this.id = id;
     }
 

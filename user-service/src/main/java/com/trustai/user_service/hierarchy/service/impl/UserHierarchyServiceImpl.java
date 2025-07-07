@@ -53,7 +53,7 @@ public class UserHierarchyServiceImpl implements UserHierarchyService {
         User root = userRepository.findById(rootUserId).orElse(null);
         if (root == null) return null;
 
-        UserTreeNode rootNode = new UserTreeNode(root.getId(), root.getUsername(), root.getWalletBalance(), root.getRank());
+        UserTreeNode rootNode = new UserTreeNode(root.getId(), root.getUsername(), root.getWalletBalance(), root.getRankCode());
         buildTreeRecursively(rootNode, 1, maxLevel); // max level 3
         return rootNode;
     }
@@ -114,7 +114,7 @@ public class UserHierarchyServiceImpl implements UserHierarchyService {
             Long childId = path.getDescendant();
             User childUser = userRepository.findById(childId).orElse(null);
             if (childUser != null) {
-                UserTreeNode childNode = new UserTreeNode(childUser.getId(), childUser.getUsername(), childUser.getWalletBalance(), childUser.getRank());
+                UserTreeNode childNode = new UserTreeNode(childUser.getId(), childUser.getUsername(), childUser.getWalletBalance(), childUser.getRankCode());
                 parentNode.addChild(childNode);
                 buildTreeRecursively(childNode, currentLevel + 1, maxLevel);
             }

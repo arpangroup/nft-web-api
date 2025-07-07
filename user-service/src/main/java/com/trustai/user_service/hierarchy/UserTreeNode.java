@@ -27,6 +27,13 @@ public class UserTreeNode {
         this.userRank = getRank(rank);
     }
 
+    public UserTreeNode(Long userId, String username, BigDecimal walletBalance, String rankCode) {
+        this.userId = userId;
+        this.username = username;
+        this.walletBalance = walletBalance;
+        this.userRank = rankCode;
+    }
+
     private String getRank(int rank) {
         if (rank == 0 || rank == 1) return "RANK_1";
         if (rank == 2) return "RANK_2";

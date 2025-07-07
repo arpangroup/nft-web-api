@@ -26,7 +26,7 @@ public class UserServiceApplication implements CommandLineRunner {
 		User user = userRepository.findById(1L).orElse(null);
 
 		if (user != null) return;
-		User rootUser = new User("U1", 3, BigDecimal.ZERO);
+		User rootUser = new User("U1", "RANK_1", BigDecimal.ZERO);
 		rootUser.setEmail("root@trustai.com");
 		rootUser.setKycInfo(new Kyc());
 		userRepository.save(rootUser);
