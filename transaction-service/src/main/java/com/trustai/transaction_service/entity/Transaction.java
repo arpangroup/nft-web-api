@@ -92,7 +92,8 @@ public class Transaction {
         this.userId = userId;
         this.amount = amount;
         this.txnType = transactionType;
-        this.balance = balance;
+        this.balance = balance == null ? BigDecimal.ZERO : balance;
+        this.gateway = PaymentGateway.SYSTEM;
         this.txnDate = LocalDateTime.now();
     }
 

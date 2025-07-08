@@ -9,6 +9,6 @@ public record DepositRequest(
         BigDecimal amount,
         PaymentGateway gateway,
         String txnRefId,
-        String metaInfo,
-        BigDecimal txnFee // nullable
+        BigDecimal txnFee,// nullable
+        String metaInfo
 ) {}

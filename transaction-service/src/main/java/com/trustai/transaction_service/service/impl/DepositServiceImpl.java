@@ -64,7 +64,7 @@ public class DepositServiceImpl implements DepositService {
                 amount,
                 amount, // no fee in manual
                 PaymentGateway.SYSTEM,
-                TransactionType.DEPOSIT,
+                TransactionType.DEPOSIT_MANUAL,
                 Transaction.TransactionStatus.SUCCESS,
                 null,  // no txnRefId
                 null,

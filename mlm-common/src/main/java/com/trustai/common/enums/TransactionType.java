@@ -5,9 +5,9 @@ public enum TransactionType {
     DEPOSIT_MANUAL,
     WITHDRAWAL,
     REFUND,
-    SUBTRACT,
-    SEND_MONEY,
-    RECEIVE_MONEY,
+    SUBTRACT,      // ADJUSTMENT
+    SEND_MONEY,    // TRANSFER
+    RECEIVE_MONEY, // TRANSFER
     INVESTMENT,
     EXCHANGE,
 
