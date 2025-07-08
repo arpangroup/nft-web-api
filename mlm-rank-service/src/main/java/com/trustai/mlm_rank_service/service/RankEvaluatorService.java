@@ -90,7 +90,7 @@ public class RankEvaluatorService {
 
     public List<RankEvaluationResultDTO> evaluateAndUpdateRanks(List<Long> userIds) {
         if (userIds == null || userIds.isEmpty()) {
-            userIds = userClient.getUsers(userIds).stream().map(UserInfo::getId).toList();
+            userIds = userClient.getUsers().stream().map(UserInfo::getId).toList();
         }
         return userIds.stream()
                 .map(this::evaluateAndUpdateRank)

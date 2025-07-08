@@ -4,7 +4,6 @@ import com.trustai.user_service.hierarchy.UserHierarchy;
 import com.trustai.user_service.hierarchy.dto.UserHierarchyStats;
 import com.trustai.user_service.hierarchy.dto.UserMetrics;
 import com.trustai.user_service.hierarchy.repository.UserHierarchyRepository;
-import com.trustai.user_service.transaction.service.DepositService;
 import com.trustai.user_service.user.entity.User;
 import com.trustai.user_service.user.exception.IdNotFoundException;
 import com.trustai.user_service.user.repository.UserRepository;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 public class UserMetricsService {
     private final UserHierarchyRepository hierarchyRepo;
     private final UserRepository userRepository;
-    private final DepositService depositService;
+    //private final DepositService depositService;
 
     public UserMetrics computeMetrics(Long userId) {
         List<UserHierarchy> downlines = hierarchyRepo.findByAncestor(userId);
@@ -42,8 +41,8 @@ public class UserMetricsService {
                 .totalTeamSize(teamSize)
                 .build();
 
-        BigDecimal totalDeposit = depositService.getTotalDeposit(userId);
-
+        //BigDecimal totalDeposit = depositService.getTotalDeposit(userId);
+        BigDecimal totalDeposit = user.getTotalDeposit();
         return UserMetrics.builder()
                 .directReferrals(depthCounts.getOrDefault(1, 0L).intValue())
                 .userHierarchyStats(stats)

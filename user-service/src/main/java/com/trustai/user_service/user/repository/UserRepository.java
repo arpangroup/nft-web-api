@@ -4,8 +4,12 @@ import com.trustai.user_service.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +23,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByAccountStatus(User.AccountStatus accountStatus);
     Page<User> findByAccountStatus(User.AccountStatus accountStatus, Pageable pageable);
+
+    @Query("SELECT u.walletBalance FROM User u WHERE u.id = :userId")
+    Optional<BigDecimal> findWalletBalanceById(@Param("userId") Long userId);
+
+    @Query("SELECT u.totalDeposit FROM User u WHERE u.id = :userId")
+    Optional<BigDecimal> findDepositBalanceById(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("UPDATE User u SET u.walletBalance = :balance WHERE u.id = :userId")
+    void updateWalletBalance(@Param("userId") Long userId, @Param("balance") BigDecimal balance);
+
+    @Modifying
+    @Query("UPDATE User u SET u.totalDeposit = :balance WHERE u.id = :userId")
+    void updateDepositBalance(@Param("userId") Long userId, @Param("balance") BigDecimal balance);
 }

@@ -31,6 +31,8 @@ public class User {
     private BigDecimal walletBalance = BigDecimal.ZERO;
     @Column(name = "profit_balance", precision = 19, scale = 4)
     private BigDecimal profitBalance = BigDecimal.ZERO;
+    @Column(name = "total_deposit", precision = 19, scale = 4)
+    private BigDecimal totalDeposit = BigDecimal.ZERO;
 
     // Referral & User Hierarchy Related..................
     @Column(name = "referral_code", unique = true, length = 255)
