@@ -26,12 +26,13 @@
     </properties>
 
     <modules>
-        <module>common</module>
+        <module>mlm-common</module>
         <module>user-service</module>
         <module>income-service</module>
         <module>product-service</module>
         <module>notification-service</module>
         <module>mlm-rank-service</module>
+        <module>nft-core</module>
     </modules>
 
     <dependencyManagement>

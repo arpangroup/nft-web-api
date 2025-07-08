@@ -21,7 +21,7 @@
 
 		<dependency>
 			<groupId>com.trustai</groupId>
-			<artifactId>common</artifactId>
+			<artifactId>mlm-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
