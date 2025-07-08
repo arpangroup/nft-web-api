@@ -11,6 +11,8 @@ import com.trustai.user_service.user.service.UserProfileService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,6 +58,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
+    @CacheEvict(value = "users", key = "#user.id")
     public User updateUser(Long userId, Map<String, Object> fieldsToUpdate) {
         User user = getUserById(userId);
 
@@ -94,6 +97,11 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
+    public List<User> getUserByIds(List<Long> userIds) {
+        return userRepository.findByIdIn(userIds);
+    }
+
+    @Override
     public List<User> getUsers(User.AccountStatus status) {
         return userRepository.findByAccountStatus(status);
     }
@@ -120,6 +128,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 //    }
 
     @Override
+    @Cacheable(value = "users", key = "#userId")
     public User getUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(()-> new IdNotFoundException("userId: " + userId + " not found"));
     }

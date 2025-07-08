@@ -28,6 +28,7 @@ public class UserMapper {
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .rankCode(user.getRankCode())
                 // Balance:
                 .walletBalance(user.getWalletBalance())
                 .profitBalance(user.getProfitBalance())

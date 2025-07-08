@@ -1,16 +1,17 @@
-package com.trustai.income_service.rank;
+package com.trustai.mlm_rank_service;
 
-import com.trustai.income_service.rank.entity.RankConfig;
-import com.trustai.income_service.rank.evaluation.RankSpecification;
-import com.trustai.income_service.rank.evaluation.strategy.MinDepositAmountSpec;
-import com.trustai.income_service.rank.evaluation.strategy.MinDirectReferralsSpec;
-import com.trustai.income_service.rank.evaluation.strategy.RequiredLevelCountSpec;
-import com.trustai.income_service.rank.repository.RankConfigRepository;
-import com.trustai.income_service.rank.service.RankEvaluatorService;
+import com.trustai.common.dto.UserInfo;
+import com.trustai.mlm_rank_service.entity.RankConfig;
+import com.trustai.mlm_rank_service.evaluation.DirectReferralSpec;
+import com.trustai.mlm_rank_service.evaluation.MinimumDepositAmountSpec;
+import com.trustai.mlm_rank_service.evaluation.RankSpecification;
+import com.trustai.mlm_rank_service.evaluation.RequiredLevelCountsSpec;
+import com.trustai.mlm_rank_service.repository.RankConfigRepository;
+import com.trustai.mlm_rank_service.service.RankEvaluatorService;
 import com.trustai.user_service.hierarchy.dto.UserHierarchyStats;
 import com.trustai.user_service.hierarchy.dto.UserMetrics;
 import com.trustai.user_service.hierarchy.service.UserMetricsService;
-import com.trustai.user_service.user.entity.User;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,19 +37,19 @@ public class RankEvaluatorServiceTest {
     //@Mock private List<RankSpecification> specifications;
 
     private final List<RankSpecification> specifications = List.of(
-            new MinDepositAmountSpec(),
-            new MinDirectReferralsSpec(),
-            new RequiredLevelCountSpec()
+            new MinimumDepositAmountSpec(),
+            new DirectReferralSpec(),
+            new RequiredLevelCountsSpec()
     );
 
-    private User user;
+    private UserInfo user;
 
     @BeforeEach
     void setup() {
         // Reflectively inject if needed (since it's final)
         ReflectionTestUtils.setField(evaluator, "specifications", specifications);
 
-        user = new User();
+        user = new UserInfo();
         user.setId(1L);
         user.setRankCode("RANK_0");
     }
@@ -72,7 +73,7 @@ public class RankEvaluatorServiceTest {
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals("RANK_0", result.get().getCode());
+        Assertions.assertEquals("RANK_0", result.get().getCode());
     }
 
     @Test
@@ -91,7 +92,7 @@ public class RankEvaluatorServiceTest {
         Optional<RankConfig> matched = evaluator.evaluate(user);
 
         assertTrue(matched.isPresent());
-        assertEquals("RANK_3", matched.get().getCode());
+        Assertions.assertEquals("RANK_3", matched.get().getCode());
     }
 
     @Test
@@ -111,7 +112,7 @@ public class RankEvaluatorServiceTest {
         Optional<RankConfig> matched = evaluator.evaluate(user);
 
         assertTrue(matched.isPresent());
-        assertEquals("RANK_2", matched.get().getCode());
+        Assertions.assertEquals("RANK_2", matched.get().getCode());
     }
 
     @Test

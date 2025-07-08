@@ -15,6 +15,7 @@ public interface UserProfileService {
     User updateUser(User user);
     User updateUserRank(Long userId, String newRankCode);
     List<User> getUsers();
+    List<User> getUserByIds(List<Long> userIds);
     List<User> getUsers(User.AccountStatus status);
     Page<UserInfo> getUsers(User.AccountStatus status, Integer page, Integer size);
     User getUserById(Long userId);
