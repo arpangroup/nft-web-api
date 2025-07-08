@@ -42,7 +42,7 @@ public class UserMetricsService {
                 .build();
 
         //BigDecimal totalDeposit = depositService.getTotalDeposit(userId);
-        BigDecimal totalDeposit = user.getTotalDeposit();
+        BigDecimal totalDeposit = user.getDepositBalance();
         return UserMetrics.builder()
                 .directReferrals(depthCounts.getOrDefault(1, 0L).intValue())
                 .userHierarchyStats(stats)

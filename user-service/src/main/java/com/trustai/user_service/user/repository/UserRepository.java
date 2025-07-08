@@ -27,7 +27,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u.walletBalance FROM User u WHERE u.id = :userId")
     Optional<BigDecimal> findWalletBalanceById(@Param("userId") Long userId);
 
-    @Query("SELECT u.totalDeposit FROM User u WHERE u.id = :userId")
+    @Query("SELECT u.depositBalance FROM User u WHERE u.id = :userId")
     Optional<BigDecimal> findDepositBalanceById(@Param("userId") Long userId);
 
     @Modifying
@@ -35,6 +35,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void updateWalletBalance(@Param("userId") Long userId, @Param("balance") BigDecimal balance);
 
     @Modifying
-    @Query("UPDATE User u SET u.totalDeposit = :balance WHERE u.id = :userId")
+    @Query("UPDATE User u SET u.depositBalance = :balance WHERE u.id = :userId")
     void updateDepositBalance(@Param("userId") Long userId, @Param("balance") BigDecimal balance);
 }

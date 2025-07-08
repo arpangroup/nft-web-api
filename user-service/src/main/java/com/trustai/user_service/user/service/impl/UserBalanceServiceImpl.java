@@ -33,7 +33,7 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     public Optional<BigDecimal> findDepositBalanceById(Long userId) {
         //return userRepository.findDepositBalanceById(userId);
         var user = profileService.getUserById(userId);
-        return Optional.ofNullable(user.getTotalDeposit());
+        return Optional.ofNullable(user.getDepositBalance());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.trustai.transaction_service.service.impl;
 
 import com.trustai.common.client.UserClient;
+import com.trustai.common.enums.TransactionType;
 import com.trustai.transaction_service.repository.TransactionRepository;
 import com.trustai.transaction_service.service.WalletService;
 import jakarta.transaction.Transactional;
@@ -28,11 +29,25 @@ public class WalletServiceImpl implements WalletService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
+    @Override
     @Transactional
     public void updateBalanceFromTransaction(Long userId, BigDecimal delta) {
         BigDecimal current = getUserBalance(userId);
         BigDecimal updated = current.add(delta);
         userClient.updateWalletBalance(userId, updated);
+    }
+
+    @Override
+    @Transactional
+    public void updateBalanceFromTransaction(Long userId, BigDecimal delta, TransactionType transactionType) {
+        updateBalanceFromTransaction(userId, delta);
+
+        if (transactionType == TransactionType.DEPOSIT) {
+            BigDecimal currentDepositBalance = userClient.findDepositBalanceById(userId).orElse(BigDecimal.ZERO);
+            BigDecimal newDepositBalance = currentDepositBalance.add(delta);
+            userClient.updateDepositBalance(userId, newDepositBalance);
+        }
+
     }
 
     @Override

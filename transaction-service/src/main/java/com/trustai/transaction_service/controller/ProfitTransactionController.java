@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/profits")
 @RequiredArgsConstructor
 @Slf4j
-public class ProfitController {
+public class ProfitTransactionController {
     private final TransactionQueryService transactionService;
 
     @GetMapping

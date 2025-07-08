@@ -1,5 +1,6 @@
 package com.trustai.transaction_service.service.impl;
 
+import com.trustai.common.client.UserClient;
 import com.trustai.common.enums.PaymentGateway;
 import com.trustai.common.enums.TransactionType;
 import com.trustai.transaction_service.dto.DepositRequest;
@@ -10,6 +11,7 @@ import com.trustai.transaction_service.service.WalletService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.pqc.jcajce.provider.NTRU;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
@@ -25,6 +27,7 @@ import java.util.Optional;
 public class DepositServiceImpl implements DepositService {
     private final TransactionRepository transactionRepository;
     private final WalletService walletService;
+    private final UserClient userClient;
 
     @Override
     @Transactional
@@ -145,7 +148,7 @@ public class DepositServiceImpl implements DepositService {
         transaction.setSenderId(senderId);
 
         transactionRepository.save(transaction);
-        walletService.updateBalanceFromTransaction(userId, netAmount);
+        walletService.updateBalanceFromTransaction(userId, netAmount, TransactionType.DEPOSIT);
 
         return transaction;
     }
