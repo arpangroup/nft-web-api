@@ -133,45 +133,4 @@ public class RankEvaluatorServiceTest {
         assertTrue(result.isEmpty());
     }
 
-
-
-    /*@Test
-    void shouldAssignHighestMatchingRank() {
-        // Given
-        User user = new User();
-        user.setId(1L);
-        user.setRankCode("RANK_!");
-
-        UserMetrics metrics = new UserMetrics(*//* populate mock values *//*);
-
-        RankConfig bronze = createRank("BRONZE", 1);
-        RankConfig silver = createRank("SILVER", 2);
-        RankConfig gold = createRank("GOLD", 3);
-
-        List<RankConfig> ranks = List.of(gold, silver, bronze); // Descending
-
-        Mockito.when(metricsService.computeMetrics(1L)).thenReturn(metrics);
-        Mockito.when(rankRepo.findAllByActiveTrueOrderByRankOrderDesc()).thenReturn(ranks);
-
-        // All specs are mocked to return true
-        Mockito.when(specifications.stream()).thenReturn(Stream.of(
-                (RankSpecification) (u, m, r) -> true
-        ));
-
-        // When
-        Optional<RankConfig> result = evaluator.evaluate(user);
-
-        // Then
-        assertTrue(result.isPresent());
-        assertEquals("GOLD", result.get().getCode());
-    }
-
-    private RankConfig createRank(String code, int order) {
-        RankConfig config = new RankConfig();
-        config.setCode(code);
-        config.setRankOrder(order);
-        config.setActive(true);
-        return config;
-    }*/
-
 }

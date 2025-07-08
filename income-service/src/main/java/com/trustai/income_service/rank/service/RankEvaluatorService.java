@@ -39,7 +39,7 @@ public class RankEvaluatorService {
 
         RankConfig bestMatched = null;
         for (RankConfig rank : ranks) {
-            log.info("🔍 Evaluating rank: {} ({})", rank.getDisplayName(), rank.getCode());
+            log.info("🔍 Evaluating rank: {} ({}) for userId: {}", rank.getDisplayName(), rank.getCode(), user.getId());
 
             List<SpecificationResult> results = specifications.stream()
                     .map(spec -> spec.evaluate(user, metrics, rank))
