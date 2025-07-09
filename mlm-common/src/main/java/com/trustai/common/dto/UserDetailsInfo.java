@@ -35,5 +35,5 @@ public class UserDetailsInfo {
     // Status
     private AccountStatus accountStatus;
 
-    private LocalDateTime createdAt;
+    private String createdAt;
 }

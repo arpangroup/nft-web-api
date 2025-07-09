@@ -6,15 +6,15 @@ import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@Component
+//@Component
 public class TransactionIdGenerator {
 
     private static final String PREFIX = "TRX";
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int RANDOM_LENGTH = 6;
-    private final SecureRandom random = new SecureRandom();
+    private static final SecureRandom random = new SecureRandom();
 
-    public String generateTransactionId() {
+    public static String generateTransactionId() {
         StringBuilder sb = new StringBuilder(PREFIX);
 
         // Add timestamp

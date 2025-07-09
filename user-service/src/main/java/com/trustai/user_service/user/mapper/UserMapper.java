@@ -1,6 +1,7 @@
 package com.trustai.user_service.user.mapper;
 
 import com.trustai.common.dto.*;
+import com.trustai.common.util.DateUtil;
 import com.trustai.user_service.user.entity.Kyc;
 import com.trustai.user_service.user.entity.User;
 import com.trustai.user_service.user.ustil.PhoneMaskingUtil;
@@ -64,7 +65,7 @@ public class UserMapper {
                 // Status:
                 .accountStatus(convert(user))
                 // AuditLog
-                .createdAt(user.getCreatedAt())
+                .createdAt(DateUtil.formatDisplayDate(user.getCreatedAt()))
                 .build();
     }
 

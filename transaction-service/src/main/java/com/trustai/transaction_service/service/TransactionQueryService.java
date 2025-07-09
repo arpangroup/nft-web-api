@@ -16,7 +16,7 @@ public interface TransactionQueryService {
     // ------------------------------------------------------------------------
     Page<Transaction> getTransactions(Transaction.TransactionStatus status, Integer page, Integer size);
     Page<Transaction> getProfits(Integer page, Integer size);
-    Page<Transaction> getTransactionsByUserId(Long userId, Pageable pageable);
+    Page<Transaction> getTransactionsByUserId(Long userId, Integer page, Integer size);
     Boolean hasDepositTransaction(Long userId);
 
     // ------------------------------------------------------------------------

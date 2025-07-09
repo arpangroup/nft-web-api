@@ -48,8 +48,8 @@ public class TransactionServiceFacade {
         return transactionQueryService.getProfits(page, size);
     }
 
-    public Page<Transaction> getTransactionsByUserId(Long userId, Pageable pageable) {
-        return transactionQueryService.getTransactionsByUserId(userId, pageable);
+    public Page<Transaction> getTransactionsByUserId(Long userId, Integer page, Integer size) {
+        return transactionQueryService.getTransactionsByUserId(userId, page, size);
     }
 
     public Boolean hasDepositTransaction(Long userId) {
@@ -96,7 +96,7 @@ public class TransactionServiceFacade {
     }
 
     public Transaction subtract(long userId, @NonNull BigDecimal amount, String reason) {
-        return adjustmentService.subtract(userId, amount, reason);
+        return adjustmentService.subtractBalance(userId, amount, reason);
     }
 
     public Transaction refund(long userId, @NonNull BigDecimal amount, String originalTxnRef, String reason) {

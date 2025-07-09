@@ -2,6 +2,7 @@ package com.trustai.transaction_service.entity;
 
 import com.trustai.common.enums.PaymentGateway;
 import com.trustai.common.enums.TransactionType;
+import com.trustai.transaction_service.util.TransactionIdGenerator;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -94,6 +95,7 @@ public class Transaction {
         this.txnType = transactionType;
         this.balance = balance == null ? BigDecimal.ZERO : balance;
         this.gateway = PaymentGateway.SYSTEM;
+        this.txnRefId = TransactionIdGenerator.generateTransactionId();
         this.txnDate = LocalDateTime.now();
     }
 
