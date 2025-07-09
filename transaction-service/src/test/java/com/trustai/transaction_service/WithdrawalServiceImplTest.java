@@ -42,7 +42,7 @@ class WithdrawalServiceImplTest {
         BigDecimal currentBalance = new BigDecimal("1000.00");
         BigDecimal newBalance = currentBalance.subtract(amount);
 
-        when(walletService.getUserBalance(userId)).thenReturn(currentBalance);
+        when(walletService.getWalletBalance(userId)).thenReturn(currentBalance);
         doNothing().when(walletService).ensureSufficientBalance(userId, amount);
         when(transactionRepository.save(any(Transaction.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -62,7 +62,7 @@ class WithdrawalServiceImplTest {
         assertEquals(destination, result.getMetaInfo());
 
         verify(walletService).ensureSufficientBalance(userId, amount);
-        verify(walletService).getUserBalance(userId);
+        verify(walletService).getWalletBalance(userId);
         verify(walletService).updateBalanceFromTransaction(userId, amount.negate());
         verify(transactionRepository).save(any(Transaction.class));
     }
@@ -83,7 +83,7 @@ class WithdrawalServiceImplTest {
         // Arrange
         BigDecimal currentBalance = new BigDecimal("500.00");
 
-        when(walletService.getUserBalance(userId)).thenReturn(currentBalance);
+        when(walletService.getWalletBalance(userId)).thenReturn(currentBalance);
         doNothing().when(walletService).ensureSufficientBalance(userId, amount);
         when(transactionRepository.save(any(Transaction.class))).thenAnswer(invocation -> invocation.getArgument(0));
 

@@ -21,7 +21,7 @@ public class WalletServiceImpl implements WalletService {
      * then subtracting all withdrawals, investments, and transfers sent.
      */
     @Override
-    public BigDecimal getUserBalance(Long userId) {
+    public BigDecimal getWalletBalance(Long userId) {
         /*BigDecimal credits = transactionRepository.sumCredits(userId);
         BigDecimal debits = transactionRepository.sumDebits(userId);
         return credits.subtract(debits);*/
@@ -32,7 +32,7 @@ public class WalletServiceImpl implements WalletService {
     @Override
     @Transactional
     public void updateBalanceFromTransaction(Long userId, BigDecimal delta) {
-        BigDecimal current = getUserBalance(userId);
+        BigDecimal current = getWalletBalance(userId);
         BigDecimal updated = current.add(delta);
         userClient.updateWalletBalance(userId, updated);
     }
@@ -52,7 +52,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void ensureSufficientBalance(Long userId, BigDecimal amount) {
-        BigDecimal balance = getUserBalance(userId);
+        BigDecimal balance = getWalletBalance(userId);
         if (balance.compareTo(amount) < 0) {
             throw new IllegalStateException("Insufficient wallet balance");
         }

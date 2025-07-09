@@ -24,7 +24,7 @@ public class TransferServiceImpl implements TransferService {
         }
 
         // Debit sender
-        BigDecimal senderBalance = walletService.getUserBalance(senderId).subtract(amount);
+        BigDecimal senderBalance = walletService.getWalletBalance(senderId).subtract(amount);
         Transaction debitTxn = new Transaction(senderId, amount, TransactionType.SEND_MONEY, senderBalance);
         debitTxn.setSenderId(senderId);
         debitTxn.setGateway(PaymentGateway.SYSTEM);
@@ -35,7 +35,7 @@ public class TransferServiceImpl implements TransferService {
         walletService.updateBalanceFromTransaction(senderId, amount.negate());
 
         // Credit receiver
-        BigDecimal receiverBalance = walletService.getUserBalance(receiverId).add(amount);
+        BigDecimal receiverBalance = walletService.getWalletBalance(receiverId).add(amount);
         Transaction creditTxn = new Transaction(receiverId, amount, TransactionType.RECEIVE_MONEY, receiverBalance);
         creditTxn.setSenderId(senderId);
         creditTxn.setGateway(PaymentGateway.SYSTEM);

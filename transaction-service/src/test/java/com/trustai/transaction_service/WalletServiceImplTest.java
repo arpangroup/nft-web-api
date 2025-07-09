@@ -4,7 +4,6 @@ package com.trustai.transaction_service;
 import com.trustai.common.client.UserClient;
 import com.trustai.common.enums.TransactionType;
 import com.trustai.transaction_service.repository.TransactionRepository;
-import com.trustai.transaction_service.service.WalletService;
 import com.trustai.transaction_service.service.impl.WalletServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,20 +36,20 @@ class WalletServiceImplTest {
     // --- getUserBalance() ---
 
     @Test
-    void getUserBalance_shouldReturnBalance_whenUserExists() {
+    void getUserBalance_shouldReturnBalance_whenWalletExists() {
         when(userClient.findWalletBalanceById(userId)).thenReturn(Optional.of(new BigDecimal("1000.00")));
 
-        BigDecimal balance = walletService.getUserBalance(userId);
+        BigDecimal balance = walletService.getWalletBalance(userId);
 
         assertEquals(new BigDecimal("1000.00"), balance);
         verify(userClient).findWalletBalanceById(userId);
     }
 
     @Test
-    void getUserBalance_shouldThrow_whenUserNotFound() {
+    void getUserBalance_shouldThrow_whenWalletNotFound() {
         when(userClient.findWalletBalanceById(userId)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> walletService.getUserBalance(userId));
+        assertThrows(IllegalArgumentException.class, () -> walletService.getWalletBalance(userId));
         verify(userClient).findWalletBalanceById(userId);
     }
 

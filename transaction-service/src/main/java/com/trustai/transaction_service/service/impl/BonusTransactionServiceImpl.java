@@ -23,7 +23,7 @@ public class BonusTransactionServiceImpl implements BonusTransactionService {
     @Override
     @Transactional
     public Transaction applySignupBonus(long userId, BigDecimal bonusAmount) {
-        BigDecimal updatedBalance = walletService.getUserBalance(userId).add(bonusAmount);
+        BigDecimal updatedBalance = walletService.getWalletBalance(userId).add(bonusAmount);
         Transaction txn = new Transaction(userId, bonusAmount, TransactionType.BONUS, updatedBalance);
         txn.setGateway(PaymentGateway.SYSTEM);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
@@ -37,7 +37,7 @@ public class BonusTransactionServiceImpl implements BonusTransactionService {
     @Override
     @Transactional
     public Transaction applyReferralBonus(long referrerUserId, long referredUserId, BigDecimal bonusAmount) {
-        BigDecimal updatedBalance = walletService.getUserBalance(referrerUserId).add(bonusAmount);
+        BigDecimal updatedBalance = walletService.getWalletBalance(referrerUserId).add(bonusAmount);
         Transaction txn = new Transaction(referrerUserId, bonusAmount, TransactionType.BONUS, updatedBalance);
         txn.setGateway(PaymentGateway.SYSTEM);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
@@ -51,7 +51,7 @@ public class BonusTransactionServiceImpl implements BonusTransactionService {
     @Override
     @Transactional
     public Transaction applyBonus(long userId, BigDecimal bonusAmount, String reason) {
-        BigDecimal updatedBalance = walletService.getUserBalance(userId).add(bonusAmount);
+        BigDecimal updatedBalance = walletService.getWalletBalance(userId).add(bonusAmount);
         Transaction txn = new Transaction(userId, bonusAmount, TransactionType.BONUS, updatedBalance);
         txn.setGateway(PaymentGateway.SYSTEM);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
@@ -65,7 +65,7 @@ public class BonusTransactionServiceImpl implements BonusTransactionService {
     @Override
     @Transactional
     public Transaction applyInterest(long userId, BigDecimal interestAmount, String periodDescription) {
-        BigDecimal updatedBalance = walletService.getUserBalance(userId).add(interestAmount);
+        BigDecimal updatedBalance = walletService.getWalletBalance(userId).add(interestAmount);
         Transaction txn = new Transaction(userId, interestAmount, TransactionType.INTEREST, updatedBalance);
         txn.setGateway(PaymentGateway.SYSTEM);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);

@@ -42,8 +42,8 @@ class TransferServiceImplTest {
         BigDecimal senderInitialBalance = new BigDecimal("1000.00");
         BigDecimal receiverInitialBalance = new BigDecimal("500.00");
 
-        when(walletService.getUserBalance(senderId)).thenReturn(senderInitialBalance);
-        when(walletService.getUserBalance(receiverId)).thenReturn(receiverInitialBalance);
+        when(walletService.getWalletBalance(senderId)).thenReturn(senderInitialBalance);
+        when(walletService.getWalletBalance(receiverId)).thenReturn(receiverInitialBalance);
         when(transactionRepository.save(any(Transaction.class))).thenAnswer(inv -> inv.getArgument(0));
 
         // When

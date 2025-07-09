@@ -11,7 +11,6 @@ import com.trustai.transaction_service.service.WalletService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.pqc.jcajce.provider.NTRU;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
@@ -134,7 +133,7 @@ public class DepositServiceImpl implements DepositService {
             String metaInfo,
             Long senderId
     ) {
-        BigDecimal currentBalance = walletService.getUserBalance(userId);
+        BigDecimal currentBalance = walletService.getWalletBalance(userId);
         BigDecimal newBalance = currentBalance.add(netAmount);
 
         Transaction transaction = new Transaction(userId, grossAmount, txnType, newBalance);

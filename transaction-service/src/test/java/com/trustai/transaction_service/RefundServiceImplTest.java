@@ -40,7 +40,7 @@ class RefundServiceImplTest {
         String reason = "duplicate_payment";
         BigDecimal currentBalance = new BigDecimal("500.00");
 
-        when(walletService.getUserBalance(userId)).thenReturn(currentBalance);
+        when(walletService.getWalletBalance(userId)).thenReturn(currentBalance);
         when(transactionRepository.save(any(Transaction.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -57,7 +57,7 @@ class RefundServiceImplTest {
         assertEquals(Transaction.TransactionStatus.SUCCESS, result.getStatus());
         assertEquals(currentBalance.add(amount), result.getBalance());
 
-        verify(walletService).getUserBalance(userId);
+        verify(walletService).getWalletBalance(userId);
         verify(walletService).updateBalanceFromTransaction(userId, amount);
         verify(transactionRepository).save(result);
     }

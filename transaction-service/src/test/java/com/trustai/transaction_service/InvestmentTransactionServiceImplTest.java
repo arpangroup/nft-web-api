@@ -40,7 +40,7 @@ class InvestmentTransactionServiceImplTest {
         String investmentType = "staking";
         String metaInfo = "staking_lock_90days";
 
-        when(walletService.getUserBalance(userId)).thenReturn(currentBalance);
+        when(walletService.getWalletBalance(userId)).thenReturn(currentBalance);
         when(transactionRepository.save(any(Transaction.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 

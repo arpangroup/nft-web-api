@@ -23,7 +23,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     @Transactional
     public Transaction exchange(long userId, BigDecimal fromAmount, String fromCurrency, BigDecimal toAmount, String toCurrency, String metaInfo) {
         walletService.ensureSufficientBalance(userId, fromAmount);
-        BigDecimal currentBalance = walletService.getUserBalance(userId);
+        BigDecimal currentBalance = walletService.getWalletBalance(userId);
         BigDecimal updatedBalance = currentBalance.subtract(fromAmount).add(toAmount);
         Transaction txn = new Transaction(userId, toAmount, TransactionType.EXCHANGE, updatedBalance);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);

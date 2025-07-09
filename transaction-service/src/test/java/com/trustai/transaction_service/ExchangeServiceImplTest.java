@@ -41,7 +41,7 @@ class ExchangeServiceImplTest {
         String toCurrency = "USDT";
         String metaInfo = "binance_rate";
 
-        when(walletService.getUserBalance(userId)).thenReturn(new BigDecimal("500.00"));
+        when(walletService.getWalletBalance(userId)).thenReturn(new BigDecimal("500.00"));
         when(transactionRepository.save(any(Transaction.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // When

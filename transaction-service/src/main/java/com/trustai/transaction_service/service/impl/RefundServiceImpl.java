@@ -20,7 +20,7 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public Transaction refund(long userId, BigDecimal amount, String originalTxnRef, String reason) {
-        BigDecimal updatedBalance = walletService.getUserBalance(userId).add(amount);
+        BigDecimal updatedBalance = walletService.getWalletBalance(userId).add(amount);
         Transaction txn = new Transaction(userId, amount, TransactionType.REFUND, updatedBalance);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
         txn.setRemarks("Refund for txnRef: " + originalTxnRef);

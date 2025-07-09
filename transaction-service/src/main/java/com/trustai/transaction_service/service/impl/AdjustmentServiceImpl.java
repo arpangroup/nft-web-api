@@ -27,7 +27,7 @@ public class AdjustmentServiceImpl implements AdjustmentService {
 
         walletService.ensureSufficientBalance(userId, amount);
 
-        BigDecimal currentBalance = walletService.getUserBalance(userId);
+        BigDecimal currentBalance = walletService.getWalletBalance(userId);
         BigDecimal newBalance = currentBalance.subtract(amount);
 
         Transaction txn = new Transaction(userId, amount, TransactionType.SUBTRACT, newBalance);

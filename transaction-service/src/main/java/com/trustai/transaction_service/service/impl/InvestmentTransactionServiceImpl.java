@@ -21,7 +21,7 @@ public class InvestmentTransactionServiceImpl implements InvestmentTransactionSe
     @Override
     public Transaction invest(long userId, BigDecimal amount, String investmentType, String metaInfo) {
         walletService.ensureSufficientBalance(userId, amount);
-        BigDecimal updatedBalance = walletService.getUserBalance(userId).subtract(amount);
+        BigDecimal updatedBalance = walletService.getWalletBalance(userId).subtract(amount);
         Transaction txn = new Transaction(userId, amount, TransactionType.INVESTMENT, updatedBalance);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
         txn.setRemarks("Investment in: " + investmentType);

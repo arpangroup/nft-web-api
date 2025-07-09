@@ -36,7 +36,7 @@ public class BonusTransactionServiceTest {
         Long userId = 1L;
         BigDecimal bonusAmount = new BigDecimal("100.00");
 
-        when(walletService.getUserBalance(userId)).thenReturn(new BigDecimal("200.00"));
+        when(walletService.getWalletBalance(userId)).thenReturn(new BigDecimal("200.00"));
         when(transactionRepository.save(any(Transaction.class))).thenAnswer(inv -> inv.getArgument(0));
 
         Transaction txn = bonusTransactionService.applySignupBonus(userId, bonusAmount);
@@ -57,7 +57,7 @@ public class BonusTransactionServiceTest {
         Long referredUserId = 20L;
         BigDecimal bonusAmount = new BigDecimal("50.00");
 
-        when(walletService.getUserBalance(referrerUserId)).thenReturn(new BigDecimal("100.00"));
+        when(walletService.getWalletBalance(referrerUserId)).thenReturn(new BigDecimal("100.00"));
         when(transactionRepository.save(any(Transaction.class))).thenAnswer(inv -> inv.getArgument(0));
 
         Transaction txn = bonusTransactionService.applyReferralBonus(referrerUserId, referredUserId, bonusAmount);
@@ -77,7 +77,7 @@ public class BonusTransactionServiceTest {
         BigDecimal bonusAmount = new BigDecimal("25.00");
         String reason = "Leaderboard reward";
 
-        when(walletService.getUserBalance(userId)).thenReturn(new BigDecimal("75.00"));
+        when(walletService.getWalletBalance(userId)).thenReturn(new BigDecimal("75.00"));
         when(transactionRepository.save(any(Transaction.class))).thenAnswer(inv -> inv.getArgument(0));
 
         Transaction txn = bonusTransactionService.applyBonus(userId, bonusAmount, reason);
@@ -97,7 +97,7 @@ public class BonusTransactionServiceTest {
         BigDecimal interestAmount = new BigDecimal("15.50");
         String period = "July 2025";
 
-        when(walletService.getUserBalance(userId)).thenReturn(new BigDecimal("200.00"));
+        when(walletService.getWalletBalance(userId)).thenReturn(new BigDecimal("200.00"));
         when(transactionRepository.save(any(Transaction.class))).thenAnswer(inv -> inv.getArgument(0));
 
         Transaction txn = bonusTransactionService.applyInterest(userId, interestAmount, period);

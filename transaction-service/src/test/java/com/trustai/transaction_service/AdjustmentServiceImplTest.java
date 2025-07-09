@@ -36,7 +36,7 @@ class AdjustmentServiceImplTest {
         Long userId = 1L;
         BigDecimal amountToSubtract = new BigDecimal("50.00");
 
-        when(walletService.getUserBalance(userId)).thenReturn(new BigDecimal("200.00"));
+        when(walletService.getWalletBalance(userId)).thenReturn(new BigDecimal("200.00"));
         when(transactionRepository.save(any(Transaction.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Transaction result = adjustmentService.subtract(userId, amountToSubtract, "penalty");

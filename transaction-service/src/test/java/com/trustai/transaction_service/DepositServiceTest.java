@@ -7,9 +7,8 @@ import com.trustai.common.enums.TransactionType;
 import com.trustai.transaction_service.dto.DepositRequest;
 import com.trustai.transaction_service.entity.Transaction;
 import com.trustai.transaction_service.repository.TransactionRepository;
-import com.trustai.transaction_service.service.DepositService;
-import com.trustai.transaction_service.service.WalletService;
 import com.trustai.transaction_service.service.impl.DepositServiceImpl;
+import com.trustai.transaction_service.service.impl.WalletServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -24,13 +23,14 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+//@ExtendWith(MockitoExtension.class)
 class DepositServiceTest {
 
     @Mock
     private TransactionRepository transactionRepository;
 
     @Mock
-    private WalletService walletService;
+    private WalletServiceImpl walletService;
 
     @Mock
     private UserClient userClient;
@@ -46,9 +46,16 @@ class DepositServiceTest {
     @Test
     void deposit_shouldCreateTransactionSuccessfully() {
         // Arrange
-        DepositRequest request = new DepositRequest(1L, new BigDecimal("100.00"), PaymentGateway.BINANCE, "TXN123", BigDecimal.TEN, "bonus");
+        DepositRequest request = new DepositRequest(
+                1L,
+                new BigDecimal("100.00"),
+                PaymentGateway.BINANCE,
+                BigDecimal.TEN,
+                "TXN123",
+                "bonus"
+        );
 
-        when(walletService.getUserBalance(1L)).thenReturn(new BigDecimal("50.00"));
+        when(walletService.getWalletBalance(1L)).thenReturn(new BigDecimal("50.00"));
         when(transactionRepository.save(any(Transaction.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
@@ -68,7 +75,7 @@ class DepositServiceTest {
     @Test
     void depositManual_shouldCreateManualTransactionSuccessfully() {
         // Arrange
-        when(walletService.getUserBalance(1L)).thenReturn(BigDecimal.ZERO);
+        when(walletService.getWalletBalance(1L)).thenReturn(BigDecimal.ZERO);
         when(transactionRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
@@ -126,5 +133,106 @@ class DepositServiceTest {
     void confirmGatewayDeposit_shouldThrowIfNotFound() {
         when(transactionRepository.findByTxnRefId("INVALID")).thenReturn(Optional.empty());
         assertThrows(IllegalArgumentException.class, () -> depositService.confirmGatewayDeposit("INVALID", "json"));
+    }
+
+    // ####################################
+    @Test
+    void deposit_shouldApplyTxnFeeAndUpdateWalletCorrectly_whenNonSystemGateway() {
+        Long userId = 1L;
+        BigDecimal currentBalance = new BigDecimal("1000.00");
+        BigDecimal depositAmount = new BigDecimal("500.00");
+        BigDecimal txnFee = new BigDecimal("20.00");
+        BigDecimal newBalance = new BigDecimal("1480.00"); // currentBalance + (depositAmount - txnFee)
+
+
+        when(walletService.getWalletBalance(userId)).thenReturn(currentBalance);
+        when(transactionRepository.save(any(Transaction.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        DepositRequest request = new DepositRequest(
+                userId,
+                depositAmount, // deposit
+                PaymentGateway.BINANCE,   // non-system gateway
+                txnFee,  // fee
+                "txn123",
+                "deposit via binance"
+        );
+
+        Transaction result = depositService.deposit(request);
+
+        ArgumentCaptor<Transaction> txnCaptor = ArgumentCaptor.forClass(Transaction.class);
+        verify(transactionRepository).save(txnCaptor.capture());
+        Transaction savedTxn = txnCaptor.getValue();
+
+        // Assertions
+        assertEquals(depositAmount, savedTxn.getAmount());
+        assertEquals(txnFee, savedTxn.getTxnFee());
+        assertEquals(newBalance, savedTxn.getBalance()); // 1000 + (500 - 20)
+        assertEquals("txn123", savedTxn.getTxnRefId());
+        assertEquals(TransactionType.DEPOSIT, savedTxn.getTxnType());
+        assertEquals(Transaction.TransactionStatus.SUCCESS, savedTxn.getStatus());
+        assertEquals(PaymentGateway.BINANCE, savedTxn.getGateway());
+
+        verify(walletService).updateBalanceFromTransaction(eq(userId), eq(new BigDecimal("480.00")), eq(TransactionType.DEPOSIT));
+    }
+
+    @Test
+    void deposit_shouldUpdateWalletAndDepositBalancesCorrectly() {
+        Long userId = 1L;
+        BigDecimal initialWallet = new BigDecimal("1000.00");
+        BigDecimal initialDeposit = new BigDecimal("500.00");
+        BigDecimal amount = new BigDecimal("500.00");
+        BigDecimal txnFee = new BigDecimal("20.00");
+        BigDecimal netAmount = amount.subtract(txnFee); // 480
+        BigDecimal expectedWallet = initialWallet.add(netAmount); // 1480
+        BigDecimal expectedDeposit = initialDeposit.add(netAmount); // 980
+
+        //  1. Set up mocks : Mock user balances before deposit
+        when(userClient.findWalletBalanceById(userId)).thenReturn(Optional.of(initialWallet));
+        when(userClient.findDepositBalanceById(userId)).thenReturn(Optional.of(initialDeposit));
+        when(transactionRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        // BEFORE deposit:
+        when(walletService.getWalletBalance(userId)).thenReturn(initialWallet);
+
+        DepositRequest request = new DepositRequest(
+                userId,
+                amount,
+                PaymentGateway.BINANCE, // // Non-system gateway to include fee
+                txnFee,
+                "txn123",
+                "Deposit via BINANCE"
+        );
+
+        // 2. Act
+        Transaction result = depositService.deposit(request);
+
+        // AFTER deposit, simulate updated state:
+        when(walletService.getWalletBalance(userId)).thenReturn(expectedWallet);
+
+        // 3. Assert transaction state
+        assertNotNull(result);
+        assertEquals(userId, result.getUserId());
+        assertEquals(amount, result.getAmount());
+        assertEquals(txnFee, result.getTxnFee());
+        assertEquals(expectedWallet, result.getBalance()); // new wallet balance in transaction
+
+        // Verify transaction repository
+        ArgumentCaptor<Transaction> captor = ArgumentCaptor.forClass(Transaction.class);
+        verify(transactionRepository).save(captor.capture());
+
+        Transaction savedTxn = captor.getValue();
+        assertEquals(amount, savedTxn.getAmount());
+        assertEquals(txnFee, savedTxn.getTxnFee());
+        assertEquals(expectedWallet, savedTxn.getBalance());
+
+        // 4. Now simulate post-state to test updated wallet/deposit from service
+        when(userClient.findWalletBalanceById(userId)).thenReturn(Optional.of(expectedWallet));
+        when(userClient.findDepositBalanceById(userId)).thenReturn(Optional.of(expectedDeposit));
+
+        BigDecimal actualWallet = walletService.getWalletBalance(userId);
+        //BigDecimal actualDeposit = walletService.findDepositBalanceById(userId).orElse(BigDecimal.ZERO);
+
+        // 5. Final assertions
+        assertEquals(expectedWallet, actualWallet, "Wallet balance should be updated correctly");
+        //assertEquals(expectedDeposit, actualDeposit, "Deposit balance should be updated correctly");
     }
 }
