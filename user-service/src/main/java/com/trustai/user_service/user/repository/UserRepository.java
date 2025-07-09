@@ -27,14 +27,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u.walletBalance FROM User u WHERE u.id = :userId")
     Optional<BigDecimal> findWalletBalanceById(@Param("userId") Long userId);
 
-    @Query("SELECT u.depositBalance FROM User u WHERE u.id = :userId")
-    Optional<BigDecimal> findDepositBalanceById(@Param("userId") Long userId);
-
     @Modifying
     @Query("UPDATE User u SET u.walletBalance = :balance WHERE u.id = :userId")
     void updateWalletBalance(@Param("userId") Long userId, @Param("balance") BigDecimal balance);
 
+    /*
+    @Query("SELECT u.depositBalance FROM User u WHERE u.id = :userId")
+    Optional<BigDecimal> findDepositBalanceById(@Param("userId") Long userId);
+
     @Modifying
     @Query("UPDATE User u SET u.depositBalance = :balance WHERE u.id = :userId")
     void updateDepositBalance(@Param("userId") Long userId, @Param("balance") BigDecimal balance);
+    */
 }

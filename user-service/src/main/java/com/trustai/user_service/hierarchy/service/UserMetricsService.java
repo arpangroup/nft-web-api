@@ -6,6 +6,7 @@ import com.trustai.user_service.hierarchy.dto.UserMetrics;
 import com.trustai.user_service.hierarchy.repository.UserHierarchyRepository;
 import com.trustai.user_service.user.entity.User;
 import com.trustai.user_service.user.exception.IdNotFoundException;
+import com.trustai.user_service.user.provider.TransactionClient;
 import com.trustai.user_service.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class UserMetricsService {
     private final UserHierarchyRepository hierarchyRepo;
     private final UserRepository userRepository;
     //private final DepositService depositService;
+    private final TransactionClient transactionClient;
 
     public UserMetrics computeMetrics(Long userId) {
         List<UserHierarchy> downlines = hierarchyRepo.findByAncestor(userId);
@@ -41,8 +43,8 @@ public class UserMetricsService {
                 .totalTeamSize(teamSize)
                 .build();
 
-        //BigDecimal totalDeposit = depositService.getTotalDeposit(userId);
-        BigDecimal totalDeposit = user.getDepositBalance();
+        BigDecimal totalDeposit = transactionClient.getDepositBalance(userId);
+        //BigDecimal totalDeposit = user.getDepositBalance();
         return UserMetrics.builder()
                 .directReferrals(depthCounts.getOrDefault(1, 0L).intValue())
                 .userHierarchyStats(stats)

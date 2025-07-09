@@ -29,9 +29,8 @@ public class UserBalanceServiceImpl implements UserBalanceService {
         userRepository.updateWalletBalance(userId, updatedAmount);
     }
 
-    @Override
+   /* @Override
     public Optional<BigDecimal> findDepositBalanceById(Long userId) {
-        //return userRepository.findDepositBalanceById(userId);
         var user = profileService.getUserById(userId);
         return Optional.ofNullable(user.getDepositBalance());
     }
@@ -39,5 +38,5 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     @Override
     public void updateDepositBalance(long userId, BigDecimal updatedTotalDepositAmount) {
         userRepository.updateDepositBalance(userId, updatedTotalDepositAmount);
-    }
+    }*/
 }

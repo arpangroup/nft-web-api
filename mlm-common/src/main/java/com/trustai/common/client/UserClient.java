@@ -16,6 +16,6 @@ public interface UserClient {
     // User Wallet + Deposit Balance:
     Optional<BigDecimal> findWalletBalanceById(Long userId);
     void updateWalletBalance(long userId, BigDecimal updatedAmount);
-    Optional<BigDecimal> findDepositBalanceById(Long userId);
-    void updateDepositBalance(long userId, BigDecimal updatedTotalDepositAmount);
+    /*Optional<BigDecimal> findDepositBalanceById(Long userId);
+    void updateDepositBalance(long userId, BigDecimal updatedTotalDepositAmount);*/
 }

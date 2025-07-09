@@ -55,7 +55,7 @@ public class UserClientImpl implements UserClient {
         userBalanceService.updateWalletBalance(userId, updatedAmount);
     }
 
-    @Override
+    /*@Override
     public Optional<BigDecimal> findDepositBalanceById(Long userId) {
         return userBalanceService.findDepositBalanceById(userId);
     }
@@ -63,6 +63,6 @@ public class UserClientImpl implements UserClient {
     @Override
     public void updateDepositBalance(long userId, BigDecimal updatedTotalDepositAmount) {
         userBalanceService.updateDepositBalance(userId, updatedTotalDepositAmount);
-    }
+    }*/
 
 }

@@ -42,11 +42,11 @@ public class WalletServiceImpl implements WalletService {
     public void updateBalanceFromTransaction(Long userId, BigDecimal delta, TransactionType transactionType) {
         updateBalanceFromTransaction(userId, delta);
 
-        if (transactionType == TransactionType.DEPOSIT) {
+        /*if (transactionType == TransactionType.DEPOSIT) {
             BigDecimal currentDepositBalance = userClient.findDepositBalanceById(userId).orElse(BigDecimal.ZERO);
             BigDecimal newDepositBalance = currentDepositBalance.add(delta);
             userClient.updateDepositBalance(userId, newDepositBalance);
-        }
+        }*/
 
     }
 

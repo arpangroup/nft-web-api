@@ -188,7 +188,6 @@ class DepositServiceTest {
 
         //  1. Set up mocks : Mock user balances before deposit
         when(userClient.findWalletBalanceById(userId)).thenReturn(Optional.of(initialWallet));
-        when(userClient.findDepositBalanceById(userId)).thenReturn(Optional.of(initialDeposit));
         when(transactionRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
         // BEFORE deposit:
         when(walletService.getWalletBalance(userId)).thenReturn(initialWallet);
@@ -226,7 +225,6 @@ class DepositServiceTest {
 
         // 4. Now simulate post-state to test updated wallet/deposit from service
         when(userClient.findWalletBalanceById(userId)).thenReturn(Optional.of(expectedWallet));
-        when(userClient.findDepositBalanceById(userId)).thenReturn(Optional.of(expectedDeposit));
 
         BigDecimal actualWallet = walletService.getWalletBalance(userId);
         //BigDecimal actualDeposit = walletService.findDepositBalanceById(userId).orElse(BigDecimal.ZERO);

@@ -69,12 +69,12 @@ class WalletServiceImplTest {
     @Test
     void updateBalanceFromTransaction_shouldAlsoUpdateDepositBalanceForDepositTxn() {
         when(userClient.findWalletBalanceById(userId)).thenReturn(Optional.of(new BigDecimal("200.00")));
-        when(userClient.findDepositBalanceById(userId)).thenReturn(Optional.of(new BigDecimal("50.00")));
+        //when(userClient.findDepositBalanceById(userId)).thenReturn(Optional.of(new BigDecimal("50.00")));
 
         walletService.updateBalanceFromTransaction(userId, new BigDecimal("100.00"), TransactionType.DEPOSIT);
 
         verify(userClient).updateWalletBalance(userId, new BigDecimal("300.00"));
-        verify(userClient).updateDepositBalance(userId, new BigDecimal("150.00"));
+        //verify(userClient).updateDepositBalance(userId, new BigDecimal("150.00"));
     }
 
     @Test
@@ -84,7 +84,7 @@ class WalletServiceImplTest {
         walletService.updateBalanceFromTransaction(userId, new BigDecimal("50.00"), TransactionType.WITHDRAWAL);
 
         verify(userClient).updateWalletBalance(userId, new BigDecimal("550.00"));
-        verify(userClient, never()).updateDepositBalance(anyLong(), any());
+        //verify(userClient, never()).updateDepositBalance(anyLong(), any());
     }
 
     // --- ensureSufficientBalance() ---
