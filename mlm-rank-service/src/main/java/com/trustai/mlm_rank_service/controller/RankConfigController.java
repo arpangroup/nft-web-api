@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v2/rankings")
+@RequestMapping("/api/v1/rankings")
 @RequiredArgsConstructor
 @Slf4j
 public class RankConfigController {
