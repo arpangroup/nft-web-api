@@ -42,6 +42,7 @@ public class NotificationService {
     }
 
     private String resolveTemplate(String template, Map<String, String> props) {
+        if (props == null) return template;
         for (Map.Entry<String, String> entry : props.entrySet()) {
             template = template.replace("{{" + entry.getKey() + "}}", entry.getValue());
         }
