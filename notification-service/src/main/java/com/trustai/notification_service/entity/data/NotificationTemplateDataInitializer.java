@@ -1,5 +1,6 @@
-package com.trustai.notification_service.entity;
+package com.trustai.notification_service.entity.data;
 
+import com.trustai.notification_service.entity.NotificationTemplate;
 import com.trustai.notification_service.repository.NotificationTemplateRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;

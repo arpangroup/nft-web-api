@@ -21,7 +21,7 @@ public class NotificationTemplate {
     @Column(nullable = false)
     private NotificationType notificationType = NotificationType.EMAIL;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String subject;
 
     @Lob

@@ -18,12 +18,13 @@ public class EmailTemplate {
     @Column(unique = true, nullable = false)
     private String code; // unique template code
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String subject;
 
     private String banner;
     private String title;
     private String salutation;
+    @Lob
     private String messageBody;
 
     private String buttonLevel;
@@ -35,6 +36,7 @@ public class EmailTemplate {
     private String bottomTitle;
     private String bottomBody;
 
+    private String templateFor;
     private boolean templateActive;
 
     public EmailTemplate(String code, String subject) {
@@ -45,5 +47,7 @@ public class EmailTemplate {
     public EmailTemplate(NotificationCode code, String subject) {
         this(code.name(), subject);
     }
+
+
 
 }
