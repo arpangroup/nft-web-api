@@ -27,8 +27,8 @@ public class PushNotificationTemplateDataInitializer {
             new PushNotificationTemplate(NotificationCode.NEW_USER)
                     .setTitle("Wellcome to {{full_name}}")
                     .setMessageBody("""
-                            Thanks for joining us  {{full_name}}\n
-                                                        
+                            Thanks for joining us  {{full_name}}
+                            
                             {{message}}
                             """)
                     .setTemplateFor(TEMPLATE_FOR_ADMIN)
@@ -37,27 +37,27 @@ public class PushNotificationTemplateDataInitializer {
             new PushNotificationTemplate(NotificationCode.MANUAL_DEPOSIT_REQUEST)
                     .setTitle("Manual Deposit request")
                     .setMessageBody("""
-                           The manual deposit request details:\n
-                           {{txn}}\n
-                           {{gateway_name}}\n
+                           The manual deposit request details:
+                           {{txn}}
+                           {{gateway_name}}
                            {{deposit_amount}}
-                            """)
+                           """)
                     .setTemplateFor(TEMPLATE_FOR_ADMIN)
                     .setTemplateActive(true),
             new PushNotificationTemplate(NotificationCode.WITHDRAW_REQUEST)
                     .setTitle("Withdraw Request")
                     .setMessageBody("""
-                           Withdraw Request details:\n
-                           {{txn}}\n
-                           {{method_name}}\n
+                           Withdraw Request details:
+                           {{txn}}
+                           {{method_name}}
                            {{withdraw_amount}}
-                            """)
+                           """)
                     .setTemplateFor(TEMPLATE_FOR_ADMIN)
                     .setTemplateActive(true),
             new PushNotificationTemplate(NotificationCode.KYC_REQUEST)
                     .setTitle("Kyc Request")
                     .setMessageBody("""
-                            {{full_name}} Kyc requested\n
+                            {{full_name}} Kyc requested
                             {{email}}
                             """)
                     .setTemplateFor(TEMPLATE_FOR_ADMIN)
@@ -66,54 +66,54 @@ public class PushNotificationTemplateDataInitializer {
             new PushNotificationTemplate(NotificationCode.USER_INVESTMENT_START)
                     .setTitle("You Invested on {{plan_name}}")
                     .setMessageBody("""
-                           Hello!\n
-                           {{txn}} 'Successfully Investment\n
-                           {{plan_name}}\n
+                           Hello!
+                           {{txn}} 'Successfully Investment
+                           {{plan_name}}
                            {{invest_amount}}
-                            """)
+                           """)
                     .setTemplateFor(TEMPLATE_FOR_ADMIN)
                     .setTemplateActive(true),
             new PushNotificationTemplate(NotificationCode.INVESTED_ON_PROFIT)
                     .setTitle("You Invested on {{plan_name}}")
                     .setMessageBody("""
-                           Hello!\n
-                           {{txn}} 'Successfully Investment\n
-                           {{plan_name}}\n
+                           Hello!
+                           {{txn}} 'Successfully Investment
+                           {{plan_name}
                            {{invest_amount}}
                            {{roi}}
-                            """)
+                           """)
                     .setTemplateFor(TEMPLATE_FOR_ADMIN)
                     .setTemplateActive(true),
             new PushNotificationTemplate(NotificationCode.INVESTMENT_END)
                     .setTitle("You Invested on {{plan_name}}")
                     .setMessageBody("""
-                           Hello!\n
-                           {{txn}} 'Successfully Investment End\n
-                           {{plan_name}}\n
+                           Hello!
+                           {{txn}} 'Successfully Investment End
+                           {{plan_name}}
                            {{invest_amount}}
-                            """)
+                           """)
                     .setTemplateFor(TEMPLATE_FOR_ADMIN)
                     .setTemplateActive(true),
             new PushNotificationTemplate(NotificationCode.WITHDRAW_REQUEST_ACTION)
                     .setTitle("Withdraw Request")
                     .setMessageBody("""
-                           Withdraw Request details:\n
+                           Withdraw Request details:
                            {{message}}
-                           {{txn}}\n
-                           {{method_name}}\n
-                           {{withdraw_amount}}\n
+                           {{txn}}
+                           {{method_name}}
+                           {{withdraw_amount}}
                            {{status}}
-                            """),
+                           """),
             new PushNotificationTemplate(NotificationCode.MANUAL_DEPOSIT_REQUEST_ACTION)
                     .setTitle("Manual Deposit request")
                     .setMessageBody("""
-                           The manual deposit request details:\n
+                           The manual deposit request details:
                            {{message}}
-                           {{txn}}\n
-                           {{gateway_name}}\n
-                           {{deposit_amount}}\n
+                           {{txn}}
+                           {{gateway_name}}
+                           {{deposit_amount}}
                            {{status}}
-                            """)
+                           """)
         );
     }
 

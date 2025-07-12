@@ -26,36 +26,36 @@ public class SmsTemplateDataInitializer {
         return List.of(
             new SmsTemplate(NotificationCode.USER_MAIL_SEND)
                     .setMessageBody("""
-                            Thanks for joining us  {{full_name}}\n
+                            Thanks for joining us  {{full_name}}
                             {{message}}
                             """),
 
                 new SmsTemplate(NotificationCode.USER_INVESTMENT)
                         .setMessageBody("""
-                               Hello!\n
-                               {{txn}}. 'Successfully Investment\n
-                               {{plan_name}}\n
+                               Hello!
+                               {{txn}}. 'Successfully Investment
+                               {{plan_name}}
                                {{invest_amount}}
                             """),
                 new SmsTemplate(NotificationCode.USER_ACCOUNT_DISABLED),
                 new SmsTemplate(NotificationCode.MANUAL_DEPOSIT_REQUEST)
                         .setMessageBody("""
-                                The manual deposit request details:\n
-                                {{txn}}\n
-                                {{gateway_name}}\n
+                                The manual deposit request details:
+                                {{txn}}
+                                {{gateway_name}}
                                 {{deposit_amount}}
                                 """),
                 new SmsTemplate(NotificationCode.WITHDRAW_REQUEST)
                         .setMessageBody("""
-                                Withdraw Request details:\n
-                                {{txn}}\n
-                                {{method_name}}\n
+                                Withdraw Request details:
+                                {{txn}}
+                                {{method_name}}
                                 {{withdraw_amount}}
                                 """),
                 new SmsTemplate(NotificationCode.KYC_REQUEST)
                         .setMessageBody("""
-                                Thanks for joining our platform! ---  {{site_title}}\n
-                                                    
+                                Thanks for joining our platform! ---  {{site_title}}
+                                
                                 {{full_name}}
                                 {{email}}
                                 
@@ -65,47 +65,47 @@ public class SmsTemplateDataInitializer {
                                 """),
                 new SmsTemplate(NotificationCode.KYC_ACTION)
                         .setMessageBody("""
-                                Thanks for joining our platform! ---  {{site_title}}\n
+                                Thanks for joining our platform! ---  {{site_title}}
                                                     
-                                {{message}}\n
-                                {{full_name}}\n
-                                {{email}}\n\n
+                                {{message}}
+                                {{full_name}}
+                                {{email}}
                                 
-                                As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits.\n\n
+                                As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits.
                                 
                                 Find out more about in - {{site_url}}
                                 """),
                 new SmsTemplate(NotificationCode.INVEST_ROI)
                         .setMessageBody("""
-                                Hello!\n
-                                {{txn}}. 'Successfully Investment\n
-                                {{plan_name}}\n
-                                {{invest_amount}}\n
+                                Hello!
+                                {{txn}}. 'Successfully Investment
+                                {{plan_name}}
+                                {{invest_amount}}
                                 {{roi}}
                                 """),
                 new SmsTemplate(NotificationCode.INVESTMENT_END)
                         .setMessageBody("""
-                                Hello!\n
-                                {{txn}}. 'Successfully Investment End\n
-                                {{plan_name}}\n
+                                Hello!
+                                {{txn}}. 'Successfully Investment End
+                                {{plan_name}}
                                 {{invest_amount}}
                                 """),
                 new SmsTemplate(NotificationCode.WITHDRAW_REQUEST_ACTION)
                         .setMessageBody("""
                                 Withdraw Request details:
-                                {{message}}\n
-                                {{txn}}\n
+                                {{message}}
+                                {{txn}}
                                 {{method_name}}
                                 {{withdraw_amount}}
                                 {{status}}
                                 """),
                 new SmsTemplate(NotificationCode.MANUAL_DEPOSIT_REQUEST_ACTION)
                         .setMessageBody("""
-                                The manual deposit request details:\n
-                                [[message]]\n
-                                [[txn]]\n
-                                [[gateway_name]]\n
-                                [[deposit_amount]]\n
+                                The manual deposit request details:
+                                [[message]]
+                                [[txn]]
+                                [[gateway_name]]
+                                [[deposit_amount]]
                                 [[status]]
                                 """)
         );
