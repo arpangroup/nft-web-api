@@ -16,7 +16,7 @@ public class EmailTemplate {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String code; // unique template code
+    private String code; // templateName
 
     @Column(nullable = false)
     private String subject;

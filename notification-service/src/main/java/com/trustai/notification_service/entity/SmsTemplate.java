@@ -16,7 +16,7 @@ public class SmsTemplate {
     private Long id;
 
     @Column(nullable = false)
-    private String code; // unique template code
+    private String code; // templateName
 
     private String messageBody;
 

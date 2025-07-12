@@ -30,25 +30,25 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Sample Email")
                         .setSalutation("Hi {{full_name}},")
                         .setMessageBody("""
-                            <p>Thanks for joining us&nbsp;{{site_title}}</p>
-                            <p>{{message}}</p>
-                            <p>Find out more about in - {{site_url}}</p>
+                        Thanks for joining us&nbsp;{{site_title}}
+                        {{message}}
+                        Find out more about in - {{site_url}}
                         """)
                         .setButtonLevel("Login Your Account")
                         .setButtonLink("https://trustai.co.in/login")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""
-                            <p>Regards</p>
-                            <p>{{site_title}}</p>
+                        Regards
+                        {{site_title}}
                         """)
                         .setEnableFooterBottom(false)
                         .setBottomTitle("What is {{site_title}}")
                         .setBottomBody("""
-                            Hyiprio is a visual asset manager made for collaboration.
-                            Build a central library for your team's visual assets.
-                            Empower creation and ensure consistency from your desktop.
+                        TrustAI is a visual asset manager made for collaboration.
+                        Build a central library for your team's visual assets.
+                        Empower creation and ensure consistency from your desktop.
                         
-                            <p>{{site_url}}</p>
+                        {{site_url}}
                         """)
                         .setTemplateFor(TEMPLATE_FOR_USER)
                         .setTemplateActive(false),
@@ -58,28 +58,28 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Welcome to {{site_title}}")
                         .setSalutation("Hi {{full_name}},")
                         .setMessageBody("""
-                            Thanks for joining our platform! ---  {{site_title}}
-                            <p>{{message}}</p>
-                            <p>As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits.</p>
-                            <p>Find out more about in - {{site_url}}</p>
+                        Thanks for joining our platform! ---  {{site_title}}
+                        {{message}}
+                        As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits.
+                        Find out more about in - {{site_url}}
                         """)
                         .setButtonLevel("Login Your Account")
                         .setButtonLink("https://trustai.co.in/login")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""
-                            Thanks for joining our platform! ---  {{site_title}}
-                            <p>{{message}}</p>
-                            <p>As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits.</p>
-                            <p>Find out more about in - {{site_url}}</p>
+                        Thanks for joining our platform! ---  {{site_title}}
+                        {{message}}
+                        As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits.
+                        Find out more about in - {{site_url}}
                         """)
                         .setEnableFooterBottom(true)
                         .setBottomTitle("What is {{site_title}}")
                         .setBottomBody("""
-                            Hyiprio is a visual asset manager made for collaboration.
-                            Build a central library for your team's visual assets.
-                            Empower creation and ensure consistency from your desktop.
+                        Hyiprio is a visual asset manager made for collaboration.
+                        Build a central library for your team's visual assets.
+                        Empower creation and ensure consistency from your desktop.
                         
-                            <p>{{site_url}}</p>
+                        {{site_url}}
                         """)
                         .setTemplateFor(TEMPLATE_FOR_SUBSCRIBER)
                         .setTemplateActive(false),
@@ -88,22 +88,23 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Verify Email Address")
                         .setSalutation("Hi {{full_name}},")
                         .setMessageBody("""
-                            Hello! <br/>
-                            Please click the button below to verify your email address.
+                        Hello!
+                        
+                        Please click the button below to verify your email address.
                         """)
                         .setButtonLevel("Verify Email Address")
                         .setButtonLink("{{token}}")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""
-                            Regards,<br/>
-                            {{site_title}}
+                        Regards,
+                        {{site_title}}
                         """)
                         .setEnableFooterBottom(true)
                         .setBottomTitle("Verify Email Address")
                         .setBottomBody("""
-                           If you're having trouble clicking the "Verify Email Address" button, copy\s
-                           and paste the URL below into your web browser:{{token}}
-                        """)
+                       If you're having trouble clicking the "Verify Email Address" button, copy\s
+                       and paste the URL below into your web browser:{{token}}
+                       """)
                         .setTemplateFor(TEMPLATE_FOR_USER)
                         .setTemplateActive(true),
                 new EmailTemplate(NotificationCode.FORGOT_PASSWORD, "User Forget Password")
@@ -111,14 +112,14 @@ public class EmailTemplateDataInitializer {
                         .setTitle("User Password Change")
                         .setSalutation("Hi user,")
                         .setMessageBody("""
-                            Please click the button below to Change the Password.
+                        Please click the button below to Change the Password.
                         """)
                         .setButtonLevel("Reset Password")
                         .setButtonLink("{{token}}")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""
-                            Regards,<br/>
-                            {{site_title}}
+                        Regards,
+                        {{site_title}}
                         """)
                         .setEnableFooterBottom(true)
                         .setBottomTitle("User Password Change")
@@ -130,17 +131,17 @@ public class EmailTemplateDataInitializer {
                         .setTitle("You Invested on {{plan_name}}")
                         .setSalutation("Hi {{full_name}},")
                         .setMessageBody("""
-                             Hello! <br/>
-                             {{txn}}. 'Successfully Investment <br/>
-                             {{plan_name}} <br/>
-                             {{invest_amount}}
+                         Hello!
+                         {{txn}}. 'Successfully Investment
+                         {{plan_name}}
+                         {{invest_amount}}
                         """)
                         .setButtonLevel("Login Account")
                         .setButtonLink("{{token}}")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""
-                            Regards,<br/>
-                            {{site_title}}
+                        Regards,
+                        {{site_title}}
                         """)
                         .setEnableFooterBottom(true)
                         .setBottomTitle("Successfully Investment")
@@ -152,14 +153,14 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Sorry to say that")
                         .setSalutation("Hi {{full_name}},")
                         .setMessageBody("""
-                             Your account is disabled for a serious cause. Sorry! you're unable to use your account again.
+                        Your account is disabled for a serious cause. Sorry! you're unable to use your account again.
                         """)
                         .setButtonLevel("Contact Us")
                         .setButtonLink("https://trustai.co.in/login")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""
-                            Regards,<br/>
-                            {{site_title}}
+                        Regards,
+                        {{site_title}}
                         """)
                         .setEnableFooterBottom(true)
                         .setBottomTitle("User Account Disabled")
@@ -171,17 +172,17 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Manual Deposit request")
                         .setSalutation("Hi Admin,")
                         .setMessageBody("""
-                              The manual deposit request details:
-                              {{txn}}
-                              {{gateway_name}}
-                              {{deposit_amount}}
+                        The manual deposit request details:
+                        {{txn}}
+                        {{gateway_name}}
+                        {{deposit_amount}}
                         """)
                         .setButtonLevel("Review The requests")
                         .setButtonLink("https://trustai.co.in/admin")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""
-                            Regards,<br/>
-                            {{site_title}}
+                        Regards,
+                        {{site_title}}
                         """)
                         .setEnableFooterBottom(true)
                         .setBottomTitle("Manual Deposit request")
@@ -193,17 +194,17 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Manual Deposit request")
                         .setSalutation("Hi Admin,")
                         .setMessageBody("""
-                              The manual deposit request details:
-                              {{txn}}
-                              {{gateway_name}}
-                              {{deposit_amount}}
+                        The manual deposit request details:
+                        {{txn}}
+                        {{gateway_name}}
+                        {{deposit_amount}}
                         """)
                         .setButtonLevel("Review The requests")
                         .setButtonLink("https://trustai.co.in/admin")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""
-                            Regards,<br/>
-                            {{site_title}}
+                        Regards,
+                        {{site_title}}
                         """)
                         .setEnableFooterBottom(true)
                         .setBottomTitle("Manual Deposit request")
@@ -215,21 +216,21 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Admin Forget Password")
                         .setSalutation("Hi Admin,")
                         .setMessageBody("""
-                              Please click the button below to reset your password
+                        Please click the button below to reset your password
                         """)
                         .setButtonLevel("Review The requestsPassword reset")
                         .setButtonLink("{{token}}")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""
-                            Regards,<br/>
-                            {{site_title}}
+                        Regards,
+                        {{site_title}}
                         """)
                         .setEnableFooterBottom(true)
                         .setBottomTitle("Withdraw Request")
                         .setBottomBody("""
-                               {{full_name}}
-                               {{token}}
-                               """)
+                       {{full_name}}
+                       {{token}}
+                       """)
                         .setTemplateFor(TEMPLATE_FOR_ADMIN)
                         .setTemplateActive(true),
                 new EmailTemplate(NotificationCode.CONTACT_MAIL_SEND, "{{subject}} for {{full_name}}")
@@ -237,28 +238,33 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Welcome to {{site_title}}")
                         .setSalutation("Hi {{full_name}},")
                         .setMessageBody("""
-                              Thanks for joining our platform! ---  {{site_title}} <br/><br/>
-                              {{message}}
-                              {{full_name}}
-                              {{email}}<br/>
-                              As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits. <br/><br/>                              
-                              Find out more about in - {{site_url}}
+                        Thanks for joining our platform! ---  {{site_title}}
+                        
+                        {{message}}
+                        {{full_name}}
+                        {{email}}
+                        
+                        As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits.
+                        
+                        Find out more about in - {{site_url}}
                         """)
                         .setButtonLevel("Login Your Account")
                         .setButtonLink("https://trustai.co.in/login")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""
-                            Thanks for joining our platform! ---  {{site_title}} <br/><br/>
-                            {{message}}
-                            <p>As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits. </p>
-                            Find out more about in - {{site_url}}
+                        Thanks for joining our platform! ---  {{site_title}}
+                        
+                        {{message}}
+                        
+                        As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits.
+                        Find out more about in - {{site_url}}
                         """)
                         .setEnableFooterBottom(true)
                         .setBottomTitle("What is {{site_title}}")
                         .setBottomBody("""
-                               Hyiprio is a visual asset manager made for collaboration. Build a central library for your team's visual assets. Empower creation and ensure consistency from your desktop.
-                               <p>{{site_url}}</p>
-                               """)
+                       Hyiprio is a visual asset manager made for collaboration. Build a central library for your team's visual assets. Empower creation and ensure consistency from your desktop.
+                       {{site_url}}
+                       """)
                         .setTemplateFor(TEMPLATE_FOR_ADMIN)
                         .setTemplateActive(true),
                 new EmailTemplate(NotificationCode.KYC_REQUEST, "{{subject}} for {{full_name}}")
@@ -266,28 +272,33 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Welcome to {{site_title}}")
                         .setSalutation("Hi {{full_name}},")
                         .setMessageBody("""
-                              Thanks for joining our platform! ---  {{site_title}} <br/><br/>
-                              {{message}}
-                              {{full_name}}
-                              {{email}}<br/>
-                              As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits. <br/><br/>                              
-                              Find out more about in - {{site_url}}
+                        Thanks for joining our platform! ---  {{site_title}}
+                        {{message}}
+                        {{full_name}}
+                        {{email}}
+                        
+                        As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits.
+                        
+                        
+                        Find out more about in - {{site_url}}
                         """)
                         .setButtonLevel("Login Your Account")
                         .setButtonLink("https://trustai.co.in/login")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""
-                            Thanks for joining our platform! ---  {{site_title}} <br/><br/>
-                            {{message}}
-                            <p>As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits. </p>
-                            Find out more about in - {{site_url}}
+                        Thanks for joining our platform! ---  {{site_title}}
+                        
+                        {{message}}
+                        As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits.
+                        
+                        Find out more about in - {{site_url}}
                         """)
                         .setEnableFooterBottom(true)
                         .setBottomTitle("What is {{site_title}}")
                         .setBottomBody("""
-                               Hyiprio is a visual asset manager made for collaboration. Build a central library for your team's visual assets. Empower creation and ensure consistency from your desktop.
-                               <p>{{site_url}}</p>
-                               """)
+                       Hyiprio is a visual asset manager made for collaboration. Build a central library for your team's visual assets. Empower creation and ensure consistency from your desktop.
+                       {{site_url}}
+                       """)
                         .setTemplateFor(TEMPLATE_FOR_ADMIN)
                         .setTemplateActive(true),
                 new EmailTemplate(NotificationCode.KYC_ACTION, "{{subject}} for {{full_name}}")
@@ -295,28 +306,32 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Welcome to {{site_title}}")
                         .setSalutation("Hi {{full_name}},")
                         .setMessageBody("""
-                              Thanks for joining our platform! ---  {{site_title}} <br/><br/>
-                              {{message}}
-                              {{full_name}}
-                              {{email}}<br/>
-                              As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits. <br/><br/>                              
-                              Find out more about in - {{site_url}}
+                        Thanks for joining our platform! ---  {{site_title}}
+                        
+                        {{message}}
+                        {{full_name}}
+                        {{email}}
+                        
+                        As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits.
+                        
+                        Find out more about in - {{site_url}}
                         """)
                         .setButtonLevel("Login Your Account")
                         .setButtonLink("https://trustai.co.in/login")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""
-                            Thanks for joining our platform! ---  {{site_title}} <br/><br/>
-                            {{message}}
-                            <p>As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits. </p>
-                            Find out more about in - {{site_url}}
+                        Thanks for joining our platform! ---  {{site_title}}
+                        
+                        {{message}}
+                        As a member of our platform, you can mange your account, buy or sell cryptocurrency, invest and earn profits.
+                        Find out more about in - {{site_url}}
                         """)
                         .setEnableFooterBottom(true)
                         .setBottomTitle("What is {{site_title}}")
                         .setBottomBody("""
-                               Hyiprio is a visual asset manager made for collaboration. Build a central library for your team's visual assets. Empower creation and ensure consistency from your desktop.
-                               <p>{{site_url}}</p>
-                               """)
+                       Hyiprio is a visual asset manager made for collaboration. Build a central library for your team's visual assets. Empower creation and ensure consistency from your desktop.
+                       {{site_url}}
+                       """)
                         .setTemplateFor(TEMPLATE_FOR_ADMIN)
                         .setTemplateActive(true),
                 new EmailTemplate(NotificationCode.INVEST_ROI, "Thanks for the Investment on {{site_title}}")
@@ -324,19 +339,20 @@ public class EmailTemplateDataInitializer {
                 .setTitle("You Invested on {{plan_name}}")
                 .setSalutation("Hi {{full_name}},")
                 .setMessageBody("""
-                           Hello! <br/>
-                           {{txn}}. 'Successfully Investment <br/>
-                           {{plan_name}} <br/>
-                           {{invest_amount}} <br/>
-                           {{roi}}
-                        """)
+                       Hello!
+                       
+                       {{txn}}. 'Successfully Investment
+                       {{plan_name}}
+                       {{invest_amount}}
+                       {{roi}}
+                       """)
                 .setButtonLevel("Login Your Account")
                 .setButtonLink("https://trustai.co.in/login")
                 .setEnableFooterStatus(true)
                 .setFooterBody("""                            
-                         <p>Regards</p>
-                         <p>{{site_title}}</p>
-                        """)
+                     Regards
+                     {{site_title}}
+                     """)
                 .setEnableFooterBottom(false)
                 .setBottomTitle("Successfully ROI")
                 .setBottomBody("{{txn}}. ' Successfully ROI")
@@ -347,17 +363,17 @@ public class EmailTemplateDataInitializer {
                         .setTitle("You Invested on {{plan_name}}")
                         .setSalutation("Hi {{full_name}},")
                         .setMessageBody("""
-                           Hello! <br/>
-                           {{txn}}. 'Successfully Investment <br/>
-                           {{plan_name}} <br/>
+                           Hello!
+                           {{txn}}. 'Successfully Investment
+                           {{plan_name}}
                            {{invest_amount}}
                         """)
                         .setButtonLevel("Login Your Account")
                         .setButtonLink("https://trustai.co.in/login")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""                            
-                         <p>Regards</p>
-                         <p>{{site_title}}</p>
+                        Regards
+                        {{site_title}}
                         """)
                         .setEnableFooterBottom(false)
                         .setBottomTitle("Successfully Investment")
@@ -369,19 +385,19 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Withdraw Request")
                         .setSalutation("Hi {{full_name}},")
                         .setMessageBody("""
-                            Withdraw Request details: <br/>
-                            {{message}} <br/>
-                            {{txn}} <br/>
-                            {{method_name}} <br/>
-                            {{withdraw_amount}} <br/>
-                            {{status}}
+                        Withdraw Request details:
+                        {{message}}
+                        {{txn}}
+                        {{method_name}}
+                        {{withdraw_amount}}
+                        {{status}}
                         """)
                         .setButtonLevel("Withdraw Request")
                         .setButtonLink("{{site_url}}")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""                            
-                         <p>Regards</p>
-                         <p>{{site_title}}</p>
+                        Regards
+                        {{site_title}}
                         """)
                         .setEnableFooterBottom(false)
                         .setBottomTitle("Withdraw Request")
@@ -393,19 +409,19 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Manual Deposit request")
                         .setSalutation("Hi {{full_name}},")
                         .setMessageBody("""
-                            The manual deposit request details: <br/>
-                            {{message}} <br/>
-                            {{txn}} <br/>
-                            {{gateway_name}}
-                            {{deposit_amount}} <br/>
-                            {{status}}
+                        The manual deposit request details:
+                        {{message}}
+                        {{txn}}
+                        {{gateway_name}}
+                        {{deposit_amount}}
+                        {{status}}
                         """)
                         .setButtonLevel("Review The requests")
                         .setButtonLink("{{site_url}}")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""                            
-                         <p>Regards</p>
-                         <p>{{site_title}}</p>
+                        Regards
+                        {{site_title}}
                         """)
                         .setEnableFooterBottom(false)
                         .setBottomTitle("Manual Deposit request")
@@ -417,17 +433,17 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Support Ticket")
                         .setSalutation("Hi {{full_name}},")
                         .setMessageBody("""
-                            Support Ticket: <br/>
-                            {{title}} <br/>
-                            {{message}} <br/>
-                            {{status}}
+                        Support Ticket:
+                        {{title}}
+                        {{message}}
+                        {{status}}
                         """)
                         .setButtonLevel("...")
                         .setButtonLink("{{site_url}}")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""                            
-                         <p>Regards</p>
-                         <p>{{site_title}}</p>
+                        Regards
+                        {{site_title}}
                         """)
                         .setEnableFooterBottom(false)
                         .setBottomTitle("Support Ticket")
@@ -439,17 +455,17 @@ public class EmailTemplateDataInitializer {
                         .setTitle("Support Ticket")
                         .setSalutation("Hi {{full_name}},")
                         .setMessageBody("""
-                            Support Ticket: <br/>
-                            {{title}} <br/>
-                            {{message}} <br/>
-                            {{status}}
+                        Support Ticket:
+                        {{title}}
+                        {{message}}
+                        {{status}}
                         """)
                         .setButtonLevel("...")
                         .setButtonLink("{{site_url}}")
                         .setEnableFooterStatus(true)
                         .setFooterBody("""                            
-                         <p>Regards</p>
-                         <p>{{site_title}}</p>
+                        Regards
+                        {{site_title}}
                         """)
                         .setEnableFooterBottom(false)
                         .setBottomTitle("Support Ticket")
