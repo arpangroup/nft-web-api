@@ -8,6 +8,7 @@ import com.trustai.transaction_service.dto.request.DepositRequest;
 import com.trustai.transaction_service.dto.request.ManualDepositRequest;
 import com.trustai.transaction_service.entity.PendingDeposit;
 import com.trustai.transaction_service.entity.Transaction;
+import com.trustai.transaction_service.exception.TransactionException;
 import com.trustai.transaction_service.mapper.TransactionMapper;
 import com.trustai.transaction_service.repository.PendingDepositRepository;
 import com.trustai.transaction_service.repository.TransactionRepository;
@@ -45,7 +46,7 @@ public class DepositServiceImpl implements DepositService {
     @Transactional
     public PendingDeposit depositManual(ManualDepositRequest request) {
         if (request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Amount must be greater than zero for manual deposit.");
+            throw new TransactionException("Amount must be greater than zero for manual deposit.");
         }
 
         PendingDeposit deposit = buildPendingDeposit(
@@ -116,10 +117,10 @@ public class DepositServiceImpl implements DepositService {
     @Transactional
     public PendingDeposit approvePendingDeposit(Long depositId, String adminUser) {
         PendingDeposit deposit = pendingDepositRepository.findById(depositId)
-                .orElseThrow(() -> new IllegalArgumentException("PendingDeposit not found"));
+                .orElseThrow(() -> new TransactionException("PendingDeposit not found"));
 
         if (deposit.getStatus() != PendingDeposit.DepositStatus.PENDING) {
-            throw new IllegalStateException("Only pending deposits can be approved.");
+            throw new TransactionException("Only pending deposits can be approved.");
         }
 
         BigDecimal netAmount = deposit.getAmount().subtract(deposit.getTxnFee());
@@ -151,10 +152,10 @@ public class DepositServiceImpl implements DepositService {
     @Transactional
     public PendingDeposit rejectPendingDeposit(Long depositId, String adminUser, String reason) {
         PendingDeposit deposit = pendingDepositRepository.findById(depositId)
-                .orElseThrow(() -> new IllegalArgumentException("PendingDeposit not found"));
+                .orElseThrow(() -> new TransactionException("PendingDeposit not found")); // IllegalArgumentException
 
         if (deposit.getStatus() != PendingDeposit.DepositStatus.PENDING) {
-            throw new IllegalStateException("Only pending deposits can be rejected.");
+            throw new TransactionException("Only pending deposits can be rejected."); // IllegalStateException
         }
 
         deposit.setStatus(PendingDeposit.DepositStatus.REJECTED);
@@ -214,16 +215,16 @@ public class DepositServiceImpl implements DepositService {
             txn.setMetaInfo(gatewayResponseJson);
             return transactionRepository.save(txn);
         }
-        throw new IllegalArgumentException("Transaction not found with reference: " + txnRefId);
+        throw new TransactionException("Transaction not found with reference: " + txnRefId); // IllegalArgumentException
     }
 
 
     private void validateDepositRequest(DepositRequest request) {
         if (request.getUserId() == null || request.getUserId() <= 0) {
-            throw new IllegalArgumentException("Invalid user ID");
+            throw new TransactionException("Invalid user ID"); // IllegalArgumentException
         }
         if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Deposit amount must be greater than zero");
+            throw new TransactionException("Deposit amount must be greater than zero"); // IllegalArgumentException
         }
         /*if (request.getPaymentGateway() == null) {
             throw new IllegalArgumentException("Payment paymentGateway must be provided");
