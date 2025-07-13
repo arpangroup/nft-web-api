@@ -17,12 +17,13 @@ import java.util.Optional;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long>, JpaSpecificationExecutor<Transaction>
 {
+    Page<Transaction> findByTxnType(TransactionType txnType, Pageable pageable);
     Page<Transaction> findByTxnTypeIn(List<TransactionType> txnTypes, Pageable pageable);
+    Page<Transaction> findByTxnTypeAndStatus(TransactionType txnType, Transaction.TransactionStatus status, Pageable pageable);
 
     // 1. Basic filters
     Page<Transaction> findByStatus(Transaction.TransactionStatus status, Pageable pageable);
 
-    Page<Transaction> findByTxnType(TransactionType txnType, Pageable pageable);
 
     Page<Transaction> findByUserId(Long userId, Pageable pageable);
     Page<Transaction> findByUserIdAndTxnType(Long userId, TransactionType transactionType, Pageable pageable);
@@ -30,7 +31,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
     boolean existsByUserIdAndTxnType(Long userId, TransactionType txnType);
 
     // 2. Date range filter
-    Page<Transaction> findByUserIdAndTxnDateBetween(Long userId, LocalDateTime start, LocalDateTime end, Pageable pageable);
+    Page<Transaction> findByUserIdAndCreatedAtBetween(Long userId, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
     // 3. Reference ID lookup
     Optional<Transaction> findByTxnRefId(String txnRefId);
@@ -56,8 +57,21 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
             "WHERE t.userId = :userId AND t.txnType = :txnType")
     BigDecimal sumAmountByUserIdAndTxnType(@Param("userId") Long userId, @Param("txnType") TransactionType txnType);
 
+    @Query("""
+    SELECT SUM(t.amount)
+    FROM Transaction t
+    WHERE t.userId = :userId
+      AND t.txnType IN :txnTypes
+      AND t.status IN :statuses
+    """)
+    BigDecimal sumAmountByUserIdAndTxnTypeAndStatusIn(
+            @Param("userId") Long userId,
+            @Param("txnTypes") List<TransactionType> txnTypes,
+            @Param("statuses") List<Transaction.TransactionStatus> statuses
+    );
+
     // 9. Recent N transactions
-    List<Transaction> findTop10ByUserIdOrderByTxnDateDesc(Long userId);
+    List<Transaction> findTop10ByUserIdOrderByCreatedAtDesc(Long userId);
 
     // 10. Suspicious transactions
     List<Transaction> findByAmountGreaterThanEqual(BigDecimal threshold);

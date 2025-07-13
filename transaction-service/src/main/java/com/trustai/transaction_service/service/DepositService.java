@@ -1,6 +1,9 @@
 package com.trustai.transaction_service.service;
 
-import com.trustai.transaction_service.dto.DepositRequest;
+import com.trustai.transaction_service.dto.response.DepositHistoryItem;
+import com.trustai.transaction_service.dto.request.DepositRequest;
+import com.trustai.transaction_service.dto.request.ManualDepositRequest;
+import com.trustai.transaction_service.entity.PendingDeposit;
 import com.trustai.transaction_service.entity.Transaction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,35 +13,40 @@ import java.math.BigDecimal;
 
 public interface DepositService {
     /**
-     * Processes an automatic deposit using a specified payment gateway.
-     * <p>
-     * This method facilitates depositing funds through supported <b>payment gateways</b>.
-     * Note that an additional gateway charge will apply.
-     *
-     * @param depositRequest
-     * @param amount     the deposit amount (must not be null)
-     * @param gateway    the payment gateway used for the transaction (must not be null)
-     * @param txnFee     the transaction fee or gateway charge (must not be null)
-     * @param txnRefId   the transaction reference ID from the payment gateway (can be null)
-     * @param status     the current status of the transaction (e.g., "PENDING", "COMPLETED")
-     * @param metaInfo   optional metadata related to the transaction (can be null or JSON string)
-     * @return           a {@link Transaction} object representing the completed deposit
-     */
-    //Transaction deposit(long userId, @NonNull BigDecimal amount, @NonNull PaymentGateway gateway, Optional<BigDecimal> txnFee, String txnRefId, Transaction.TransactionStatus status, String metaInfo);
-    Transaction deposit(@NonNull DepositRequest depositRequest);
-
-    /**
      * Processes a manual deposit initiated by an admin or another authorized user.
      * <p>
-     * This method is used for off-gateway deposits such as cash, cheque, or internal adjustments.
+     * This method is used for off-paymentGateway deposits such as cash, cheque, or internal adjustments.
      *
      * @param userId     the ID of the user whose account will be credited
      * @param depositor  the ID of the admin or user performing the deposit
      * @param amount     the amount to be manually deposited (must not be null)
      * @param remarks    additional remarks or comments regarding the manual deposit (optional)
-     * @return           a {@link Transaction} object representing the manual deposit
+     * @return           a {@link PendingDeposit} object representing the manual deposit
      */
-    Transaction depositManual(long userId, long depositor, @NonNull BigDecimal amount, String remarks);
+    PendingDeposit depositManual(ManualDepositRequest request);
+
+
+    /**
+     * Processes an automatic deposit using a specified payment paymentGateway.
+     * <p>
+     * This method facilitates depositing funds through supported <b>payment gateways</b>.
+     * Note that an additional paymentGateway charge will apply.
+     *
+     * @param depositRequest
+     * @param amount     the deposit amount (must not be null)
+     * @param gateway    the payment paymentGateway used for the transaction (must not be null)
+     * @param txnFee     the transaction fee or paymentGateway charge (must not be null)
+     * @param txnRefId   the transaction reference ID from the payment paymentGateway (can be null)
+     * @param status     the current status of the transaction (e.g., "PENDING", "COMPLETED")
+     * @param metaInfo   optional metadata related to the transaction (can be null or JSON string)
+     * @return           a {@link Transaction} object representing the completed deposit
+     */
+    //Transaction deposit(long userId, @NonNull BigDecimal amount, @NonNull PaymentGateway paymentGateway, Optional<BigDecimal> txnFee, String txnRefId, Transaction.TransactionStatus status, String metaInfo);
+    PendingDeposit deposit(@NonNull DepositRequest depositRequest);
+
+
+    PendingDeposit approvePendingDeposit(Long depositId, String adminUser);
+    PendingDeposit rejectPendingDeposit(Long depositId, String adminUser, String reason);
 
     /**
      * Returns total deposited amount for a user.
@@ -46,7 +54,7 @@ public interface DepositService {
     BigDecimal getTotalDeposit(long userId);
 
     /**
-     * To prevent duplicate deposits due to retries from client/gateway:
+     * To prevent duplicate deposits due to retries from client/paymentGateway:
      * Optional: Checks whether a deposit with this reference already exists.
      *
      * @param txnRefId
@@ -61,7 +69,8 @@ public interface DepositService {
      * @param pageable
      * @return
      */
-    Page<Transaction> getDepositHistory(Long userId, Pageable pageable);
+    Page<DepositHistoryItem> getDepositHistory(Long userId, Pageable pageable);
+    Page<DepositHistoryItem> getDepositHistory(Transaction.TransactionStatus status, Pageable pageable);
 
     /**
      * Optional: For gateways using async confirmation callbacks.

@@ -4,7 +4,7 @@ package com.trustai.transaction_service;
 import com.trustai.common.client.UserClient;
 import com.trustai.common.enums.PaymentGateway;
 import com.trustai.common.enums.TransactionType;
-import com.trustai.transaction_service.dto.DepositRequest;
+import com.trustai.transaction_service.dto.request.DepositRequest;
 import com.trustai.transaction_service.entity.Transaction;
 import com.trustai.transaction_service.repository.TransactionRepository;
 import com.trustai.transaction_service.service.impl.DepositServiceImpl;
@@ -151,7 +151,7 @@ class DepositServiceTest {
         DepositRequest request = new DepositRequest(
                 userId,
                 depositAmount, // deposit
-                PaymentGateway.BINANCE,   // non-system gateway
+                PaymentGateway.BINANCE,   // non-system paymentGateway
                 txnFee,  // fee
                 "txn123",
                 "deposit via binance"
@@ -195,7 +195,7 @@ class DepositServiceTest {
         DepositRequest request = new DepositRequest(
                 userId,
                 amount,
-                PaymentGateway.BINANCE, // // Non-system gateway to include fee
+                PaymentGateway.BINANCE, // // Non-system paymentGateway to include fee
                 txnFee,
                 "txn123",
                 "Deposit via BINANCE"

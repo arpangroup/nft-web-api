@@ -92,12 +92,12 @@ class TransactionQueryServiceImplTest {
     void getTransactionsByUserIdAndDateRange_shouldReturnResults() {
         LocalDateTime from = LocalDateTime.now().minusDays(5);
         LocalDateTime to = LocalDateTime.now();
-        when(transactionRepository.findByUserIdAndTxnDateBetween(userId, from, to, pageable)).thenReturn(Page.empty());
+        when(transactionRepository.findByUserIdAndCreatedAtBetween(userId, from, to, pageable)).thenReturn(Page.empty());
 
         Page<Transaction> result = service.getTransactionsByUserIdAndDateRange(userId, from, to, pageable);
 
         assertNotNull(result);
-        verify(transactionRepository).findByUserIdAndTxnDateBetween(userId, from, to, pageable);
+        verify(transactionRepository).findByUserIdAndCreatedAtBetween(userId, from, to, pageable);
     }
 
     @Test
@@ -177,7 +177,7 @@ class TransactionQueryServiceImplTest {
     @Test
     void findTop10ByUserIdOrderByTxnDateDesc_shouldDelegateCall() {
         service.findTop10ByUserIdOrderByTxnDateDesc(userId);
-        verify(transactionRepository).findTop10ByUserIdOrderByTxnDateDesc(userId);
+        verify(transactionRepository).findTop10ByUserIdOrderByCreatedAtDesc(userId);
     }
 
     @Test

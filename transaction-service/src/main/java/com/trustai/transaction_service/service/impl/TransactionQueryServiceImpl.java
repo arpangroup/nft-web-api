@@ -92,7 +92,7 @@ public class TransactionQueryServiceImpl implements TransactionQueryService {
     @Override
     public Page<Transaction> getTransactionsByUserIdAndDateRange(Long userId, LocalDateTime start, LocalDateTime end, Pageable pageable) {
         log.info("Fetching transactions for userId: {} between {} and {}", userId, start, end);
-        return transactionRepository.findByUserIdAndTxnDateBetween(userId, start, end, pageable);
+        return transactionRepository.findByUserIdAndCreatedAtBetween(userId, start, end, pageable);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class TransactionQueryServiceImpl implements TransactionQueryService {
 
     @Override
     public Page<Transaction> findByUserIdAndStatusAndGateway(Long userId, Transaction.TransactionStatus status, PaymentGateway gateway, Pageable pageable) {
-        log.info("Fetching transactions for userId: {}, status: {}, gateway: {}", userId, status, gateway);
+        log.info("Fetching transactions for userId: {}, status: {}, paymentGateway: {}", userId, status, gateway);
         return transactionRepository.findByUserIdAndStatusAndGateway(userId, status, gateway, pageable);
     }
 
@@ -130,14 +130,14 @@ public class TransactionQueryServiceImpl implements TransactionQueryService {
     public Page<Transaction> searchTransactions(Long userId, Transaction.TransactionStatus status, TransactionType type,
                                                 PaymentGateway gateway,
                                                 LocalDateTime fromDate, LocalDateTime toDate, Pageable pageable) {
-        log.info("Searching transactions with filters - userId: {}, status: {}, type: {}, gateway: {}, from: {}, to: {}",
+        log.info("Searching transactions with filters - userId: {}, status: {}, type: {}, paymentGateway: {}, from: {}, to: {}",
                 userId, status, type, gateway, fromDate, toDate);
         Specification<Transaction> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (userId != null) predicates.add(cb.equal(root.get("userId"), userId));
             if (status != null) predicates.add(cb.equal(root.get("status"), status));
             if (type != null) predicates.add(cb.equal(root.get("txnType"), type));
-            if (gateway != null) predicates.add(cb.equal(root.get("gateway"), gateway));
+            if (gateway != null) predicates.add(cb.equal(root.get("paymentGateway"), gateway));
             if (fromDate != null) predicates.add(cb.greaterThanOrEqualTo(root.get("txnDate"), fromDate));
             if (toDate != null) predicates.add(cb.lessThanOrEqualTo(root.get("txnDate"), toDate));
             return cb.and(predicates.toArray(new Predicate[0]));
@@ -171,7 +171,7 @@ public class TransactionQueryServiceImpl implements TransactionQueryService {
     @Override
     public List<Transaction> findTop10ByUserIdOrderByTxnDateDesc(Long userId) {
         log.info("Fetching top 10 recent transactions for userId: {}", userId);
-        return transactionRepository.findTop10ByUserIdOrderByTxnDateDesc(userId);
+        return transactionRepository.findTop10ByUserIdOrderByCreatedAtDesc(userId);
     }
 
     @Override

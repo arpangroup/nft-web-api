@@ -1,0 +1,67 @@
+package com.trustai.transaction_service.controller;
+
+import com.trustai.common.dto.ApiResponse;
+import com.trustai.transaction_service.dto.request.RejectDepositRequest;
+import com.trustai.transaction_service.dto.response.DepositHistoryItem;
+import com.trustai.transaction_service.dto.request.DepositRequest;
+import com.trustai.transaction_service.dto.request.ManualDepositRequest;
+import com.trustai.transaction_service.entity.PendingDeposit;
+import com.trustai.transaction_service.entity.Transaction;
+import com.trustai.transaction_service.service.DepositService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/v1/deposits")
+@RequiredArgsConstructor
+@Slf4j
+public class DepositController {
+    private final DepositService depositService;
+    private String ADMIN_USER = "Admin";
+
+    @GetMapping
+    public ResponseEntity<Page<DepositHistoryItem>> depositHistory(
+            @RequestParam(required = false) Transaction.TransactionStatus status,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+        log.info("Received request for deposit history. Status: {}, Page: {}, Size: {}", status, page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<DepositHistoryItem> transactions = depositService.getDepositHistory(status, pageable);
+        log.info("Fetched {} deposit transactions.", transactions.getNumberOfElements());
+        return ResponseEntity.ok(transactions);
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse> depositNow(@RequestBody @Valid DepositRequest request) {
+        log.info("Received deposit request: {}", request);
+        PendingDeposit deposit = depositService.deposit(request);
+        log.info("Standard deposit completed for userId: {}. Transaction ID: {}", request.getUserId(), deposit.getId());
+        return ResponseEntity.ok(ApiResponse.success("Successfully create!"));
+    }
+
+    @PostMapping("/manual")
+    public ResponseEntity<ApiResponse> manualDeposit(@RequestBody @Valid ManualDepositRequest request) {
+        log.info("Received manualDeposit request: {}", request);
+        PendingDeposit pendingDeposit = depositService.depositManual(request);
+        log.info("Manual deposit completed for userId: {}. PendingDeposit ID: {}", request.getUserId(), pendingDeposit.getId());
+        return ResponseEntity.ok(ApiResponse.success("Successfully create!"));
+    }
+
+    @PostMapping("/approve/{id}")
+    public ResponseEntity<PendingDeposit> approve(@PathVariable Long id) {
+        return ResponseEntity.ok(depositService.approvePendingDeposit(id, "ADMIN_USER"));
+    }
+
+    @PostMapping("/reject/{id}")
+    public ResponseEntity<PendingDeposit> reject(@PathVariable Long id, @RequestBody @Valid RejectDepositRequest request) {
+        return ResponseEntity.ok(depositService.rejectPendingDeposit(id, ADMIN_USER, request.rejectionReason()));
+    }
+
+}

@@ -1,22 +1,21 @@
 package com.trustai.transaction_service.entity;
 
 import com.trustai.common.enums.PaymentGateway;
-import com.trustai.common.enums.TransactionType;
-import com.trustai.transaction_service.util.TransactionIdGenerator;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "transactions")
+@Table(name = "pending_deposit")
 @NoArgsConstructor
-@Getter
-public class Transaction {
+@Accessors(chain = true)
+@Data
+public class PendingDeposit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -24,18 +23,10 @@ public class Transaction {
     @Column(nullable = false)
     private Long userId;
 
-    @Column(nullable = true)
-    @Setter
-    private Long senderId;
-
     @Column(nullable = false)
     private BigDecimal amount = BigDecimal.ZERO;
 
-    @Column(nullable = false)
-    private BigDecimal balance = BigDecimal.ZERO;
-
-    @Column(nullable = true)
-    @Setter
+    @Column(nullable = false, unique = true)
     private String txnRefId; // should be unique
 
     @Column(length = 255, nullable = true)
@@ -45,15 +36,11 @@ public class Transaction {
     @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TransactionStatus status = TransactionStatus.PENDING;
+    private DepositStatus status = DepositStatus.PENDING;
 
     @Column(nullable = true)
     @Setter
-    private BigDecimal txnFee;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TransactionType txnType;
+    private BigDecimal txnFee = BigDecimal.TWO;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -69,27 +56,23 @@ public class Transaction {
     private String currencyCode = "INR";
 
     @Column
-    @Setter
     private String linkedTxnId;// Useful for reversals, refunds, or when one transaction triggers another (e.g., commission, bonus, chargebacks).
-
-    @Column(length = 50)
-    private String sourceModule; // e.g., "investment", "referral", "marketplace" <== If transactions can originate from different modules
-
-    @Column(nullable = false)
-    private boolean isCredit;
 
     @Column(nullable = false)
     private boolean isDeleted = false; // Useful for compliance, data retention policies without deleting.
 
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-    @Column(nullable = false, updatable = true)
-    private LocalDateTime updatedAt;
-    @Column
-    private String createdBy;
-    @Column
-    private String updatedBy;
+    @Column(nullable = false, updatable = false) private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = true) private LocalDateTime updatedAt;
+    @Column private String createdBy;
+    @Column private String updatedBy;
+    @Column private String approvedBy;
+    @Column private LocalDateTime approvedAt;
+    @Column private String rejectedBy;
+    @Column private LocalDateTime rejectedAt;
+
+    @Column(length = 255)
+    private String rejectionReason;
 
     @PrePersist
     protected void onCreate() {
@@ -102,19 +85,29 @@ public class Transaction {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public Transaction(long userId, BigDecimal amount, @NotNull TransactionType transactionType, BigDecimal balance) {
+    public PendingDeposit(long userId, BigDecimal amount) {
         this.userId = userId;
         this.amount = amount;
-        this.txnType = transactionType;
-        this.balance = balance == null ? BigDecimal.ZERO : balance;
-        this.gateway = PaymentGateway.SYSTEM;
-        this.txnRefId = TransactionIdGenerator.generateTransactionId();
     }
 
-    public enum TransactionStatus {
+    // For Manual Deposit:
+    public PendingDeposit(long userId, BigDecimal amount, String linkedAccountNumber) {
+        this.userId = userId;
+        this.amount = amount;
+        this.linkedTxnId = linkedAccountNumber;
+    }
+
+    // For Standard Deposit:
+    public PendingDeposit(long userId, BigDecimal amount, PaymentGateway paymentGateway, String txnRefId, BigDecimal txnFee) {
+        this.userId = userId;
+        this.amount = amount;
+        this.txnRefId = txnRefId;
+        this.txnFee = txnFee;
+    }
+
+    public enum DepositStatus {
         PENDING,
-        SUCCESS,
-        FAILED,
-        CANCELLED;
+        APPROVED,
+        REJECTED
     }
 }

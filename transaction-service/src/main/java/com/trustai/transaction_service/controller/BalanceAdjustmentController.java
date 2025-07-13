@@ -1,7 +1,7 @@
 package com.trustai.transaction_service.controller;
 
 import com.trustai.common.dto.ApiResponse;
-import com.trustai.transaction_service.dto.BalanceAdjustmentRequest;
+import com.trustai.transaction_service.dto.request.BalanceAdjustmentRequest;
 import com.trustai.transaction_service.service.AdjustmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
