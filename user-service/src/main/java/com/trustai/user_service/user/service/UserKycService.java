@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 
 public interface UserKycService {
     Page<SimpleKycInfo> getAllKyc(Kyc.KycStatus status, Integer page, Integer size);
+    Kyc getKycById(Long kycId);
 
     // Accessible only to User
     Kyc updateKyc(Long userId, KycUpdateRequest request);

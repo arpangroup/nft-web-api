@@ -27,6 +27,8 @@ public class Kyc {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private KycDocumentType documentType = KycDocumentType.NATIONAL_ID;
+    private String identityNumber;
+    private String documentImage;
 
     // ########################### Status #############################
     @Enumerated(EnumType.STRING)

@@ -1,5 +1,6 @@
 package com.trustai.user_service.controller;
 
+import com.trustai.user_service.user.dto.KycApproveRequest;
 import com.trustai.user_service.user.dto.SimpleKycInfo;
 import com.trustai.user_service.user.entity.Kyc;
 import com.trustai.user_service.user.service.UserKycService;
@@ -25,4 +26,20 @@ public class KycController {
         Page<SimpleKycInfo> paginatedKycList = userKycService.getAllKyc(status, page, size);
         return ResponseEntity.ok(paginatedKycList);
     }
+
+    @GetMapping("/{kycId}")
+    public ResponseEntity<Kyc> getKycById(@PathVariable Long kycId) {
+        return ResponseEntity.ok(userKycService.getKycById(kycId));
+    }
+
+    @PostMapping("/{kycId}/approve")
+    public ResponseEntity<Kyc> approveKyc(@PathVariable Long kycId, @RequestBody KycApproveRequest request) {
+        return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("/{kycId}/reject")
+    public ResponseEntity<Kyc> rejectKyc(@PathVariable Long kycId, @RequestBody KycApproveRequest request) {
+        return ResponseEntity.ok(userKycService.getKycById(kycId));
+    }
+
 }

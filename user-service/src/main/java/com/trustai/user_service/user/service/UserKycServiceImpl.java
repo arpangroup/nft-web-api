@@ -8,6 +8,7 @@ import com.trustai.user_service.user.entity.Kyc;
 import com.trustai.user_service.user.mapper.KycMapper;
 import com.trustai.user_service.user.mapper.UserMapper;
 import com.trustai.user_service.user.repository.KycRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -36,6 +37,12 @@ public class UserKycServiceImpl implements UserKycService{
         }
         return kycPage.map(mapper::mapTo);
     }
+
+    @Override
+    public Kyc getKycById(Long kycId) {
+        return kycRepository.findById(kycId).orElseThrow(() -> new EntityNotFoundException("Kyc ID: " + kycId + " not found"));
+    }
+
 
     @Override
     public Kyc updateKyc(Long userId, KycUpdateRequest request) {

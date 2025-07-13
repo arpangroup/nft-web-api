@@ -21,7 +21,7 @@ public class EmailNotificationStrategy implements NotificationStrategy {
         log.debug("Preparing to send email to {}", recipient);
         System.out.printf("[EMAIL] To: %s | Subject: %s | Body: %s\n", recipient, subject, content);
         try {
-            emailService.sendHtmlMail(recipient, subject, content);
+            emailService.sendMail(recipient, subject, content);
             log.info("Email sent to {} with subject '{}'", recipient, subject);
         } catch (Exception e) {
             log.error("Failed to send email to {}: {}", recipient, e.getMessage(), e);
