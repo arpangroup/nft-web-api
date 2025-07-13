@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +44,7 @@ public class DepositController {
         log.info("Received deposit request: {}", request);
         PendingDeposit deposit = depositService.deposit(request);
         log.info("Standard deposit completed for userId: {}. Transaction ID: {}", request.getUserId(), deposit.getId());
-        return ResponseEntity.ok(ApiResponse.success("Successfully create!"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Deposit successfully completed."));
     }
 
     @PostMapping("/manual")
@@ -51,17 +52,19 @@ public class DepositController {
         log.info("Received manualDeposit request: {}", request);
         PendingDeposit pendingDeposit = depositService.depositManual(request);
         log.info("Manual deposit completed for userId: {}. PendingDeposit ID: {}", request.getUserId(), pendingDeposit.getId());
-        return ResponseEntity.ok(ApiResponse.success("Successfully create!"));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.success("Deposit Request Accepted!"));
     }
 
     @PostMapping("/approve/{id}")
-    public ResponseEntity<PendingDeposit> approve(@PathVariable Long id) {
-        return ResponseEntity.ok(depositService.approvePendingDeposit(id, "ADMIN_USER"));
+    public ResponseEntity<ApiResponse> approve(@PathVariable Long id) {
+        depositService.approvePendingDeposit(id, "ADMIN_USER");
+        return ResponseEntity.ok(ApiResponse.success("Deposit approved successfully."));
     }
 
     @PostMapping("/reject/{id}")
-    public ResponseEntity<PendingDeposit> reject(@PathVariable Long id, @RequestBody @Valid RejectDepositRequest request) {
-        return ResponseEntity.ok(depositService.rejectPendingDeposit(id, ADMIN_USER, request.rejectionReason()));
+    public ResponseEntity<ApiResponse> reject(@PathVariable Long id, @RequestBody @Valid RejectDepositRequest request) {
+        depositService.rejectPendingDeposit(id, ADMIN_USER, request.rejectionReason());
+        return ResponseEntity.ok(ApiResponse.error("Deposit rejected successfully."));
     }
 
 }
