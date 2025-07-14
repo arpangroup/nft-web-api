@@ -1,5 +1,6 @@
 package com.trustai.product_service.entity.investment;
 
+import com.trustai.common.enums.CurrencyType;
 import com.trustai.product_service.repository.InvestmentSchemaRepository;
 import com.trustai.product_service.repository.ScheduleRepository;
 import jakarta.annotation.PostConstruct;
@@ -52,7 +53,7 @@ public class InvestmentSchemaDataInitializer {
         schema1.setUpdatedAt(LocalDateTime.now());
         schema1.setCreatedBy("admin");
         schema1.setUpdatedBy("admin");
-        schema1.setCurrency("USD");
+        schema1.setCurrency(CurrencyType.USD);
         schema1.setEarlyExitPenalty(new BigDecimal("50.00"));
         schema1.setTermsAndConditionsUrl("https://example.com/tc/fixed1yr");
         investmentSchemaRepository.save(schema1);
@@ -78,7 +79,7 @@ public class InvestmentSchemaDataInitializer {
         schema2.setUpdatedAt(LocalDateTime.now());
         schema2.setCreatedBy("system");
         schema2.setUpdatedBy("system");
-        schema2.setCurrency("INR");
+        schema2.setCurrency(CurrencyType.INR);
         schema2.setEarlyExitPenalty(new BigDecimal("100.00"));
         schema2.setTermsAndConditionsUrl("https://example.com/tc/flexiblelife");
         investmentSchemaRepository.save(schema2);
@@ -104,7 +105,7 @@ public class InvestmentSchemaDataInitializer {
         schema3.setUpdatedAt(LocalDateTime.now());
         schema3.setCreatedBy("manager");
         schema3.setUpdatedBy("manager");
-        schema3.setCurrency("EUR");
+        schema3.setCurrency(CurrencyType.EUR);
         schema3.setEarlyExitPenalty(new BigDecimal("75.00"));
         schema3.setTermsAndConditionsUrl("https://example.com/tc/lifetimefixed");
         investmentSchemaRepository.save(schema3);
@@ -131,7 +132,7 @@ public class InvestmentSchemaDataInitializer {
         schema4.setUpdatedAt(LocalDateTime.now());
         schema4.setCreatedBy("admin");
         schema4.setUpdatedBy("admin");
-        schema4.setCurrency("USD");
+        schema4.setCurrency(CurrencyType.USD);
         schema4.setEarlyExitPenalty(new BigDecimal("150.00"));
         schema4.setTermsAndConditionsUrl("https://example.com/tc/dynamictier");
         investmentSchemaRepository.save(schema4);

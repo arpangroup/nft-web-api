@@ -46,7 +46,9 @@ public class InvestmentController {
 
     @PutMapping("/{id}")
     public ResponseEntity<InvestmentSchema> updateSchema(@PathVariable Long id,  @RequestBody Map<String, Object> updates) {
+        log.info("Received request to update InvestmentSchema with ID: {} and updates: {}", id, updates.keySet());
         InvestmentSchema updatedSchema = schemaService.updateSchema(id, updates);
+        log.info("Successfully updated InvestmentSchema with ID: {}", id);
         return ResponseEntity.ok(updatedSchema );
     }
 }

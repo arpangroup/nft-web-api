@@ -1,5 +1,6 @@
 package com.trustai.product_service.service;
 
+import com.trustai.common.enums.CurrencyType;
 import com.trustai.product_service.entity.investment.InvestmentSchema;
 import com.trustai.product_service.entity.investment.Schedule;
 import com.trustai.product_service.exception.ResourceNotFoundException;
@@ -47,31 +48,95 @@ public class InvestmentSchemaServiceImpl implements InvestmentSchemaService {
     @Override
     public InvestmentSchema updateSchema(Long id, Map<String, Object> updates) {
         InvestmentSchema schema = getSchemaById(id);
+        log.info("Starting partial update for InvestmentSchema ID: {}", id);
 
         updates.forEach((key, value) -> {
-            switch (key) {
-                case "title" -> schema.setTitle((String) value);
-                case "schemaBadge" -> schema.setSchemaBadge((String) value);
-                case "schemaType" -> schema.setSchemaType(InvestmentSchema.SchemaType.valueOf((String) value));
-                case "minimumInvestmentAmount" -> schema.setMinimumInvestmentAmount(new BigDecimal(value.toString()));
-                case "maximumInvestmentAmount" -> schema.setMaximumInvestmentAmount(new BigDecimal(value.toString()));
-                case "returnRate" -> schema.setReturnRate(new BigDecimal(value.toString()));
-                case "interestCalculationMethod" -> schema.setInterestCalculationMethod(InvestmentSchema.InterestCalculationType.valueOf((String) value));
-                case "returnType" -> schema.setReturnType(InvestmentSchema.ReturnType.valueOf((String) value));
-                case "totalReturnPeriods" -> schema.setTotalReturnPeriods((Integer) value);
-                case "isCapitalReturned" -> schema.setCapitalReturned((Boolean) value);
-                case "isFeatured" -> schema.setFeatured((Boolean) value);
-                case "isCancellable" -> schema.setCancellable((Boolean) value);
-                case "cancellationGracePeriodMinutes" -> schema.setCancellationGracePeriodMinutes((Integer) value);
-                case "isTradeable" -> schema.setTradeable((Boolean) value);
-                case "isActive" -> schema.setActive((Boolean) value);
-                case "description" -> schema.setDescription((String) value);
-                case "currency" -> schema.setCurrency((String) value);
-                case "earlyExitPenalty" -> schema.setEarlyExitPenalty(new BigDecimal(value.toString()));
-                case "termsAndConditionsUrl" -> schema.setTermsAndConditionsUrl((String) value);
-                //case "updatedBy" -> schema.setUpdatedBy((String) value);
+            try {
+                switch (key) {
+                    case "title" -> {
+                        schema.setTitle((String) value);
+                        log.debug("Updated field 'title' to '{}'", value);
+                    }
+                    case "schemaBadge" -> {
+                        schema.setSchemaBadge((String) value);
+                        log.debug("Updated field 'schemaBadge' to '{}'", value);
+                    }
+                    case "schemaType" -> {
+                        schema.setSchemaType(InvestmentSchema.SchemaType.valueOf((String) value));
+                        log.debug("Updated field 'schemaType' to '{}'", value);
+                    }
+                    case "minimumInvestmentAmount" -> {
+                        schema.setMinimumInvestmentAmount(new BigDecimal(value.toString()));
+                        log.debug("Updated field 'minimumInvestmentAmount' to '{}'", value);
+                    }
+                    case "maximumInvestmentAmount" -> {
+                        schema.setMaximumInvestmentAmount(new BigDecimal(value.toString()));
+                        log.debug("Updated field 'maximumInvestmentAmount' to '{}'", value);
+                    }
+                    case "returnRate" -> {
+                        schema.setReturnRate(new BigDecimal(value.toString()));
+                        log.debug("Updated field 'returnRate' to '{}'", value);
+                    }
+                    case "interestCalculationMethod" -> {
+                        schema.setInterestCalculationMethod(InvestmentSchema.InterestCalculationType.valueOf((String) value));
+                        log.debug("Updated field 'interestCalculationMethod' to '{}'", value);
+                    }
+                    case "returnType" -> {
+                        schema.setReturnType(InvestmentSchema.ReturnType.valueOf((String) value));
+                        log.debug("Updated field 'returnType' to '{}'", value);
+                    }
+                    case "totalReturnPeriods" -> {
+                        schema.setTotalReturnPeriods((Integer) value);
+                        log.debug("Updated field 'totalReturnPeriods' to '{}'", value);
+                    }
+                    case "isCapitalReturned", "capitalReturned" -> {
+                        schema.setCapitalReturned((Boolean) value);
+                        log.debug("Updated field 'isCapitalReturned' to '{}'", value);
+                    }
+                    case "isFeatured", "featured" -> {
+                        schema.setFeatured((Boolean) value);
+                        log.debug("Updated field 'isFeatured' to '{}'", value);
+                    }
+                    case "isCancellable", "cancellable" -> {
+                        schema.setCancellable((Boolean) value);
+                        log.debug("Updated field 'isCancellable' to '{}'", value);
+                    }
+                    case "cancellationGracePeriodMinutes" -> {
+                        schema.setCancellationGracePeriodMinutes((Integer) value);
+                        log.debug("Updated field 'cancellationGracePeriodMinutes' to '{}'", value);
+                    }
+                    case "isTradeable", "tradeable" -> {
+                        schema.setTradeable((Boolean) value);
+                        log.debug("Updated field 'isTradeable' to '{}'", value);
+                    }
+                    case "isActive", "active" -> {
+                        schema.setActive((Boolean) value);
+                        log.debug("Updated field 'isActive' to '{}'", value);
+                    }
+                    case "description" -> {
+                        schema.setDescription((String) value);
+                        log.debug("Updated field 'description' to '{}'", value);
+                    }
+                    case "currency" -> {
+                        try {
+                            CurrencyType currencyEnum = CurrencyType.valueOf(((String) value).toUpperCase());
+                            schema.setCurrency(currencyEnum);
+                            log.debug("Updated field 'currency' to '{}'", currencyEnum);
+                        } catch (IllegalArgumentException  e) {
+                            log.error("Invalid currency value: {}", value);
+                        }
+                    }
+                    case "earlyExitPenalty" -> {
+                        schema.setEarlyExitPenalty(new BigDecimal(value.toString()));
+                        log.debug("Updated field 'earlyExitPenalty' to '{}'", value);
+                    }
+                    case "termsAndConditionsUrl" -> {
+                        schema.setTermsAndConditionsUrl((String) value);
+                        log.debug("Updated field 'termsAndConditionsUrl' to '{}'", value);
+                    }
+                    //case "updatedBy" -> schema.setUpdatedBy((String) value);
 
-                // Special handling for nested Schedule
+                    // Special handling for nested Schedule
                 /*case "returnScheduleId" -> {
                     Long scheduleId = Long.valueOf(value.toString());
                     Schedule schedule = new Schedule();
@@ -79,7 +144,11 @@ public class InvestmentSchemaServiceImpl implements InvestmentSchemaService {
                     schema.setReturnSchedule(schedule);
                 }*/
 
-                default -> log.warn("Unknown field: {}", key);
+                    default -> log.warn("Unknown field received in update: {}", key);
+                }
+            } catch (Exception e) {
+                log.error("Error updating field '{}': {}", key, e.getMessage(), e);
+                throw new IllegalArgumentException("Invalid value for field: " + key);
             }
         });
 

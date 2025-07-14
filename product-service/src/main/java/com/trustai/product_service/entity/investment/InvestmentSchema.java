@@ -1,5 +1,6 @@
 package com.trustai.product_service.entity.investment;
 
+import com.trustai.common.enums.CurrencyType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -57,7 +58,10 @@ public class InvestmentSchema {
     private boolean isActive;
 
     private String description; // Schema summary for UI/API display
-    private String currency; // e.g., USD, INR – especially if multi-currency support is needed
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CurrencyType currency; // e.g., USD, INR – especially if multi-currency support is needed
     private BigDecimal earlyExitPenalty; // Penalty if exited before full duration
     private String termsAndConditionsUrl; // For linking external T&C
 
