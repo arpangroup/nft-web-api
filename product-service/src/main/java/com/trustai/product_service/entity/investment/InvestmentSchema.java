@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "investment_schemas")
@@ -56,20 +57,25 @@ public class InvestmentSchema {
     private boolean isActive;
 
     private String description; // Schema summary for UI/API display
-
-    @Column(updatable = false)
-    private java.time.LocalDateTime createdAt;
-
-    private java.time.LocalDateTime updatedAt;
-
-    private String createdBy; // Useful for audit trail
-
-    private String updatedBy;
-
     private String currency; // e.g., USD, INR – especially if multi-currency support is needed
     private BigDecimal earlyExitPenalty; // Penalty if exited before full duration
     private String termsAndConditionsUrl; // For linking external T&C
 
+    @Column(nullable = false, updatable = false) private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = true) private LocalDateTime updatedAt;
+    @Column private String createdBy;
+    @Column private String updatedBy;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
     public enum SchemaType {
         FIXED, // Fixed interest or terms

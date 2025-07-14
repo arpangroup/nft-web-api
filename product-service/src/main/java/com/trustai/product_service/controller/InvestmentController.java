@@ -4,10 +4,15 @@ import com.trustai.product_service.entity.investment.InvestmentSchema;
 import com.trustai.product_service.service.InvestmentSchemaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/investment-schemas")
@@ -17,8 +22,12 @@ public class InvestmentController {
     private final InvestmentSchemaService schemaService;
 
     @GetMapping
-    public ResponseEntity<List<InvestmentSchema>> getAllSchemas() {
-        List<InvestmentSchema> schemas = schemaService.getAllSchemas();
+    public ResponseEntity<Page<InvestmentSchema>> getAllSchemas(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size) {
+        log.info("Received request for all investment schemas");
+        Pageable pageable = PageRequest.of(page, size);
+        Page<InvestmentSchema> schemas = schemaService.getAllSchemas(pageable);
         return ResponseEntity.ok(schemas);
     }
 
@@ -31,6 +40,13 @@ public class InvestmentController {
     @PostMapping
     public ResponseEntity<InvestmentSchema> createSchema(@RequestBody InvestmentSchema investmentSchema) {
         InvestmentSchema created = schemaService.createSchema(investmentSchema);
-        return ResponseEntity.status(201).body(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<InvestmentSchema> updateSchema(@PathVariable Long id,  @RequestBody Map<String, Object> updates) {
+        InvestmentSchema updatedSchema = schemaService.updateSchema(id, updates);
+        return ResponseEntity.ok(updatedSchema );
     }
 }
