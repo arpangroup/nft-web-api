@@ -13,8 +13,9 @@ public class DepositHistoryItem {
     private BigDecimal amount;
     private String linkedAccountId;
     private String paymentGateway;
+    private BigDecimal txnFee;
     private String currencyCode;
     private String status;
     private String remarks;
-
+    private String txnDate;
 }

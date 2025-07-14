@@ -22,6 +22,6 @@ public class DepositRequest extends ManualDepositRequest {
     @Size(max = 50, message = "Transaction reference ID must not exceed 50 characters")
     private String txnRefId;
 
-    @Size(max = 3, message = "currencyCode must not exceed 3 characters")
-    private String currencyCode;
+    /*@Size(max = 3, message = "currencyCode must not exceed 3 characters")
+    private String currencyCode;*/
 }

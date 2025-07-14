@@ -1,6 +1,7 @@
 package com.trustai.transaction_service.service.impl;
 
 import com.trustai.common.client.UserClient;
+import com.trustai.common.enums.CurrencyType;
 import com.trustai.common.enums.PaymentGateway;
 import com.trustai.common.enums.TransactionType;
 import com.trustai.transaction_service.dto.response.DepositHistoryItem;
@@ -42,27 +43,51 @@ public class DepositServiceImpl implements DepositService {
     private final TransactionMapper mapper;
     private final List<TransactionType> DEPOSIT_TRANSACTIONS = List.of(TransactionType.DEPOSIT, TransactionType.DEPOSIT_MANUAL);
 
+    // Only by ADMIN
     @Override
     @Transactional
-    public PendingDeposit depositManual(ManualDepositRequest request) {
-        if (request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new TransactionException("Amount must be greater than zero for manual deposit.");
-        }
+    public PendingDeposit depositManual(ManualDepositRequest request, String createdBy) {
+        log.info("Processing manual deposit for userId: {}, amount: {}", request.getUserId(), request.getAmount());
+        validateManualDepositRequest(request);
+
+        PaymentGateway paymentGateway = PaymentGateway.SYSTEM;
+        BigDecimal fee = calculateTxnFee(paymentGateway, request.getAmount());
+        BigDecimal netAmount = request.getAmount().subtract(fee);
+        log.debug("Calculated fee: {}, netAmount: {}", fee, netAmount);
+
+        String txnRefId = TransactionIdGenerator.generateTransactionId(); // As txnRefId empty for manual
 
         PendingDeposit deposit = buildPendingDeposit(
                 request.getUserId(),
                 request.getAmount(),
-                "", // txnRefId empty for manual
+                txnRefId,
                 BigDecimal.ZERO,
                 PaymentGateway.SYSTEM,
                 request.getRemarks(),
                 request.getMetaInfo(),
-                "INR", // or make this configurable
-                PendingDeposit.DepositStatus.PENDING,
-                request.getLinkedAccountId() // linkedAccountId is required to identify from which account the txn happened (eg: upiID)
-        );;
+                CurrencyType.INR.name(), // or make this configurable
+                null, // linkedAccountId is required to identify from which account the txn happened (eg: upiID)
+                PendingDeposit.DepositStatus.APPROVED, // AS Deposited by ADMIN directly
+                createdBy // IMPORTANT for AUDIT
+        );
         pendingDepositRepository.save(deposit);
         log.info("Manual PendingDeposit created with ID: {} and status: {}", deposit.getId(), deposit.getStatus());
+
+        Transaction transaction = createAndSaveTransaction(
+                request.getUserId(),
+                request.getAmount(),
+                netAmount,
+                paymentGateway,
+                TransactionType.DEPOSIT_MANUAL,
+                Transaction.TransactionStatus.SUCCESS, // AS Deposited by ADMIN directly
+                txnRefId,
+                fee,
+                null, // no need of linkedTxnId as the txn is direct vis PaymentGateway, we can track via txnRefId and the gateway
+                "Deposit via " + paymentGateway.name(),
+                request.getMetaInfo(),
+                null // no sender for user-initiated
+        );
+        log.info("Deposit transaction created successfully with ID: {}", transaction.getId());
 
         return deposit;
     }
@@ -87,28 +112,15 @@ public class DepositServiceImpl implements DepositService {
                 paymentGateway,
                 request.getRemarks(),
                 request.getMetaInfo(),
-                request.getCurrencyCode(),
-                PendingDeposit.DepositStatus.APPROVED,
-                null // no linkedTxnId
+                CurrencyType.INR.name(), // or make this configurable
+                null, // no linkedTxnId
+                PendingDeposit.DepositStatus.PENDING, // AS Deposited by PaymentGateway, and need to verify the payment
+                String.valueOf(request.getUserId())
         );
         pendingDepositRepository.save(deposit);
         log.info("PendingDeposit created successfully with ID: {} and status: {}", deposit.getId(), deposit.getStatus());
 
-        Transaction transaction = createAndSaveTransaction(
-                request.getUserId(),
-                request.getAmount(),
-                netAmount,
-                paymentGateway,
-                TransactionType.DEPOSIT,
-                Transaction.TransactionStatus.SUCCESS,
-                request.getTxnRefId(),
-                fee,
-                null, // no need of linkedTxnId as the txn is direct vis PaymentGateway, we can track via txnRefId and the gateway
-                "Deposit via " + paymentGateway.name(),
-                request.getMetaInfo(),
-                null // no sender for user-initiated
-        );
-        log.info("Deposit transaction created successfully with ID: {}", transaction.getId());
+
 
         return deposit;
     }
@@ -190,20 +202,20 @@ public class DepositServiceImpl implements DepositService {
     }
 
     @Override
-    public Page<DepositHistoryItem> getDepositHistory(Transaction.TransactionStatus status, Pageable pageable) {
+    public Page<DepositHistoryItem> getDepositHistory(PendingDeposit.DepositStatus status, Pageable pageable) {
         log.debug("Fetching deposit history with status: {}, page request: {}", status, pageable);
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
 
-        if (status == Transaction.TransactionStatus.PENDING) {
-            Page<PendingDeposit> pendingDeposits = pendingDepositRepository.findByStatus(PendingDeposit.DepositStatus.PENDING, pageable);
+        if (status == PendingDeposit.DepositStatus.PENDING || status == PendingDeposit.DepositStatus.REJECTED) {
+            Page<PendingDeposit> pendingDeposits = pendingDepositRepository.findByStatus(status, pageable);
             return pendingDeposits.map(mapper::mapToDepositHistory);
-        } else if (status == null) {
-            Page<Transaction> transactions = transactionRepository.findByTxnTypeIn(DEPOSIT_TRANSACTIONS, pageable);
-            return transactions.map(mapper::mapToDepositHistory);
-        } else {
+        }
+        Page<Transaction> transactions = transactionRepository.findByTxnTypeIn(DEPOSIT_TRANSACTIONS, pageable);
+        return transactions.map(mapper::mapToDepositHistory);
+        /*else {
             Page<Transaction> transactions = transactionRepository.findByTxnTypeAndStatus(TransactionType.DEPOSIT, status, pageable);
             return transactions.map(mapper::mapToDepositHistory);
-        }
+        }*/
     }
 
     @Override
@@ -232,6 +244,14 @@ public class DepositServiceImpl implements DepositService {
         if (request.getTxnRefId() == null || request.getTxnRefId().isBlank()) {
             throw new IllegalArgumentException("Transaction reference ID is required");
         }*/
+    }
+    private void validateManualDepositRequest(ManualDepositRequest request) {
+        if (request.getUserId() == null || request.getUserId() <= 0) {
+            throw new TransactionException("Invalid user ID"); // IllegalArgumentException
+        }
+        if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new TransactionException("Deposit amount must be greater than zero"); // IllegalArgumentException
+        }
     }
 
     private BigDecimal calculateTxnFee(PaymentGateway paymentGateway, BigDecimal txnAmount) {
@@ -285,8 +305,9 @@ public class DepositServiceImpl implements DepositService {
             String remarks,
             String metaInfo,
             String currencyCode,
+            String linkedTxnId,
             PendingDeposit.DepositStatus status,
-            String linkedTxnId
+            String createdBy
     ) {
         if (txnRefId == null) txnRefId = TransactionIdGenerator.generateTransactionId();
         return new PendingDeposit(userId, amount)
@@ -296,8 +317,9 @@ public class DepositServiceImpl implements DepositService {
                 .setRemarks(remarks)
                 .setMetaInfo(metaInfo)
                 .setCurrencyCode(currencyCode)
+                .setLinkedTxnId(linkedTxnId)
                 .setStatus(status)
-                .setLinkedTxnId(linkedTxnId);
+                .setCreatedBy(createdBy);
     }
 
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 public class TransactionDataInitializer {
     private final TransactionRepository transactionRepository;
@@ -24,7 +24,7 @@ public class TransactionDataInitializer {
         createTransaction(5L, "Withdraw", "-5000 INR", "WITHDRAWAL", "Cancelled");
         createTransaction(6L, "Investment", "-5000 INR", "SYSTEM", "Success");
         createTransaction(7L, "Signup Bonus", "-5000 INR", "SYSTEM", "Success");
-        createTransaction(8L, "Deposit", "-5000 INR", "SYSTEM", "Success");
+        createTransaction(8L, "Deposit", "5000 INR", "SYSTEM", "Success");
         createTransaction(9L, "Refund", "-5000 INR", "SYSTEM", "Success");
         createTransaction(10L, "Referral", "-5000 INR", "SYSTEM", "Success");
         createTransaction(11L, "Exchange", "-5000 INR", "SYSTEM", "Success");

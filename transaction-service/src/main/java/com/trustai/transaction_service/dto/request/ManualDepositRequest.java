@@ -19,9 +19,9 @@ public class ManualDepositRequest {
     @DecimalMin(value = "0.01", inclusive = true, message = "Amount must be at least 0.01")
     private BigDecimal amount;
 
-    @NotNull(message = "linkedAccountId is required")
+   /* @NotNull(message = "linkedAccountId is required")
     @Size(max = 20, message = "linkedAccountId must not exceed 20 characters")
-    private String linkedAccountId;
+    private String linkedAccountId;*/
 
     @Size(max = 100, message = "Meta info must not exceed 100 characters")
     private String metaInfo;

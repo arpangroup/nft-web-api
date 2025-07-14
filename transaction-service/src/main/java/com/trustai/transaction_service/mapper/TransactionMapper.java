@@ -1,5 +1,6 @@
 package com.trustai.transaction_service.mapper;
 
+import com.trustai.common.util.DateUtil;
 import com.trustai.transaction_service.dto.response.DepositHistoryItem;
 import com.trustai.transaction_service.entity.PendingDeposit;
 import com.trustai.transaction_service.entity.Transaction;
@@ -15,9 +16,11 @@ public class TransactionMapper {
                 .amount(transaction.getAmount())
                 .linkedAccountId(transaction.getSenderId() != null ? transaction.getSenderId().toString() : null)
                 .paymentGateway(transaction.getGateway().name())
+                .txnFee(transaction.getTxnFee())
                 .currencyCode(transaction.getCurrencyCode())
                 .status(transaction.getStatus().name())
                 .remarks(transaction.getRemarks())
+                .txnDate(DateUtil.formatDisplayDate(transaction.getCreatedAt()))
                 .build();
     }
 
@@ -28,9 +31,11 @@ public class TransactionMapper {
                 .amount(deposit.getAmount())
                 .linkedAccountId(deposit.getLinkedTxnId())
                 .paymentGateway(deposit.getGateway().name())
+                .txnFee(deposit.getTxnFee())
                 .currencyCode(deposit.getCurrencyCode())
                 .status(deposit.getStatus().name())
                 .remarks(deposit.getRemarks())
+                .txnDate(DateUtil.formatDisplayDate(deposit.getCreatedAt()))
                 .build();
     }
 }

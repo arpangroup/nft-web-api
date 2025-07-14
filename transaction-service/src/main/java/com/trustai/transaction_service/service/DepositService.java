@@ -23,7 +23,7 @@ public interface DepositService {
      * @param remarks    additional remarks or comments regarding the manual deposit (optional)
      * @return           a {@link PendingDeposit} object representing the manual deposit
      */
-    PendingDeposit depositManual(ManualDepositRequest request);
+    PendingDeposit depositManual(ManualDepositRequest request, String createdBy);
 
 
     /**
@@ -70,7 +70,7 @@ public interface DepositService {
      * @return
      */
     Page<DepositHistoryItem> getDepositHistory(Long userId, Pageable pageable);
-    Page<DepositHistoryItem> getDepositHistory(Transaction.TransactionStatus status, Pageable pageable);
+    Page<DepositHistoryItem> getDepositHistory(PendingDeposit.DepositStatus status, Pageable pageable);
 
     /**
      * Optional: For gateways using async confirmation callbacks.

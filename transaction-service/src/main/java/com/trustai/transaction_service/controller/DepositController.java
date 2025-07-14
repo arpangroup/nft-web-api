@@ -28,7 +28,7 @@ public class DepositController {
 
     @GetMapping
     public ResponseEntity<Page<DepositHistoryItem>> depositHistory(
-            @RequestParam(required = false) Transaction.TransactionStatus status,
+            @RequestParam(required = false) PendingDeposit.DepositStatus status,
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
@@ -41,16 +41,18 @@ public class DepositController {
 
     @PostMapping
     public ResponseEntity<ApiResponse> depositNow(@RequestBody @Valid DepositRequest request) {
+        //return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("Automatic Deposit is Currently Disabled in Backend"));
         log.info("Received deposit request: {}", request);
         PendingDeposit deposit = depositService.deposit(request);
         log.info("Standard deposit completed for userId: {}. Transaction ID: {}", request.getUserId(), deposit.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Deposit successfully completed."));
     }
 
+    // Only by ADMIN
     @PostMapping("/manual")
     public ResponseEntity<ApiResponse> manualDeposit(@RequestBody @Valid ManualDepositRequest request) {
         log.info("Received manualDeposit request: {}", request);
-        PendingDeposit pendingDeposit = depositService.depositManual(request);
+        PendingDeposit pendingDeposit = depositService.depositManual(request, ADMIN_USER);
         log.info("Manual deposit completed for userId: {}. PendingDeposit ID: {}", request.getUserId(), pendingDeposit.getId());
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.success("Deposit Request Accepted!"));
     }
