@@ -65,12 +65,16 @@ public class BonusTransactionServiceImpl implements BonusTransactionService {
     @Override
     @Transactional
     public Transaction applyInterest(long userId, BigDecimal interestAmount, String periodDescription) {
-        BigDecimal updatedBalance = walletService.getWalletBalance(userId).add(interestAmount);
+        BigDecimal currentBalance = walletService.getWalletBalance(userId);
+        BigDecimal updatedBalance = currentBalance.add(interestAmount);
+
         Transaction txn = new Transaction(userId, interestAmount, TransactionType.INTEREST, updatedBalance);
+        txn.setCredit(true);
         txn.setGateway(PaymentGateway.SYSTEM);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
-        txn.setRemarks("Interest for period: " + periodDescription);
+        txn.setRemarks("Interest for Investment profit for period: " + periodDescription);
         txn.setMetaInfo("interest_payment");
+
         transactionRepository.save(txn);
         walletService.updateBalanceFromTransaction(userId, interestAmount);
         return txn;

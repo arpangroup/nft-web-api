@@ -55,7 +55,7 @@ class InvestmentTransactionServiceImplTest {
         assertEquals(currentBalance.subtract(amount), result.getBalance());
         assertEquals(Transaction.TransactionStatus.SUCCESS, result.getStatus());
 
-        verify(walletService).ensureSufficientBalance(userId, amount);
+        verify(walletService).hasSufficientBalance(userId, amount);
         verify(walletService).updateBalanceFromTransaction(userId, amount.negate());
         verify(transactionRepository).save(result);
     }
@@ -66,12 +66,12 @@ class InvestmentTransactionServiceImplTest {
         BigDecimal amount = new BigDecimal("999.99");
 
         doThrow(new IllegalArgumentException("Insufficient funds"))
-                .when(walletService).ensureSufficientBalance(userId, amount);
+                .when(walletService).hasSufficientBalance(userId, amount);
 
         assertThrows(IllegalArgumentException.class,
                 () -> investmentTransactionService.invest(userId, amount, "staking", "meta"));
 
-        verify(walletService).ensureSufficientBalance(userId, amount);
+        verify(walletService).hasSufficientBalance(userId, amount);
         verify(walletService, never()).updateBalanceFromTransaction(any(), any());
         verify(transactionRepository, never()).save(any());
     }

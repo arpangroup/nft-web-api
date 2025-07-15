@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(nullable = false)
     private Long userId;
@@ -73,9 +73,11 @@ public class Transaction {
     private String linkedTxnId;// Useful for reversals, refunds, or when one transaction triggers another (e.g., commission, bonus, chargebacks).
 
     @Column(length = 50)
+    @Setter
     private String sourceModule; // e.g., "investment", "referral", "marketplace" <== If transactions can originate from different modules
 
     @Column(nullable = false)
+    @Setter
     private boolean isCredit;
 
     @Column(nullable = false)

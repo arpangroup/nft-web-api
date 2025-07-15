@@ -48,7 +48,7 @@ class AdjustmentServiceImplTest {
         assertEquals("manual_adjustment", result.getMetaInfo());
         assertEquals(new BigDecimal("150.00"), result.getBalance());
 
-        verify(walletService).ensureSufficientBalance(userId, amountToSubtract);
+        verify(walletService).hasSufficientBalance(userId, amountToSubtract);
         verify(walletService).updateBalanceFromTransaction(userId, amountToSubtract.negate());
         verify(transactionRepository).save(result);
     }
@@ -63,7 +63,7 @@ class AdjustmentServiceImplTest {
 
         assertEquals("Amount to subtract must be greater than zero.", ex.getMessage());
 
-        verify(walletService, never()).ensureSufficientBalance(any(), any());
+        verify(walletService, never()).hasSufficientBalance(any(), any());
         verify(transactionRepository, never()).save(any());
     }
 }

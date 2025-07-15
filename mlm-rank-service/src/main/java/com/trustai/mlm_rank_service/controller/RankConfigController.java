@@ -29,6 +29,11 @@ public class RankConfigController {
         return ResponseEntity.ok(rankConfigService.getRankById(id));
     }
 
+    @GetMapping("/code/{rankCode}")
+    public ResponseEntity<RankConfig> getRankConfigByCode(@PathVariable String rankCode) {
+        return ResponseEntity.ok(rankConfigService.getRankByRankCode(rankCode));
+    }
+
     @PostMapping
     public ResponseEntity<?> createRank(@RequestBody RankConfigDto request) {
         rankConfigService.createRank(request);

@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.trustai.*"})
-//@EnableFeignClients(basePackages = "com.trustai.user_service")
+@EnableFeignClients
 public class NftCoreApplication implements CommandLineRunner {
 	@Autowired UserRepository userRepository;
 

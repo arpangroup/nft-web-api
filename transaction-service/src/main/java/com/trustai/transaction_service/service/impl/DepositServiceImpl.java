@@ -291,7 +291,7 @@ public class DepositServiceImpl implements DepositService {
         }
 
         transactionRepository.save(txn);
-        walletService.updateBalanceFromTransaction(userId, netAmount, TransactionType.DEPOSIT);
+        walletService.updateBalanceFromTransaction(userId, netAmount);
 
         return txn;
     }

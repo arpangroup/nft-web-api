@@ -19,14 +19,18 @@ public class UserBalanceServiceImpl implements UserBalanceService {
 
     @Override
     public Optional<BigDecimal> findWalletBalanceById(Long userId) {
+        log.debug("Fetching wallet balance for userId: {}", userId);
         //return userRepository.findWalletBalanceById(userId);
         var user = profileService.getUserById(userId);
+        log.info("Wallet balance retrieved for userId {}: {}", userId, user.getWalletBalance());
         return Optional.ofNullable(user.getWalletBalance());
     }
 
     @Override
     public void updateWalletBalance(long userId, BigDecimal updatedAmount) {
+        log.info("Updating wallet balance for userId: {} to {}", userId, updatedAmount);
         userRepository.updateWalletBalance(userId, updatedAmount);
+        log.debug("Wallet balance updated in repository for userId: {}", userId);
     }
 
    /* @Override

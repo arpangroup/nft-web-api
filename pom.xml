@@ -33,6 +33,7 @@
         <module>notification-service</module>
         <module>mlm-rank-service</module>
         <module>transaction-service</module>
+        <module>investment-service</module>
         <module>nft-core</module>
     </modules>
 

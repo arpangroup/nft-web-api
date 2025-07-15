@@ -90,18 +90,18 @@ class WalletServiceImplTest {
     // --- ensureSufficientBalance() ---
 
     @Test
-    void ensureSufficientBalance_shouldPass_whenSufficient() {
+    void hasSufficientBalance_shouldPass_whenSufficient() {
         when(userClient.findWalletBalanceById(userId)).thenReturn(Optional.of(new BigDecimal("100.00")));
 
-        assertDoesNotThrow(() -> walletService.ensureSufficientBalance(userId, new BigDecimal("90.00")));
+        assertDoesNotThrow(() -> walletService.hasSufficientBalance(userId, new BigDecimal("90.00")));
     }
 
     @Test
-    void ensureSufficientBalance_shouldFail_whenInsufficient() {
+    void hasSufficientBalance_shouldFail_whenInsufficient() {
         when(userClient.findWalletBalanceById(userId)).thenReturn(Optional.of(new BigDecimal("30.00")));
 
         Exception ex = assertThrows(IllegalStateException.class,
-                () -> walletService.ensureSufficientBalance(userId, new BigDecimal("50.00")));
+                () -> walletService.hasSufficientBalance(userId, new BigDecimal("50.00")));
 
         assertEquals("Insufficient wallet balance", ex.getMessage());
     }

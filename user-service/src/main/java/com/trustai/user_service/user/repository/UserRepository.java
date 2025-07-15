@@ -1,6 +1,7 @@
 package com.trustai.user_service.user.repository;
 
 import com.trustai.user_service.user.entity.User;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,6 +29,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<BigDecimal> findWalletBalanceById(@Param("userId") Long userId);
 
     @Modifying
+    @Transactional
     @Query("UPDATE User u SET u.walletBalance = :balance WHERE u.id = :userId")
     void updateWalletBalance(@Param("userId") Long userId, @Param("balance") BigDecimal balance);
 

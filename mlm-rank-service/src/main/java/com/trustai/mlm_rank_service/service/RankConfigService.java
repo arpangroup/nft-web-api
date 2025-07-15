@@ -2,6 +2,7 @@ package com.trustai.mlm_rank_service.service;
 
 import com.trustai.mlm_rank_service.dto.RankConfigDto;
 import com.trustai.mlm_rank_service.entity.RankConfig;
+import com.trustai.mlm_rank_service.exception.RankNotFoundException;
 import com.trustai.mlm_rank_service.repository.RankConfigRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,10 @@ public class RankConfigService {
 
     public RankConfig getRankById(Long id) {
         return rankConfigRepository.findById(id).orElseThrow(() -> new RuntimeException("Id Not found"));
+    }
+
+    public RankConfig getRankByRankCode(String code) {
+        return rankConfigRepository.findByCode(code).orElseThrow(() -> new RankNotFoundException(code));
     }
 
     public RankConfig createRank(RankConfigDto request) {
