@@ -24,7 +24,7 @@ public class BonusTransactionServiceImpl implements BonusTransactionService {
     @Transactional
     public Transaction applySignupBonus(long userId, BigDecimal bonusAmount) {
         BigDecimal updatedBalance = walletService.getWalletBalance(userId).add(bonusAmount);
-        Transaction txn = new Transaction(userId, bonusAmount, TransactionType.BONUS, updatedBalance);
+        Transaction txn = new Transaction(userId, bonusAmount, TransactionType.BONUS, updatedBalance, true);
         txn.setGateway(PaymentGateway.SYSTEM);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
         txn.setRemarks("Signup Bonus");
@@ -38,7 +38,7 @@ public class BonusTransactionServiceImpl implements BonusTransactionService {
     @Transactional
     public Transaction applyReferralBonus(long referrerUserId, long referredUserId, BigDecimal bonusAmount) {
         BigDecimal updatedBalance = walletService.getWalletBalance(referrerUserId).add(bonusAmount);
-        Transaction txn = new Transaction(referrerUserId, bonusAmount, TransactionType.BONUS, updatedBalance);
+        Transaction txn = new Transaction(referrerUserId, bonusAmount, TransactionType.BONUS, updatedBalance, true);
         txn.setGateway(PaymentGateway.SYSTEM);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
         txn.setRemarks("Referral Bonus for referring user: " + referredUserId);
@@ -52,7 +52,7 @@ public class BonusTransactionServiceImpl implements BonusTransactionService {
     @Transactional
     public Transaction applyBonus(long userId, BigDecimal bonusAmount, String reason) {
         BigDecimal updatedBalance = walletService.getWalletBalance(userId).add(bonusAmount);
-        Transaction txn = new Transaction(userId, bonusAmount, TransactionType.BONUS, updatedBalance);
+        Transaction txn = new Transaction(userId, bonusAmount, TransactionType.BONUS, updatedBalance, true);
         txn.setGateway(PaymentGateway.SYSTEM);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
         txn.setRemarks("Bonus: " + reason);
@@ -68,8 +68,7 @@ public class BonusTransactionServiceImpl implements BonusTransactionService {
         BigDecimal currentBalance = walletService.getWalletBalance(userId);
         BigDecimal updatedBalance = currentBalance.add(interestAmount);
 
-        Transaction txn = new Transaction(userId, interestAmount, TransactionType.INTEREST, updatedBalance);
-        txn.setCredit(true);
+        Transaction txn = new Transaction(userId, interestAmount, TransactionType.INTEREST, updatedBalance, true);
         txn.setGateway(PaymentGateway.SYSTEM);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
         txn.setRemarks("Interest for Investment profit for period: " + periodDescription);

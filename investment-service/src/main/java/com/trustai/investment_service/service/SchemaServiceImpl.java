@@ -2,10 +2,12 @@ package com.trustai.investment_service.service;
 
 import com.trustai.common.enums.CurrencyType;
 import com.trustai.investment_service.entity.InvestmentSchema;
+import com.trustai.investment_service.entity.Schedule;
 import com.trustai.investment_service.enums.InterestCalculationType;
 import com.trustai.investment_service.enums.ReturnType;
 import com.trustai.investment_service.enums.SchemaType;
 import com.trustai.investment_service.exception.ResourceNotFoundException;
+import com.trustai.investment_service.repository.ScheduleRepository;
 import com.trustai.investment_service.repository.SchemaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,7 @@ import java.util.Map;
 @Slf4j
 public class SchemaServiceImpl implements SchemaService {
     private final SchemaRepository schemaRepository;
+    private final ScheduleRepository scheduleRepository;
 
     @Override
     public Page<InvestmentSchema> getAllSchemas(Pageable pageable) {
@@ -87,7 +90,7 @@ public class SchemaServiceImpl implements SchemaService {
                         log.debug("Updated field 'returnType' to '{}'", value);
                     }
                     case "totalReturnPeriods" -> {
-                        schema.setTotalReturnPeriods((Integer) value);
+                        schema.setTotalReturnPeriods(Integer.parseInt((String) value));
                         log.debug("Updated field 'totalReturnPeriods' to '{}'", value);
                     }
                     case "isCapitalReturned", "capitalReturned" -> {
@@ -103,7 +106,7 @@ public class SchemaServiceImpl implements SchemaService {
                         log.debug("Updated field 'isCancellable' to '{}'", value);
                     }
                     case "cancellationGracePeriodMinutes" -> {
-                        schema.setCancellationGracePeriodMinutes((Integer) value);
+                        schema.setCancellationGracePeriodMinutes(Integer.parseInt((String) value));
                         log.debug("Updated field 'cancellationGracePeriodMinutes' to '{}'", value);
                     }
                     case "isTradeable", "tradeable" -> {
@@ -119,12 +122,14 @@ public class SchemaServiceImpl implements SchemaService {
                         log.debug("Updated field 'description' to '{}'", value);
                     }
                     case "currency" -> {
+                        log.debug("Updating field 'currency' to '{}'", value);
                         try {
                             CurrencyType currencyEnum = CurrencyType.valueOf(((String) value).toUpperCase());
                             schema.setCurrency(currencyEnum);
                             log.debug("Updated field 'currency' to '{}'", currencyEnum);
-                        } catch (IllegalArgumentException  e) {
+                        } catch (Exception  e) {
                             log.error("Invalid currency value: {}", value);
+                            e.printStackTrace();
                         }
                     }
                     case "earlyExitPenalty" -> {
@@ -134,6 +139,18 @@ public class SchemaServiceImpl implements SchemaService {
                     case "termsAndConditionsUrl" -> {
                         schema.setTermsAndConditionsUrl((String) value);
                         log.debug("Updated field 'termsAndConditionsUrl' to '{}'", value);
+                    }
+                    case "returnSchedule" -> {
+                        log.debug("Updating field 'returnSchedule' to '{}'", value);
+                        try {
+                            Long scheduleId = Long.parseLong((String) value);
+                            Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new ResourceNotFoundException("scheduleId = " + scheduleId + " not found"));
+                            schema.setReturnSchedule(schedule);
+                            log.debug("Updated field 'returnSchedule' to scheduleId: '{}', scheduleName: '{}' ", scheduleId, schedule.getScheduleName());
+                        } catch (Exception e) {
+                            log.error("Invalid returnSchedule value: {}", value);
+                            e.printStackTrace();
+                        }
                     }
                     //case "updatedBy" -> schema.setUpdatedBy((String) value);
 

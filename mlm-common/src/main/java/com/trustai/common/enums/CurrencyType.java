@@ -7,4 +7,5 @@ public enum CurrencyType {
     INR,  // Indian Rupee
     USD,  // US Dollar
     EUR,  // Euro
+    USDT,  // Euro
 }

@@ -31,7 +31,7 @@ public class AdjustmentServiceImpl implements AdjustmentService {
         BigDecimal newBalance = currentBalance.add(amount);
         log.debug("Current balance={}, New balance after add={}", currentBalance, newBalance);
 
-        Transaction txn = new Transaction(userId, amount, TransactionType.ADD, newBalance);
+        Transaction txn = new Transaction(userId, amount, TransactionType.ADD, newBalance, true);
         txn.setGateway(PaymentGateway.SYSTEM);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
         txn.setRemarks("Manual Add: " + reason);
@@ -61,7 +61,7 @@ public class AdjustmentServiceImpl implements AdjustmentService {
         BigDecimal newBalance = currentBalance.subtract(amount);
         log.debug("Current balance={}, New balance after subtract={}", currentBalance, newBalance);
 
-        Transaction txn = new Transaction(userId, amount, TransactionType.SUBTRACT, newBalance);
+        Transaction txn = new Transaction(userId, amount, TransactionType.SUBTRACT, newBalance, false);
         txn.setGateway(PaymentGateway.SYSTEM);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
         txn.setRemarks("Adjustment: " + reason);

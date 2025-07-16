@@ -275,7 +275,7 @@ public class DepositServiceImpl implements DepositService {
         BigDecimal currentBalance = walletService.getWalletBalance(userId);
         BigDecimal newBalance = currentBalance.add(netAmount);
 
-        Transaction txn = new Transaction(userId, grossAmount, txnType, newBalance);
+        Transaction txn = new Transaction(userId, grossAmount, txnType, newBalance, true);
 
         txn.setTxnFee(txnFee);
         txn.setLinkedTxnId(linkedTxnId);

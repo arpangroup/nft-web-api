@@ -66,8 +66,7 @@ public class WalletServiceImpl implements WalletService {
         BigDecimal oldBalance = getWalletBalance(userId);
         BigDecimal newBalance = oldBalance.subtract(amount);
 
-        Transaction txn = new Transaction(userId, amount, transactionType, newBalance);
-        txn.setCredit(false);
+        Transaction txn = new Transaction(userId, amount, transactionType, newBalance, false);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
         txn.setRemarks(remarks);
         txn.setSourceModule("investment"); // Or dynamically set by caller
@@ -89,9 +88,8 @@ public class WalletServiceImpl implements WalletService {
         BigDecimal newBalance = currentBalance.add(amount);
 
         // Create Transaction
-        Transaction txn = new Transaction(userId, amount, transactionType, newBalance);
+        Transaction txn = new Transaction(userId, amount, transactionType, newBalance, true);
         txn.setRemarks(remarks);
-        txn.setCredit(true);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
         txn.setGateway(PaymentGateway.SYSTEM);
         txn.setTxnRefId(TransactionIdGenerator.generateTransactionId());

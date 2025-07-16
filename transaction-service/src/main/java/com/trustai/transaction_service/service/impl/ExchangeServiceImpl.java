@@ -25,7 +25,7 @@ public class ExchangeServiceImpl implements ExchangeService {
         walletService.ensureSufficientBalance(userId, fromAmount);
         BigDecimal currentBalance = walletService.getWalletBalance(userId);
         BigDecimal updatedBalance = currentBalance.subtract(fromAmount).add(toAmount);
-        Transaction txn = new Transaction(userId, toAmount, TransactionType.EXCHANGE, updatedBalance);
+        Transaction txn = new Transaction(userId, toAmount, TransactionType.EXCHANGE, updatedBalance, true);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
         txn.setRemarks("Exchange: " + fromCurrency + " to " + toCurrency);
         txn.setMetaInfo(metaInfo);

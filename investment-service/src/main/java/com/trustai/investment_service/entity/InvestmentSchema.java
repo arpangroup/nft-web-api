@@ -69,7 +69,7 @@ public class InvestmentSchema {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CurrencyType currency; // e.g., USD, INR – especially if multi-currency support is needed
+    private CurrencyType currency = CurrencyType.USDT; // e.g., USD, INR – especially if multi-currency support is needed
     private BigDecimal earlyExitPenalty; // Penalty if exited before full duration
     private String termsAndConditionsUrl; // For linking external T&C
 

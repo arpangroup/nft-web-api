@@ -7,6 +7,7 @@ import com.trustai.transaction_service.service.RefundService;
 import com.trustai.transaction_service.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,9 +20,9 @@ public class RefundServiceImpl implements RefundService {
     private final WalletService walletService;
 
     @Override
-    public Transaction refund(long userId, BigDecimal amount, String originalTxnRef, String reason) {
+    public Transaction refund(long userId, @NonNull BigDecimal amount, String originalTxnRef, String reason) {
         BigDecimal updatedBalance = walletService.getWalletBalance(userId).add(amount);
-        Transaction txn = new Transaction(userId, amount, TransactionType.REFUND, updatedBalance);
+        Transaction txn = new Transaction(userId, amount, TransactionType.REFUND, updatedBalance, true);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
         txn.setRemarks("Refund for txnRef: " + originalTxnRef);
         txn.setMetaInfo(reason);;

@@ -40,12 +40,7 @@ public class TransactionDataInitializer {
             Transaction.TransactionStatus status = mapStatus(statusStr);
             TransactionType txnType = mapTransactionType(type);
 
-            Transaction txn = new Transaction(
-                    userId,
-                    amount,
-                    txnType,
-                    BigDecimal.ZERO // optionally calculate user balance here
-            );
+            Transaction txn = new Transaction(userId, amount, txnType, BigDecimal.ZERO, true);
 
             txn.setTxnRefId("TRXPOZ5ZZYDTJ"); // or UUID.randomUUID().toString()
             txn.setStatus(status);

@@ -32,7 +32,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
         BigDecimal currentBalance = walletService.getWalletBalance(userId);
         BigDecimal newBalance = currentBalance.subtract(amount);
 
-        Transaction transaction = new Transaction(userId, amount, TransactionType.WITHDRAWAL, newBalance);
+        Transaction transaction = new Transaction(userId, amount, TransactionType.WITHDRAWAL, newBalance, false);
         transaction.setGateway(PaymentGateway.SYSTEM);
         transaction.setStatus(Transaction.TransactionStatus.SUCCESS);
         transaction.setRemarks(remarks != null ? remarks : "Withdrawal to: " + destinationAccount);

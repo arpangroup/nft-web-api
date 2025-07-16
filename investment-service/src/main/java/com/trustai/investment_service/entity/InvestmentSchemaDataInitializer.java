@@ -32,20 +32,20 @@ public class InvestmentSchemaDataInitializer {
         Schedule schedule4 = new Schedule(null, "Weekly", 168);
         Schedule schedule5 = new Schedule(null, "Monthly", 720);*/
 
-        Schedule schedule1 = new Schedule(null, "2 Week", 14 * 24 * 60, "Every 2 weeks");        // 20160 minutes <== 14 days
-        Schedule schedule2 = new Schedule(null, "Hourly", 60, "Every hour");                     // 60 minutes
-        Schedule schedule3 = new Schedule(null, "Daily", 24 * 60, "Every day");                  // 1440 minutes
-        Schedule schedule4 = new Schedule(null, "Weekly", 7 * 24 * 60, "Every week");            // 10080 minutes
-        Schedule schedule5 = new Schedule(null, "Monthly", 30 * 24 * 60, "Every month (approx)");// 43200 minutes
+        Schedule scheduleHourly  = new Schedule(null, "Hourly", 60, "Every hour");                     // 60 minutes
+        Schedule scheduleDaily   = new Schedule(null, "Daily", 24 * 60, "Every day");                  // 1440 minutes
+        Schedule scheduleWeekly  = new Schedule(null, "Weekly", 7 * 24 * 60, "Every week");            // 10080 minutes
+        Schedule schedule2Weekly = new Schedule(null, "2 Week", 14 * 24 * 60, "Every 2 weeks");        // 20160 minutes <== 14 days
+        Schedule scheduleMonthly = new Schedule(null, "Monthly", 30 * 24 * 60, "Every month (approx)");// 43200 minutes
 
 
 
 
-        schedule1 = scheduleRepository.save(schedule1);
-        schedule2 = scheduleRepository.save(schedule2);
-        schedule3 = scheduleRepository.save(schedule3);
-        schedule4 = scheduleRepository.save(schedule4);
-        schedule5 = scheduleRepository.save(schedule5);
+        scheduleHourly = scheduleRepository.save(scheduleHourly);
+        scheduleDaily = scheduleRepository.save(scheduleDaily);
+        scheduleWeekly = scheduleRepository.save(scheduleWeekly);
+        schedule2Weekly = scheduleRepository.save(schedule2Weekly);
+        scheduleMonthly = scheduleRepository.save(scheduleMonthly);
 
         // Investment Schema 1 - FIXED + PERIOD + cancellable
         InvestmentSchema schema1 = new InvestmentSchema();
@@ -55,7 +55,7 @@ public class InvestmentSchemaDataInitializer {
         schema1.setMinimumInvestmentAmount(new BigDecimal("1000.00"));
         schema1.setReturnRate(new BigDecimal("6.5"));
         schema1.setInterestCalculationMethod(InterestCalculationType.PERCENTAGE);
-        schema1.setReturnSchedule(schedule4);
+        schema1.setReturnSchedule(scheduleWeekly);
         schema1.setReturnType(ReturnType.PERIOD);
         schema1.setTotalReturnPeriods(52);
         schema1.setCapitalReturned(true);
@@ -83,7 +83,7 @@ public class InvestmentSchemaDataInitializer {
         schema2.setMaximumInvestmentAmount(new BigDecimal("10000.00"));
         schema2.setReturnRate(new BigDecimal("4.0"));
         schema2.setInterestCalculationMethod(InterestCalculationType.FLAT);
-        schema2.setReturnSchedule(schedule3);
+        schema2.setReturnSchedule(scheduleDaily);
         schema2.setReturnType(ReturnType.LIFETIME);
         schema2.setCapitalReturned(false);
         schema2.setFeatured(false);
@@ -108,7 +108,7 @@ public class InvestmentSchemaDataInitializer {
         schema3.setMinimumInvestmentAmount(new BigDecimal("2500.00"));
         schema3.setReturnRate(new BigDecimal("5.25"));
         schema3.setInterestCalculationMethod(InterestCalculationType.PERCENTAGE);
-        schema3.setReturnSchedule(schedule5);
+        schema3.setReturnSchedule(scheduleMonthly);
         schema3.setReturnType(ReturnType.LIFETIME);
         schema3.setCapitalReturned(false);
         schema3.setFeatured(true);
@@ -135,7 +135,7 @@ public class InvestmentSchemaDataInitializer {
         schema4.setMaximumInvestmentAmount(new BigDecimal("20000.00"));
         schema4.setReturnRate(new BigDecimal("7.0"));
         schema4.setInterestCalculationMethod(InterestCalculationType.PERCENTAGE);
-        schema4.setReturnSchedule(schedule1);
+        schema4.setReturnSchedule(schedule2Weekly); // IMPORTANT
         schema4.setReturnType(ReturnType.PERIOD);
         schema4.setTotalReturnPeriods(26);
         schema4.setCapitalReturned(true);
@@ -160,7 +160,7 @@ public class InvestmentSchemaDataInitializer {
         weeklyRoiSchema.setMaximumInvestmentAmount(new BigDecimal("1000"));
         weeklyRoiSchema.setReturnRate(new BigDecimal("5"));
         weeklyRoiSchema.setInterestCalculationMethod(InterestCalculationType.PERCENTAGE);
-        weeklyRoiSchema.setReturnSchedule(schedule4);
+        weeklyRoiSchema.setReturnSchedule(scheduleWeekly);
         weeklyRoiSchema.setReturnType(ReturnType.PERIOD);
         weeklyRoiSchema.setTotalReturnPeriods(12);
         weeklyRoiSchema.setCapitalReturned(true);
@@ -178,7 +178,7 @@ public class InvestmentSchemaDataInitializer {
         monthlySchema.setMaximumInvestmentAmount(new BigDecimal("1000"));
         monthlySchema.setReturnRate(new BigDecimal("5"));
         monthlySchema.setInterestCalculationMethod(InterestCalculationType.PERCENTAGE);
-        monthlySchema.setReturnSchedule(schedule5);
+        monthlySchema.setReturnSchedule(scheduleMonthly);
         monthlySchema.setReturnType(ReturnType.PERIOD);
         monthlySchema.setTotalReturnPeriods(12);
         monthlySchema.setCapitalReturned(true);
@@ -188,5 +188,59 @@ public class InvestmentSchemaDataInitializer {
         monthlySchema.setPayoutMode(PayoutMode.MONTHLY);
         monthlySchema.setPayoutDates(Set.of(1, 15));
         schemaRepository.save(monthlySchema);
+
+
+        InvestmentSchema schema15 = new InvestmentSchema();
+        schema15.setTitle("CRYPTO_15$");
+        schema15.setSchemaBadge("LIFETIME_PLAN");
+        schema15.setSchemaType(SchemaType.FIXED);
+        schema15.setMinimumInvestmentAmount(new BigDecimal("15.00"));
+        //schema15.setMaximumInvestmentAmount(new BigDecimal("30.00"));
+        schema15.setReturnRate(new BigDecimal("0.0"));
+        schema15.setInterestCalculationMethod(InterestCalculationType.PERCENTAGE);
+        schema15.setReturnSchedule(scheduleDaily);
+        schema15.setReturnType(ReturnType.PERIOD);
+        schema15.setTotalReturnPeriods(90);
+        schema15.setCapitalReturned(true);
+        schema15.setFeatured(false);
+        schema15.setCancellable(false);
+        schema15.setTradeable(true);
+        schema15.setActive(true);
+        schema15.setDescription("CRYPTO_40$");
+        schema15.setCreatedAt(LocalDateTime.now());
+        schema15.setUpdatedAt(LocalDateTime.now());
+        schema15.setCreatedBy("system");
+        schema15.setUpdatedBy("system");
+        schema15.setCurrency(CurrencyType.USDT);
+        schema15.setEarlyExitPenalty(new BigDecimal("0.00"));
+        schema15.setTermsAndConditionsUrl("https://example.com/tc/flexiblelife");
+        schemaRepository.save(schema15);
+
+        InvestmentSchema schema40 = new InvestmentSchema();
+        schema40.setTitle("CRYPTO_40$");
+        schema40.setSchemaBadge("LIFETIME_PLAN");
+        schema40.setSchemaType(SchemaType.FIXED);
+        schema40.setMinimumInvestmentAmount(new BigDecimal("40.00"));
+        //schema2.setMaximumInvestmentAmount(new BigDecimal("30.00"));
+        schema40.setReturnRate(new BigDecimal("1.0"));
+        schema40.setInterestCalculationMethod(InterestCalculationType.PERCENTAGE);
+        schema40.setReturnSchedule(scheduleDaily);
+        schema40.setReturnType(ReturnType.PERIOD);
+        schema40.setTotalReturnPeriods(900);
+        schema40.setCapitalReturned(true);
+        schema40.setFeatured(false);
+        schema40.setCancellable(false);
+        schema40.setTradeable(true);
+        schema40.setActive(true);
+        schema40.setDescription("CRYPTO_40$");
+        schema40.setCreatedAt(LocalDateTime.now());
+        schema40.setUpdatedAt(LocalDateTime.now());
+        schema40.setCreatedBy("system");
+        schema40.setUpdatedBy("system");
+        schema40.setCurrency(CurrencyType.USDT);
+        schema40.setEarlyExitPenalty(new BigDecimal("0.00"));
+        schema40.setTermsAndConditionsUrl("https://example.com/tc/flexiblelife");
+        schemaRepository.save(schema40);
+
     }
 }

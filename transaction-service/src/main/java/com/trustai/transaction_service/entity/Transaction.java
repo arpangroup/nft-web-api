@@ -77,7 +77,6 @@ public class Transaction {
     private String sourceModule; // e.g., "investment", "referral", "marketplace" <== If transactions can originate from different modules
 
     @Column(nullable = false)
-    @Setter
     private boolean isCredit;
 
     @Column(nullable = false)
@@ -104,13 +103,14 @@ public class Transaction {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public Transaction(long userId, BigDecimal amount, @NotNull TransactionType transactionType, BigDecimal balance) {
+    public Transaction(long userId, BigDecimal amount, @NotNull TransactionType transactionType, BigDecimal balance, boolean isCredit) {
         this.userId = userId;
         this.amount = amount;
         this.txnType = transactionType;
         this.balance = balance == null ? BigDecimal.ZERO : balance;
         this.gateway = PaymentGateway.SYSTEM;
         this.txnRefId = TransactionIdGenerator.generateTransactionId();
+        this.isCredit = isCredit;
     }
 
     public enum TransactionStatus {
