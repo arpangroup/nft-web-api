@@ -6,6 +6,9 @@ import com.trustai.mlm_rank_service.exception.RankNotFoundException;
 import com.trustai.mlm_rank_service.repository.RankConfigRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,8 +22,8 @@ import java.util.Map;
 public class RankConfigService {
     private final RankConfigRepository rankConfigRepository;
 
-    public List<RankConfig> getAllRankConfigs() {
-        return new ArrayList<>(rankConfigRepository.findAll());
+    public Page<RankConfig> getAllRankConfigs(Pageable pageable) {
+        return rankConfigRepository.findAll(pageable);
     }
 
     public RankConfig getRankById(Long id) {
