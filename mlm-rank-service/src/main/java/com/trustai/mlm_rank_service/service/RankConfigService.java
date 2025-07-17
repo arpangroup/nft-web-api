@@ -7,13 +7,11 @@ import com.trustai.mlm_rank_service.repository.RankConfigRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -73,7 +71,10 @@ public class RankConfigService {
                 case "rankOrder" -> rank.setRankOrder(castToInt(value));
                 case "minDepositAmount" -> rank.setMinDepositAmount(castToBigDecimal(value));
                 case "minInvestmentAmount" -> rank.setMinInvestmentAmount(castToBigDecimal(value));
-                case "minDirectReferrals" -> rank.setMinDirectReferrals(castToInt(value)); // stored in requiredLevelCounts[1]
+                case "minDirectReferrals" -> {
+                    rank.setMinDirectReferrals(castToInt(value)); // stored in requiredLevelCounts[1]
+                    rank.getRequiredLevelCounts().put(1, castToInt(value));
+                }
                 case "minReferralTotalDeposit" -> rank.setMinReferralTotalDeposit(castToBigDecimal(value));
                 case "minReferralTotalInvestment" -> rank.setMinReferralTotalInvestment(castToBigDecimal(value));
                 case "minTotalEarnings" -> rank.setMinTotalEarnings(castToBigDecimal(value));
@@ -99,6 +100,15 @@ public class RankConfigService {
                 case "minLevel1Count" -> rank.getRequiredLevelCounts().put(1, castToInt(value));
                 case "minLevel2Count" -> rank.getRequiredLevelCounts().put(2, castToInt(value));
                 case "minLevel3Count" -> rank.getRequiredLevelCounts().put(3, castToInt(value));
+                case "requiredLevelCounts" -> {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> levels = (Map<String, Object>) value;
+                    levels.forEach((k, v) -> {
+                        int depth = Integer.parseInt(k);
+                        int count = castToInt(v); // Use your existing utility method
+                        rank.getRequiredLevelCounts().put(depth, count);
+                    });
+                }
                 default -> throw new IllegalArgumentException("Invalid field: " + key);
             }
         });

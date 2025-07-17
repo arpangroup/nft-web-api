@@ -6,7 +6,9 @@ import com.trustai.mlm_rank_service.service.RankConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +24,13 @@ public class RankConfigController {
 
     @GetMapping
     public  ResponseEntity<Page<RankConfig>> getRankConfig(Pageable pageable) {
-        // Convert entity to DTO including requiredLevelCounts map
-        return ResponseEntity.ok(rankConfigService.getAllRankConfigs(pageable));
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by("rankOrder").ascending()
+        );
+
+        return ResponseEntity.ok(rankConfigService.getAllRankConfigs(sortedPageable));
     }
 
     @GetMapping("/{id}")
@@ -42,7 +49,7 @@ public class RankConfigController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/update/{id}")
     public ResponseEntity<?> patchRank(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         rankConfigService.patchRank(id, updates);
         return ResponseEntity.ok().build();
