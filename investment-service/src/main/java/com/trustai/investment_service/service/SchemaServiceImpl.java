@@ -1,12 +1,15 @@
 package com.trustai.investment_service.service;
 
+import com.trustai.common.dto.RankConfigDto;
 import com.trustai.common.enums.CurrencyType;
+import com.trustai.investment_service.dto.SchemaUpsertRequest;
 import com.trustai.investment_service.entity.InvestmentSchema;
 import com.trustai.investment_service.entity.Schedule;
 import com.trustai.investment_service.enums.InterestCalculationType;
 import com.trustai.investment_service.enums.ReturnType;
 import com.trustai.investment_service.enums.SchemaType;
 import com.trustai.investment_service.exception.ResourceNotFoundException;
+import com.trustai.investment_service.provider.RankConfigClient;
 import com.trustai.investment_service.repository.ScheduleRepository;
 import com.trustai.investment_service.repository.SchemaRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -27,11 +31,17 @@ import java.util.Map;
 public class SchemaServiceImpl implements SchemaService {
     private final SchemaRepository schemaRepository;
     private final ScheduleRepository scheduleRepository;
+    private final RankConfigClient rankConfigClient;
 
     @Override
     public Page<InvestmentSchema> getAllSchemas(Pageable pageable) {
         log.info("Fetching all investment schemas...");
-        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
+        //pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
+        pageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Order.asc("linkedRank"), Sort.Order.asc("minimumInvestmentAmount"))
+        );
         return schemaRepository.findAll(pageable);
     }
 
@@ -43,10 +53,65 @@ public class SchemaServiceImpl implements SchemaService {
 
     @Override
     public InvestmentSchema createSchema(InvestmentSchema investmentSchema) {
+        log.info("Attempting to persist InvestmentSchema: {}", investmentSchema);
         investmentSchema.setCreatedAt(java.time.LocalDateTime.now());
         investmentSchema.setUpdatedAt(java.time.LocalDateTime.now());
         log.info("Creating new investment schema: {}", investmentSchema.getTitle());
-        return schemaRepository.save(investmentSchema);
+        InvestmentSchema savedSchema = schemaRepository.save(investmentSchema);
+        log.info("Successfully created investment schema with ID: {}", savedSchema.getId());
+        return savedSchema;
+    }
+
+    @Override
+    public InvestmentSchema createSchema(SchemaUpsertRequest request) {
+        log.info("Received request to create investment schema: {}", request);
+        if (request.getLinkedRankCode() == null) throw new ResourceNotFoundException("Invalid rank: " + request.getLinkedRankCode());
+
+        InvestmentSchema schema = new InvestmentSchema();
+
+        log.debug("Fetching rank config for rank code: {}", request.getLinkedRankCode());
+        RankConfigDto linkedRank = rankConfigClient.getRankConfigByRankCode(request.getLinkedRankCode());
+        if (linkedRank == null) {
+            log.error("Rank not found for rank code: {}", request.getLinkedRankCode());
+            throw new ResourceNotFoundException("Invalid rank: " + request.getLinkedRankCode());
+        }
+
+        if (request.getMinimumInvestmentAmount().compareTo(linkedRank.getMinInvestmentAmount()) < 0) {
+            throw new ResourceNotFoundException("minimumInvestmentAmount should be more than " + linkedRank.getMinInvestmentAmount());
+        }
+
+        log.debug("Fetching schedule by ID: {}", request.getReturnScheduleId());
+        Schedule schedule = scheduleRepository.findById(request.getReturnScheduleId())
+                .orElseThrow(() -> {
+                    log.error("Schedule not found for ID: {}", request.getReturnScheduleId());
+                    return new IllegalArgumentException("Invalid schedule ID: " + request.getReturnScheduleId());
+                });
+
+        BigDecimal minInvestAmount = request.getMinimumInvestmentAmount() != null ? request.getMinimumInvestmentAmount() : BigDecimal.ZERO;
+        BigDecimal maxInvestAmount = request.getMaximumInvestmentAmount() != null ? request.getMaximumInvestmentAmount() : BigDecimal.ZERO;
+        BigDecimal returnRate      = request.getReturnRate() != null ? request.getReturnRate() : BigDecimal.ZERO;
+        int totalReturnPeriods     = request.getTotalReturnPeriods() != null ? request.getTotalReturnPeriods() : 0;
+        boolean capitalReturned    = request.getCapitalReturned() != null ? request.getCapitalReturned() : false;
+        boolean active             = request.getActive() != null ? request.getActive() : false;
+        String title               = generateTitle(request.getLinkedRankCode(), returnRate);
+
+        log.info("Creating schema with title: {}", title);
+        schema.setLinkedRank(request.getLinkedRankCode());
+        schema.setTitle(title);                 // default ==> title is mandatory
+        schema.setSchemaBadge(title);           // default
+        schema.setSchemaType(SchemaType.RANGE); // default
+        schema.setMinimumInvestmentAmount(minInvestAmount);
+        schema.setMaximumInvestmentAmount(maxInvestAmount);
+        schema.setReturnRate(returnRate);
+        schema.setInterestCalculationMethod(InterestCalculationType.PERCENTAGE); // default
+        schema.setReturnSchedule(schedule);
+        schema.setReturnType(ReturnType.PERIOD); // default
+        schema.setTotalReturnPeriods(totalReturnPeriods);
+        schema.setCapitalReturned(capitalReturned);
+        schema.setActive(active);
+
+        log.debug("Final schema object before persistence: {}", schema);
+        return createSchema(schema);
     }
 
     @Override
@@ -70,6 +135,22 @@ public class SchemaServiceImpl implements SchemaService {
                         log.debug("Updated field 'schemaType' to '{}'", value);
                     }
                     case "minimumInvestmentAmount" -> {
+
+                        try{
+                            RankConfigDto linkedRank = rankConfigClient.getRankConfigByRankCode((String) value);
+                            if (linkedRank == null) {
+                                log.error("Rank not found for rank code: {}", value);
+                            } else {
+                                BigDecimal amount = new BigDecimal((String) value);
+                                if (amount.compareTo(linkedRank.getMinInvestmentAmount()) < 0) {
+                                    throw new ResourceNotFoundException("minimumInvestmentAmount should be more than " + linkedRank.getMinInvestmentAmount());
+                                }
+                            }
+                        } catch (Exception e) {
+                            log.error("Invalid linkedRank value: {}", value);
+                            e.printStackTrace();
+                        }
+
                         schema.setMinimumInvestmentAmount(new BigDecimal(value.toString()));
                         log.debug("Updated field 'minimumInvestmentAmount' to '{}'", value);
                     }
@@ -152,6 +233,22 @@ public class SchemaServiceImpl implements SchemaService {
                             e.printStackTrace();
                         }
                     }
+
+                    case "linkedRank" -> {
+                        log.debug("Updating field 'linkedRank' to '{}'", value);
+                        try{
+                            RankConfigDto linkedRank = rankConfigClient.getRankConfigByRankCode((String) value);
+                            if (linkedRank == null) {
+                                log.error("Rank not found for rank code: {}", value);
+                            } else {
+                                schema.setLinkedRank(linkedRank.getCode());
+                            }
+                        } catch (Exception e) {
+                            log.error("Invalid linkedRank value: {}", value);
+                            e.printStackTrace();
+                        }
+                    }
+
                     //case "updatedBy" -> schema.setUpdatedBy((String) value);
 
                     // Special handling for nested Schedule
@@ -173,5 +270,56 @@ public class SchemaServiceImpl implements SchemaService {
         schema.setUpdatedAt(LocalDateTime.now());
         log.info("Partially updating investment schema ID: {}", id);
         return schemaRepository.save(schema);
+    }
+
+    @Override
+    public InvestmentSchema updateSchema(Long schemaId, SchemaUpsertRequest request) {
+        log.info("Initiating update for InvestmentSchema with ID: {}", schemaId);
+
+        InvestmentSchema schema = schemaRepository.findById(schemaId).orElseThrow(() -> {
+            log.error("Schema not found for schemaId: {}", schemaId);
+           return new ResourceNotFoundException("Invalid schemaId: " + schemaId);
+        });
+
+        if (request.getLinkedRankCode() != null) {
+            log.debug("Fetching rank config for rank code: {}", request.getLinkedRankCode());
+            RankConfigDto linkedRank = rankConfigClient.getRankConfigByRankCode(request.getLinkedRankCode());
+            if (linkedRank == null) {
+                log.error("Rank not found for rank code: {}", request.getLinkedRankCode());
+                throw new ResourceNotFoundException("Invalid rank: " + request.getLinkedRankCode());
+            }
+            log.debug("Rank config found: {}", linkedRank);
+            schema.setLinkedRank(request.getLinkedRankCode());
+        }
+
+        log.debug("Applying updates to schema fields...");
+        if (request.getMinimumInvestmentAmount() != null) schema.setMinimumInvestmentAmount(request.getMinimumInvestmentAmount());
+        if (request.getMaximumInvestmentAmount() != null) schema.setMaximumInvestmentAmount(request.getMaximumInvestmentAmount());
+        if (request.getReturnRate() != null) schema.setReturnRate(request.getReturnRate());
+        if (request.getTotalReturnPeriods() != null) schema.setTotalReturnPeriods(request.getTotalReturnPeriods());
+        if (request.getCapitalReturned() != null) schema.setCapitalReturned(request.getCapitalReturned());
+        if (request.getActive() != null) schema.setActive(request.getActive());
+
+        if (request.getReturnScheduleId() != null) {
+            log.debug("Fetching schedule by ID: {}", request.getReturnScheduleId());
+            Schedule schedule = scheduleRepository.findById(request.getReturnScheduleId())
+                    .orElseThrow(() -> {
+                        log.error("Schedule not found for ID: {}", request.getReturnScheduleId());
+                        return new IllegalArgumentException("Invalid schedule ID: " + request.getReturnScheduleId());
+                    });
+            schema.setReturnSchedule(schedule);
+            log.debug("Return schedule set: {}", schedule.getId());
+        }
+
+        InvestmentSchema savedSchema = schemaRepository.save(schema);
+        log.info("Successfully updated InvestmentSchema with ID: {}", savedSchema.getId());
+        return savedSchema;
+    }
+
+    private String generateTitle(String rankCode, BigDecimal returnRate) {
+        // Format to 1 decimal place, omit trailing .0
+        DecimalFormat df = new DecimalFormat("0.#");
+        String formattedRate = df.format(returnRate);
+        return rankCode + "@" + formattedRate + "%";
     }
 }

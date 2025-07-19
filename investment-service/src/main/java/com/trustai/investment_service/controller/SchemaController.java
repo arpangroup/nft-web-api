@@ -1,5 +1,6 @@
 package com.trustai.investment_service.controller;
 
+import com.trustai.investment_service.dto.SchemaUpsertRequest;
 import com.trustai.investment_service.entity.InvestmentSchema;
 import com.trustai.investment_service.service.SchemaService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -49,5 +51,22 @@ public class SchemaController {
         InvestmentSchema updatedSchema = schemaService.updateSchema(id, updates);
         log.info("Successfully updated InvestmentSchema with ID: {}", id);
         return ResponseEntity.ok(updatedSchema );
+    }
+
+    @PostMapping("/bulk-upsert")
+    public ResponseEntity<?> createOrUpdateSchemas(@RequestBody List<SchemaUpsertRequest> requests) {
+        log.info("Received bulk request to create or update {} InvestmentSchemas", requests.size());
+
+        for (SchemaUpsertRequest request : requests) {
+            if (request.getId() != null) {
+                log.info("Updating InvestmentSchema with ID: {}", request.getId());
+                schemaService.updateSchema(request.getId(), request);
+            } else {
+                log.info("Creating new InvestmentSchema");
+                schemaService.createSchema(request);
+            }
+        }
+        log.info("Bulk createOrUpdateSchemas operation completed successfully");
+        return ResponseEntity.ok().build();
     }
 }

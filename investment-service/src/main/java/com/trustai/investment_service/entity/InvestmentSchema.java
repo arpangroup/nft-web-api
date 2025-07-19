@@ -31,19 +31,19 @@ public class InvestmentSchema {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SchemaType schemaType;
+    private SchemaType schemaType = SchemaType.RANGE;
 
     @Column(name = "min_invest_amt", precision = 19, scale = 4)
-    private BigDecimal minimumInvestmentAmount;
+    private BigDecimal minimumInvestmentAmount = BigDecimal.ZERO;
     @Column(name = "max_invest_amt", precision = 19, scale = 4)
-    private BigDecimal maximumInvestmentAmount;
+    private BigDecimal maximumInvestmentAmount = BigDecimal.ZERO;
 
     @Column(precision = 19, scale = 4)
-    private BigDecimal returnRate;
+    private BigDecimal returnRate = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private InterestCalculationType interestCalculationMethod;
+    private InterestCalculationType interestCalculationMethod = InterestCalculationType.PERCENTAGE;
 
 //    @OneToOne(optional = false)
 //    @JoinColumn(name = "schedule_id", nullable = false)
@@ -53,7 +53,7 @@ public class InvestmentSchema {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ReturnType returnType;
+    private ReturnType returnType = ReturnType.PERIOD;
 
     private int totalReturnPeriods; // totalReturnPeriods
 

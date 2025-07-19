@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.Duration;
 
 @Entity
-@Table(name = "schedules")
+@Table(name = "schedules") // ReturnSchedule
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
