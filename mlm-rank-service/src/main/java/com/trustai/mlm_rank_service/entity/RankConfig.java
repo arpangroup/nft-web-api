@@ -64,6 +64,8 @@ public class RankConfig {
     @Column(precision = 19, scale = 4)
     private BigDecimal minInvestmentAmount = BigDecimal.ZERO;
     @Column(precision = 19, scale = 4)
+    private BigDecimal maxInvestmentAmount = BigDecimal.ZERO;
+    @Column(precision = 19, scale = 4)
     private BigDecimal minReferralTotalDeposit = BigDecimal.ZERO;
     @Column(precision = 19, scale = 4)
     private BigDecimal minReferralTotalInvestment = BigDecimal.ZERO;

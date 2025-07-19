@@ -1,4 +1,4 @@
-const incomeConfigBaseUrl = '/api/v1/config/income';
+const incomeConfigBaseUrl = '/api/v1/income/configs';
 let rankConfigData = []; // Store current loaded data for update reference
 let teamConfigRaw  = [];
 let rankHasUnsavedChanges = false;
@@ -170,7 +170,7 @@ async function loadRankConfigData() {
 
 async function loadTeamRebateConfig() {
   console.log("loadTeamRebateConfig........");
-  const resp = await fetch(`${incomeConfigBaseUrl}/team`);
+  const resp = await fetch(`${incomeConfigBaseUrl}`);
   teamConfigRaw = await resp.json();
   console.log("TEAM_CONFIG_RAW: ", teamConfigRaw);
   pivotTeamData();

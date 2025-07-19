@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -49,6 +50,11 @@ public class SchemaServiceImpl implements SchemaService {
     public InvestmentSchema getSchemaById(Long id) {
         log.info("Fetching schema with ID: {}", id);
         return schemaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Investment schema not found for ID: " + id));
+    }
+
+    @Override
+    public Page<InvestmentSchema> getSchemaByLinkedRank(String rankCode, Pageable pageable) {
+        return schemaRepository.findByLinkedRank(rankCode, pageable);
     }
 
     @Override

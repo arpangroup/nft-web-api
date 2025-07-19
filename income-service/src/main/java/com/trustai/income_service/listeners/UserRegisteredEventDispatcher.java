@@ -36,10 +36,10 @@ public class UserRegisteredEventDispatcher {
         log.info("UserRegisteredEvent:  Creating pending bonus - Referrer ID: {}, Referee ID: {}, Trigger: {}", referrerId, refereeId, event.getTriggerType());
         //referralBonusService.createPendingBonus(event.getReferrerId(), event.getRefereeId(), event.getTriggerType());
 
-        // Step 3: Evaluate and update the rank for both referee and referrer
+        // Step 3: Evaluate and update the rankCode for both referee and referrer
         /**
-         * Handles updating the user's rank after a downline user registration event.
-         * Triggers immediate rank evaluation based on downline structure.
+         * Handles updating the user's rankCode after a downline user registration event.
+         * Triggers immediate rankCode evaluation based on downline structure.
          *
          * Note: This event is triggered when a new user registers under a referrer.
          *
@@ -48,9 +48,9 @@ public class UserRegisteredEventDispatcher {
          * - Can motivate referrers early by acknowledging downline growth quickly.
          *
          * Cons:
-         * - May cause rank inflation due to inactive or fake registrations.
-         * - Users who never make deposits or purchases still trigger rank updates,
-         *   potentially leading to inaccurate rank assignments.
+         * - May cause rankCode inflation due to inactive or fake registrations.
+         * - Users who never make deposits or purchases still trigger rankCode updates,
+         *   potentially leading to inaccurate rankCode assignments.
          */
         log.info("UserRegisteredEvent: Evaluating and updating ranks - Referrer ID: {}, Referee ID: {}", referrerId, refereeId);
         //rankEvaluationService.evaluateAndUpdateUserWithReferrerRank(event.getRefereeId(), BigDecimal.ZERO, event.getReferrerId());

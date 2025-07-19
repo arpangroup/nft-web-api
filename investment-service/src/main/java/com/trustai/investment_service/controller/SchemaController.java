@@ -3,6 +3,7 @@ package com.trustai.investment_service.controller;
 import com.trustai.investment_service.dto.SchemaUpsertRequest;
 import com.trustai.investment_service.entity.InvestmentSchema;
 import com.trustai.investment_service.service.SchemaService;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,10 +26,18 @@ public class SchemaController {
     @GetMapping
     public ResponseEntity<Page<InvestmentSchema>> getAllSchemas(
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "10") Integer size) {
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "") String rankCode
+    ) {
         log.info("Received request for all investment schemas");
         Pageable pageable = PageRequest.of(page, size);
-        Page<InvestmentSchema> schemas = schemaService.getAllSchemas(pageable);
+
+        Page<InvestmentSchema> schemas;
+        if (StringUtils.isNotEmpty(rankCode)) {
+            schemas = schemaService.getSchemaByLinkedRank(rankCode, pageable);
+        } else {
+            schemas = schemaService.getAllSchemas(pageable);
+        }
         return ResponseEntity.ok(schemas);
     }
 

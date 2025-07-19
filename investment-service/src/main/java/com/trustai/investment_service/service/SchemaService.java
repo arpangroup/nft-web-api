@@ -11,6 +11,7 @@ import java.util.Map;
 public interface SchemaService {
     Page<InvestmentSchema> getAllSchemas(Pageable pageable);
     InvestmentSchema getSchemaById(Long id);
+    Page<InvestmentSchema> getSchemaByLinkedRank(String rankCode, Pageable pageable);
 
     InvestmentSchema createSchema(InvestmentSchema investmentSchema);
     InvestmentSchema createSchema(SchemaUpsertRequest request);

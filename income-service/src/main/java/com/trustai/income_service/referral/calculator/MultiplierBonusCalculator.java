@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-// MULTIPLIER: Referrer’s rank/score multiplies the amount
+// MULTIPLIER: Referrer’s rankCode/score multiplies the amount
 @Deprecated
 @Component
 public class MultiplierBonusCalculator implements BonusAmountCalculator {
@@ -18,7 +18,7 @@ public class MultiplierBonusCalculator implements BonusAmountCalculator {
 
     @Override
     public BigDecimal calculate(UserInfo referrer, UserInfo referee) {
-        // MULTIPLIER: Referrer’s rank/score multiplies the amount
+        // MULTIPLIER: Referrer’s rankCode/score multiplies the amount
         //int multiplier = userClient.getRankMultiplier(referrer.getId()); // e.g., Silver=1, Gold=2
         int multiplier = 1;
         BigDecimal base = BigDecimal.valueOf(100);
