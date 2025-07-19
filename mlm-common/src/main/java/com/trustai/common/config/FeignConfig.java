@@ -1,3 +1,4 @@
+/*
 package com.trustai.common.config;
 
 import com.trustai.common.exception.FeignClientErrorDecoder;
@@ -12,3 +13,4 @@ public class FeignConfig {
         return new FeignClientErrorDecoder();
     }
 }
+*/

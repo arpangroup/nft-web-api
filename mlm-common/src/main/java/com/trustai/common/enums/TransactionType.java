@@ -15,5 +15,7 @@ public enum TransactionType {
     SIGNUP_BONUS,
     REFERRAL,
     BONUS,
+    DAILY_INCOME,
+    TEAM_INCOME,
     INTEREST,
 }

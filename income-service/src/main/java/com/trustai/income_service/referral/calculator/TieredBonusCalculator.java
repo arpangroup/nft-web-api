@@ -1,8 +1,8 @@
 package com.trustai.income_service.referral.calculator;
 
+import com.trustai.common.api.UserApi;
 import com.trustai.common.dto.UserInfo;
 import com.trustai.common.enums.CalculationType;
-import com.trustai.income_service.client.UserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 public class TieredBonusCalculator implements BonusAmountCalculator {
 
     @Autowired
-    private UserClient userClient;
+    private UserApi userApi;
 
 
     @Override

@@ -84,7 +84,7 @@ public class RankConfig {
     @Column(name = "required_count") // The value of the map — how many users are required at that depth.
     private Map<Integer, Integer> requiredLevelCounts = new HashMap<>();
 
-    private BigDecimal commissionPercentage;
+    private BigDecimal commissionPercentage; // commissionPercentage = 5 means 5%.
     private int rankBonus;
     private String description;
 

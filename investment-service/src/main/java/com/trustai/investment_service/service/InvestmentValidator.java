@@ -1,10 +1,10 @@
 package com.trustai.investment_service.service;
 
+import com.trustai.common.api.RankConfigApi;
+import com.trustai.common.api.WalletApi;
 import com.trustai.common.dto.RankConfigDto;
-import com.trustai.common.dto.UserDetailsInfo;
+import com.trustai.common.dto.UserInfo;
 import com.trustai.investment_service.entity.InvestmentSchema;
-import com.trustai.investment_service.provider.RankConfigClient;
-import com.trustai.investment_service.provider.WalletClient;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,11 +18,11 @@ import static com.trustai.investment_service.enums.SchemaType.RANGE;
 @Component
 @RequiredArgsConstructor
 public class InvestmentValidator {
-    private final RankConfigClient rankConfigClient;
-    private final WalletClient walletClient;
+    private final RankConfigApi rankConfigClient;
+    private final WalletApi walletClient;
     //private final RankService rankService;
 
-    public void validateEligibility(UserDetailsInfo user, InvestmentSchema schema, BigDecimal amount) {
+    public void validateEligibility(UserInfo user, InvestmentSchema schema, BigDecimal amount) {
         validateAmountAgainstSchema(schema, amount);
         validateUserEligibility(user, amount);
     }
@@ -47,7 +47,7 @@ public class InvestmentValidator {
         }
     }
 
-    private void validateUserEligibility(UserDetailsInfo user, BigDecimal amount) {
+    private void validateUserEligibility(UserInfo user, BigDecimal amount) {
         // Wallet Check
         //BigDecimal walletBalance = walletClient.getWalletBalance(user.getId());
         BigDecimal walletBalance = user.getWalletBalance();

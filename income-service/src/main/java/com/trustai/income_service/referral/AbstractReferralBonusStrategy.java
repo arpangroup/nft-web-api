@@ -1,9 +1,13 @@
 package com.trustai.income_service.referral;
 
+import com.trustai.common.api.TransactionApi;
+import com.trustai.common.api.UserApi;
+import com.trustai.common.api.WalletApi;
 import com.trustai.common.dto.UserInfo;
+import com.trustai.common.dto.WalletUpdateRequest;
 import com.trustai.common.enums.CalculationType;
+import com.trustai.common.enums.TransactionType;
 import com.trustai.common.enums.TriggerType;
-import com.trustai.income_service.client.UserClient;
 import com.trustai.income_service.constant.Remarks;
 import com.trustai.income_service.referral.calculator.BonusAmountCalculator;
 import com.trustai.income_service.referral.calculator.BonusAmountCalculatorFactory;
@@ -18,9 +22,10 @@ import java.math.BigDecimal;
 
 @Slf4j
 public abstract class AbstractReferralBonusStrategy implements ReferralBonusStrategy {
-
     @Autowired protected ReferralBonusRepository bonusRepository;
-    @Autowired protected UserClient userClient;
+    @Autowired protected UserApi userClient;
+    @Autowired protected WalletApi walletClient;
+    @Autowired protected TransactionApi transactionClient;
     protected BonusAmountCalculator calculator;
 
     @Autowired
@@ -53,7 +58,7 @@ public abstract class AbstractReferralBonusStrategy implements ReferralBonusStra
     @Override
     public boolean processPendingBonus(ReferralBonus bonus) {
         Long refereeId = bonus.getRefereeId();
-        UserInfo referee = userClient.getUserInfo(refereeId);
+        UserInfo referee = userClient.getUserById(refereeId);
         //UserInfo referrer = userClient.getUserInfo(bonus.getReferrerId());
 
         if (!isEligible(referee)) {
@@ -65,7 +70,16 @@ public abstract class AbstractReferralBonusStrategy implements ReferralBonusStra
     }
 
     private void depositReferralBonus(long userId, BigDecimal bonusAmount) {
-        userClient.deposit(userId, bonusAmount, Remarks.REFERRAL_BONUS, null);
+        //userClient.deposit(userId, bonusAmount, Remarks.REFERRAL_BONUS, null);
+        WalletUpdateRequest depositReferralBonusRequest = new WalletUpdateRequest(
+                bonusAmount,
+                TransactionType.REFERRAL,
+                true,
+                "referral-income",
+                Remarks.REFERRAL_BONUS,
+                null
+        );
+        walletClient.updateWalletBalance(userId, depositReferralBonusRequest);
     }
 
     // Allow strategy to provide custom amount and trigger type

@@ -15,13 +15,21 @@ spring:
       password: password
       roles: ADMIN
 
+feign:
+  client:
+    enabled:
+      income: false
+      rank: false
+      investment: false
+      transaction: false
+      user: false
+      core: true
 
 management:
   endpoints:
     web:
       exposure:
         include: refresh, health, info
-
 
 logging:
   level:

@@ -1,7 +1,11 @@
+/*
 package com.trustai.user_service.user.service.impl;
 
 import com.trustai.common.client.UserClient;
+import com.trustai.common.dto.UserHierarchyDto;
 import com.trustai.common.dto.UserInfo;
+import com.trustai.user_service.hierarchy.UserHierarchy;
+import com.trustai.user_service.hierarchy.service.UserHierarchyService;
 import com.trustai.user_service.user.mapper.UserMapper;
 import com.trustai.user_service.user.service.UserProfileService;
 import com.trustai.user_service.user.service.UserBalanceService;
@@ -10,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +24,7 @@ import java.util.Optional;
 public class UserClientImpl implements UserClient {
     private final UserProfileService profileService;
     private final UserBalanceService userBalanceService;
+    private final UserHierarchyService userHierarchyService;
     private final UserMapper mapper;
 
     @Override
@@ -70,7 +76,20 @@ public class UserClientImpl implements UserClient {
         log.debug("Wallet balance update complete for userId: {}", userId);
     }
 
-    /*@Override
+    @Override
+    public List<UserHierarchyDto> findByDescendant(Long descendant) {
+        List<UserHierarchy> userHierarchies = userHierarchyService.findByDescendant(descendant);
+
+        List<UserHierarchyDto> list = new ArrayList<>();
+        for (UserHierarchy h : userHierarchies) {
+            UserHierarchyDto dto = new UserHierarchyDto(h.getId(), h.getAncestor(), h.getDescendant(), h.getDepth(), h.isActive());
+            list.add(dto);
+        }
+        return list;
+    }
+
+    */
+/*@Override
     public Optional<BigDecimal> findDepositBalanceById(Long userId) {
         return userBalanceService.findDepositBalanceById(userId);
     }
@@ -78,6 +97,8 @@ public class UserClientImpl implements UserClient {
     @Override
     public void updateDepositBalance(long userId, BigDecimal updatedTotalDepositAmount) {
         userBalanceService.updateDepositBalance(userId, updatedTotalDepositAmount);
-    }*/
+    }*//*
+
 
 }
+*/

@@ -1,8 +1,8 @@
 package com.trustai.income_service.referral;
 
+import com.trustai.common.api.UserApi;
 import com.trustai.common.dto.UserInfo;
 import com.trustai.common.enums.TriggerType;
-import com.trustai.income_service.client.UserClient;
 import com.trustai.income_service.constant.Remarks;
 import com.trustai.income_service.referral.entity.BonusStatus;
 import com.trustai.income_service.referral.entity.ReferralBonus;
@@ -23,15 +23,15 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ReferralBonusServiceImpl implements ReferralBonusService {
-    private final UserClient userClient;
+    private final UserApi userApi;
     private final Map<String, ReferralBonusStrategy> strategies;
     private final ReferralBonusRepository bonusRepository;
 
     @Autowired
-    public ReferralBonusServiceImpl(List<ReferralBonusStrategy> strategyList, UserClient userClient, ReferralBonusRepository bonusRepository) {
+    public ReferralBonusServiceImpl(List<ReferralBonusStrategy> strategyList, UserApi userApi, ReferralBonusRepository bonusRepository) {
         this.strategies = strategyList.stream()
                 .collect(Collectors.toMap(s -> s.getClass().getAnnotation(Component.class).value(), s -> s));
-        this.userClient= userClient;
+        this.userApi = userApi;
         this.bonusRepository = bonusRepository;
     }
 
@@ -57,8 +57,8 @@ public class ReferralBonusServiceImpl implements ReferralBonusService {
 
             // Load referrer and referee data (via API or shared module)
             log.info("Calling userClient to get userInfo for Referee ID: {} and Referrer ID: {}", refereeId, bonus.getReferrerId());
-            UserInfo referee = userClient.getUserInfo(refereeId);
-            UserInfo referrer = userClient.getUserInfo(bonus.getReferrerId());
+            UserInfo referee = userApi.getUserById(refereeId);
+            UserInfo referrer = userApi.getUserById(bonus.getReferrerId());
 
             this.evaluateBonus(referrer, referee, strategy);
         }

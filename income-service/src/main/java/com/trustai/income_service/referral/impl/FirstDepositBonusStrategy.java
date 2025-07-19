@@ -15,9 +15,9 @@ public class FirstDepositBonusStrategy extends AbstractReferralBonusStrategy {
     @Override
     public boolean isEligible(UserInfo referee) {
         log.info("isEligible for firstDeposit for userId: {}", referee.getId());
-        boolean hasDeposited = userClient.hasDeposit(referee.getId());
-        log.info("userId: {}, hasDeposited: {}", referee.getId(), hasDeposited);
-        return hasDeposited;
+        BigDecimal depositBalance = transactionClient.getDepositBalance(referee.getId());
+        log.info("userId: {}, depositBalance: {}", referee.getId(), depositBalance);
+        return depositBalance.compareTo(BigDecimal.ZERO) > 0;
     }
 
     @Override

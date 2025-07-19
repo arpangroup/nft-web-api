@@ -1,15 +1,10 @@
+/*
 package com.trustai.common.exception;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import org.springframework.stereotype.Component;
 
-/*
-FeignExceptionDecoder
-GlobalFeignErrorDecoder
-DefaultFeignErrorDecoder
-CommonFeignErrorDecoder
- */
 @Component
 public class FeignClientErrorDecoder implements ErrorDecoder {
     private final ErrorDecoder defaultErrorDecoder = new ErrorDecoder.Default();
@@ -25,3 +20,4 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
         return defaultErrorDecoder.decode(methodKey, response);
     }
 }
+*/

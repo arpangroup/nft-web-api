@@ -1,12 +1,12 @@
 package com.trustai.user_service.hierarchy.service;
 
+import com.trustai.common.api.TransactionApi;
 import com.trustai.user_service.hierarchy.UserHierarchy;
-import com.trustai.user_service.hierarchy.dto.UserHierarchyStats;
-import com.trustai.user_service.hierarchy.dto.UserMetrics;
+import com.trustai.common.dto.UserHierarchyStats;
+import com.trustai.common.dto.UserMetrics;
 import com.trustai.user_service.hierarchy.repository.UserHierarchyRepository;
 import com.trustai.user_service.user.entity.User;
 import com.trustai.user_service.user.exception.IdNotFoundException;
-import com.trustai.user_service.user.provider.TransactionClient;
 import com.trustai.user_service.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class UserMetricsService {
     private final UserHierarchyRepository hierarchyRepo;
     private final UserRepository userRepository;
     //private final DepositService depositService;
-    private final TransactionClient transactionClient;
+    private final TransactionApi transactionClient;
 
     public UserMetrics computeMetrics(Long userId) {
         List<UserHierarchy> downlines = hierarchyRepo.findByAncestor(userId);

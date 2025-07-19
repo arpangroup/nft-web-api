@@ -1,6 +1,6 @@
 package com.trustai.transaction_service.service.impl;
 
-import com.trustai.common.client.UserClient;
+import com.trustai.common.api.UserApi;
 import com.trustai.common.enums.CurrencyType;
 import com.trustai.common.enums.PaymentGateway;
 import com.trustai.common.enums.TransactionType;
@@ -38,7 +38,7 @@ import java.util.Optional;
 public class DepositServiceImpl implements DepositService {
     private final TransactionRepository transactionRepository;
     private final WalletService walletService;
-    private final UserClient userClient;
+    private final UserApi userApi;
     private final PendingDepositRepository pendingDepositRepository;
     private final TransactionMapper mapper;
     private final List<TransactionType> DEPOSIT_TRANSACTIONS = List.of(TransactionType.DEPOSIT, TransactionType.DEPOSIT_MANUAL);

@@ -1,8 +1,8 @@
 package com.trustai.income_service.referral.calculator;
 
+import com.trustai.common.api.UserApi;
 import com.trustai.common.dto.UserInfo;
 import com.trustai.common.enums.CalculationType;
-import com.trustai.income_service.client.UserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ public class PercentageBonusCalculator implements BonusAmountCalculator {
     private double percentage; // e.g., 10.0 for 10%
 
     @Autowired
-    private UserClient userClient;
+    private UserApi userApi;
 
     @Override
     public BigDecimal calculate(UserInfo referrer, UserInfo referee) {

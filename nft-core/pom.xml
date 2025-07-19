@@ -42,7 +42,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.trustai</groupId>
-			<artifactId>income-service</artifactId>
+			<artifactId>notification-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -50,10 +50,9 @@
 			<artifactId>mlm-rank-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.trustai</groupId>
-			<artifactId>notification-service</artifactId>
+			<artifactId>income-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

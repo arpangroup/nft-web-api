@@ -1,8 +1,8 @@
 package com.trustai.mlm_rank_service.evaluation;
 
 import com.trustai.common.dto.UserInfo;
+import com.trustai.common.dto.UserMetrics;
 import com.trustai.mlm_rank_service.entity.RankConfig;
-import com.trustai.user_service.hierarchy.dto.UserMetrics;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

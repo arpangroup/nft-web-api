@@ -71,6 +71,11 @@ public class UserHierarchyServiceImpl implements UserHierarchyService {
                 ));
     }
 
+    @Override
+    public List<UserHierarchy> findByDescendant(Long descendant) {
+        return hierarchyRepo.findByDescendant(descendant);
+    }
+
 
     /*public Set<Long> getDirectReferrals(Long userId, int depth) {
         return hierarchyRepo.findByAncestorAndDepth(userId, depth).stream()

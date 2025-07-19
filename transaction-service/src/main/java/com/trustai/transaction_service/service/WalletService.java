@@ -12,6 +12,5 @@ public interface WalletService {
 
     void ensureSufficientBalance(Long userId, BigDecimal amount);
 
-    Transaction deduct(Long userId, BigDecimal amount, TransactionType transactionType, String remarks, String sourceModule);
-    Transaction refund(Long userId, BigDecimal amount, TransactionType transactionType, String remarks, String sourceModule);
+    Transaction updateWalletBalance(Long userId, BigDecimal amount, TransactionType transactionType, String sourceModule, boolean isCredit, String remarks, String metaInfo);
 }

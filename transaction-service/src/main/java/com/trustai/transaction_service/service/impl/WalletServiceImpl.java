@@ -1,6 +1,7 @@
 package com.trustai.transaction_service.service.impl;
 
-import com.trustai.common.client.UserClient;
+import com.trustai.common.api.UserApi;
+import com.trustai.common.dto.UserInfo;
 import com.trustai.common.enums.PaymentGateway;
 import com.trustai.common.enums.TransactionType;
 import com.trustai.transaction_service.entity.Transaction;
@@ -20,7 +21,7 @@ import java.math.BigDecimal;
 @Slf4j
 public class WalletServiceImpl implements WalletService {
     private final TransactionRepository transactionRepository;
-    private final UserClient userClient;
+    private final UserApi userClient;
 
     /**
      * Returns the current wallet balance by summing all deposits and bonuses,
@@ -32,8 +33,9 @@ public class WalletServiceImpl implements WalletService {
         /*BigDecimal credits = transactionRepository.sumCredits(userId);
         BigDecimal debits = transactionRepository.sumDebits(userId);
         return credits.subtract(debits);*/
-        return userClient.findWalletBalanceById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        UserInfo userInfo = userClient.getUserById(userId);
+        if (userInfo == null) throw new IllegalArgumentException("User not found");
+        return userInfo.getWalletBalance();
     }
 
     @Override
@@ -59,47 +61,38 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     @Transactional
-    public Transaction deduct(Long userId, BigDecimal amount, TransactionType transactionType, String remarks, String sourceModule) {
-        log.info("Starting deduction for userId: {}, amount: {}, type: {}, remarks: {}, source: {}", userId, amount, transactionType, remarks, sourceModule);
-        ensureSufficientBalance(userId, amount);
+    public Transaction updateWalletBalance(Long userId, BigDecimal amount, TransactionType transactionType, String sourceModule, boolean isCredit, String remarks, String metaInfo) {
+        log.info("Starting wallet transaction [{}] for userId: {}, amount: {}, type: {}, remarks: {}, source: {}",
+                isCredit ? "CREDIT" : "DEBIT", userId, amount, transactionType, remarks, sourceModule);
 
-        BigDecimal oldBalance = getWalletBalance(userId);
-        BigDecimal newBalance = oldBalance.subtract(amount);
-
-        Transaction txn = new Transaction(userId, amount, transactionType, newBalance, false);
-        txn.setStatus(Transaction.TransactionStatus.SUCCESS);
-        txn.setRemarks(remarks);
-        txn.setSourceModule("investment"); // Or dynamically set by caller
-
-        transactionRepository.save(txn);
-        updateBalanceFromTransaction(userId, amount.negate()); // Update wallet balance
-
-        log.info("Deduction complete for userId: {}. txnId: {}, amount: {}, newBalance: {}", userId, txn.getId(), amount, newBalance);
-        return txn;
-    }
-
-    @Override
-    @Transactional
-    public Transaction refund(Long userId, BigDecimal amount, TransactionType transactionType, String remarks, String sourceModule) {
-        log.info("Starting refund for userId: {}, amount: {}, type: {}, remarks: {}, source: {}", userId, amount, transactionType, remarks, sourceModule);
 
         // Load current balance
         BigDecimal currentBalance = getWalletBalance(userId);
         BigDecimal newBalance = currentBalance.add(amount);
 
+
+        if (!isCredit) {
+            ensureSufficientBalance(userId, amount);
+        }
+
         // Create Transaction
-        Transaction txn = new Transaction(userId, amount, transactionType, newBalance, true);
-        txn.setRemarks(remarks);
+        Transaction txn = new Transaction(userId, amount, transactionType, newBalance, isCredit);
         txn.setStatus(Transaction.TransactionStatus.SUCCESS);
-        txn.setGateway(PaymentGateway.SYSTEM);
-        txn.setTxnRefId(TransactionIdGenerator.generateTransactionId());
+        txn.setRemarks(remarks);
         txn.setSourceModule(sourceModule);
+        txn.setGateway(PaymentGateway.SYSTEM);
+        txn.setMetaInfo(metaInfo);
+
+        if (isCredit) {
+            txn.setTxnRefId(TransactionIdGenerator.generateTransactionId());
+        }
 
         transactionRepository.save(txn);
-        updateBalanceFromTransaction(userId, amount); // Update wallet
+        updateBalanceFromTransaction(userId, isCredit ? amount : amount.negate()); // Update wallet balance
 
-        log.info("Refund successful for userId: {}. txnId: {}, amount: {}, newBalance: {}", userId, txn.getId(), amount, newBalance);
+        log.info("Wallet [{}] completed for userId: {}. txnId: {}, amount: {}, newBalance: {}",
+                isCredit ? "CREDIT" : "DEBIT", userId, txn.getId(), amount, newBalance);
         return txn;
-    }
 
+    }
 }

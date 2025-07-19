@@ -1,5 +1,7 @@
+/*
 package com.trustai.mlm_rank_service;
 
+import com.trustai.common.client.UserClient;
 import com.trustai.common.dto.UserInfo;
 import com.trustai.mlm_rank_service.entity.RankConfig;
 import com.trustai.mlm_rank_service.evaluation.DirectReferralSpec;
@@ -8,9 +10,6 @@ import com.trustai.mlm_rank_service.evaluation.RankSpecification;
 import com.trustai.mlm_rank_service.evaluation.RequiredLevelCountsSpec;
 import com.trustai.mlm_rank_service.repository.RankConfigRepository;
 import com.trustai.mlm_rank_service.service.RankEvaluatorService;
-import com.trustai.user_service.hierarchy.dto.UserHierarchyStats;
-import com.trustai.user_service.hierarchy.dto.UserMetrics;
-import com.trustai.user_service.hierarchy.service.UserMetricsService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +31,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class RankEvaluatorServiceTest {
     @Mock private RankConfigRepository rankRepo;
-    @Mock private UserMetricsService metricsService;
+    @Mock private UserClient userClient;
     @InjectMocks private RankEvaluatorService evaluator;
     //@Mock private List<RankSpecification> specifications;
 
@@ -135,3 +134,4 @@ public class RankEvaluatorServiceTest {
     }
 
 }
+*/

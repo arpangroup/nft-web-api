@@ -1,20 +1,21 @@
-/*
 package com.trustai.income_service.income.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.trustai.common.api.RankConfigApi;
+import com.trustai.common.api.UserApi;
+import com.trustai.common.api.WalletApi;
 import com.trustai.common.dto.RankConfigDto;
-import com.trustai.income_service.client.UserClient;
+import com.trustai.common.dto.UserHierarchyDto;
+import com.trustai.common.dto.UserInfo;
+import com.trustai.common.dto.WalletUpdateRequest;
+import com.trustai.common.enums.TransactionType;
 import com.trustai.income_service.constant.Remarks;
 import com.trustai.income_service.income.dto.UplineIncomeLog;
 import com.trustai.income_service.income.entity.IncomeHistory;
 import com.trustai.income_service.income.repository.IncomeHistoryRepository;
 import com.trustai.income_service.income.repository.TeamRebateConfigRepository;
 import com.trustai.income_service.income.strategy.TeamIncomeStrategy;
-import com.trustai.user_service.hierarchy.UserHierarchy;
-import com.trustai.user_service.hierarchy.repository.UserHierarchyRepository;
-import com.trustai.user_service.user.entity.User;
-import com.trustai.user_service.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,26 +30,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class IncomeDistributionService {
-    private final UserRepository userRepository;
-    private final RankConfigRepository rankConfigRepo;
-    private final TeamRebateConfigRepository teamIncomeRepo;
-    private final UserHierarchyRepository hierarchyRepo;
     private final IncomeHistoryRepository incomeRepo;
+    private final TeamRebateConfigRepository teamIncomeRepo;
     private final TeamIncomeStrategy teamIncomeStrategy;
     private final ObjectMapper objectMapper;
-    private final UserClient userClient;
+    private final UserApi userClient;
+    private final RankConfigApi rankConfigClient;
+    private final WalletApi walletClient;
 
     public void distributeIncome(Long sellerId, BigDecimal saleAmount) {
         log.info("distributeIncome for sellerId: {}, productValue: {}.........", sellerId, saleAmount);
-        User seller = userRepository.findById(sellerId).orElseThrow(() -> new IllegalArgumentException("User not found: " + sellerId));
+        UserInfo seller = userClient.getUserById(sellerId);
         String sellerRank = seller.getRankCode();
         log.info("seller userId: {}, Rank: {}", sellerId, sellerRank);
-        RankConfigDto config  = rankConfigRepo.findById(sellerRank).orElseThrow(() -> new IllegalStateException("Rank config not found: " + sellerRank));
+        RankConfigDto config  = rankConfigClient.getRankConfigByRankCode(sellerRank);
 
-        //BigDecimal profitRate = config.getCommissionRate().divide(BigDecimal.valueOf(100)
-        BigDecimal profitRate = config.getCommissionRate()
+
+        //BigDecimal profitRate = config.getCommissionRate().divide(BigDecimal.valueOf(100)vide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+        BigDecimal profitRate = config.getCommissionPercentage()
                 .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-        log.info("Daily IncomePercentage: {}% ===> Daily IncomeRate: {} for SellerRank: {}", config.getCommissionRate(), profitRate, sellerRank);
+        log.info("Daily IncomePercentage: {}% ===> Daily IncomeRate: {} for SellerRank: {}", config.getCommissionPercentage(), profitRate, sellerRank);
 
         BigDecimal dailyIncome = saleAmount.multiply(profitRate).setScale(2, RoundingMode.HALF_UP);
         log.info("calculated profitRate: {} for saleAmount: {} ===> dailyIncome: {}", profitRate, saleAmount, dailyIncome);
@@ -70,11 +71,19 @@ public class IncomeDistributionService {
         log.info("Updating the seller wallet for SellerID: {} with DailyIncome: {}", seller.getId(), dailyIncome);
         String metaInfo = getMetaInfo(incomeHistory);
         log.info("MetaInfo: {}", metaInfo);
-        userClient.deposit(sellerId, dailyIncome, Remarks.DAILY_INCOME, metaInfo);
+        WalletUpdateRequest depositRequest = new WalletUpdateRequest(
+                dailyIncome,
+                TransactionType.DAILY_INCOME,
+                true,
+                "daily-income",
+                Remarks.DAILY_INCOME,
+                metaInfo
+        );
+        walletClient.updateWalletBalance(sellerId, depositRequest);
+        //userClient.deposit(sellerId, dailyIncome, Remarks.DAILY_INCOME, metaInfo);
 
         // 2. Fetch all uplines with rankCode info in a single query
-        */
-/*List<Object[]> uplineData = hierarchyRepo.findUplinesWithRank(sellerId, 3); // Depth ≤ 3
+        /*List<Object[]> uplineData = hierarchyRepo.findUplinesWithRank(sellerId, 3); // Depth ≤ 3
 
         for (Object[] row : uplineData) {
             Long uplineId = (Long) row[0];
@@ -100,19 +109,19 @@ public class IncomeDistributionService {
                         .date(LocalDate.now())
                         .build());
             }
-        }*//*
+        }*/
 
 
         // 2. Load full hierarchy in one query
         log.info("Propagate team income for user: {}...........", sellerId);
-        List<UserHierarchy> hierarchy = hierarchyRepo.findByDescendant(sellerId);
+        List<UserHierarchyDto> hierarchy = userClient.findByDescendant(sellerId);
         Map<Long, Integer> uplinesWithDepth = hierarchy.stream()
-                .filter(UserHierarchy::isActive)
-                .collect(Collectors.toMap(UserHierarchy::getAncestor, UserHierarchy::getDepth));
+                .filter(UserHierarchyDto::isActive)
+                .collect(Collectors.toMap(UserHierarchyDto::getAncestor, UserHierarchyDto::getDepth));
         log.info("All uplines for user: {} is: {}", sellerId, uplinesWithDepth);
 
         // Load all upline users in a single query
-        List<User> uplines = userRepository.findAllById(uplinesWithDepth.keySet());
+        List<UserInfo> uplines = userClient.getUsers(uplinesWithDepth.keySet().stream().toList());
 
         // Distribute team income
         log.info("Distribute team income for user: {}.............", sellerId);
@@ -132,8 +141,7 @@ public class IncomeDistributionService {
     }
 
 
-    */
-/*
+    /*
     🧪 Example Output
 
     ====== INCOME DISTRIBUTION SUMMARY ======
@@ -144,7 +152,7 @@ public class IncomeDistributionService {
     ▶️ Total Team Members Rewarded: 2
     ▶️ Total Team Income Distributed: 6.6000
     ========================================
-     *//*
+     */
 
     private void printLog(List<UplineIncomeLog> logs, Long sellerId, String sellerRank, BigDecimal dailyIncome) {
         if (logs == null) {
@@ -179,4 +187,3 @@ public class IncomeDistributionService {
         System.out.println(summary);  // or log.info(summary.toString());
     }
 }
-*/

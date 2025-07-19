@@ -1,10 +1,10 @@
 package com.trustai.investment_service.service;
 
+import com.trustai.common.api.UserApi;
 import com.trustai.common.dto.TransactionDto;
-import com.trustai.common.dto.UserDetailsInfo;
+import com.trustai.common.dto.UserInfo;
+import com.trustai.common.dto.WalletUpdateRequest;
 import com.trustai.common.enums.TransactionType;
-import com.trustai.common.dto.WalletDeductRequest;
-import com.trustai.common.dto.WalletRefundRequest;
 import com.trustai.investment_service.dto.InvestmentResponse;
 import com.trustai.investment_service.dto.UserInvestmentSummary;
 import com.trustai.investment_service.entity.InvestmentSchema;
@@ -13,8 +13,7 @@ import com.trustai.investment_service.enums.InvestmentStatus;
 import com.trustai.investment_service.exception.AccessDeniedException;
 import com.trustai.investment_service.exception.InvalidRequestException;
 import com.trustai.investment_service.exception.ResourceNotFoundException;
-import com.trustai.investment_service.provider.UserClient;
-import com.trustai.investment_service.provider.WalletClient;
+import com.trustai.common.api.WalletApi;
 import com.trustai.investment_service.repository.SchemaRepository;
 import com.trustai.investment_service.repository.UserInvestmentRepository;
 import jakarta.transaction.Transactional;
@@ -36,8 +35,8 @@ public class InvestmentServiceImpl implements InvestmentService{
     private final SchemaRepository schemaRepo;
     private final UserInvestmentRepository userInvestmentRepo;
     private final InvestmentValidator validator;
-    private final UserClient userClient;
-    private final WalletClient walletClient;
+    private final UserApi userClient;
+    private final WalletApi walletApi;
 
     private final InvestmentProfitCalculator profitCalculator;
     private final InvestmentPeriodHelper periodHelper;
@@ -46,19 +45,21 @@ public class InvestmentServiceImpl implements InvestmentService{
     @Override
     public InvestmentResponse subscribeToInvestment(Long userId, Long schemaId, BigDecimal amount) {
         InvestmentSchema schema = schemaRepo.findById(schemaId).orElseThrow(() -> new ResourceNotFoundException("Invalid schemaId"));
-        UserDetailsInfo user = userClient.getUserInfo(userId);
+        UserInfo user = userClient.getUserById(userId);
 
         // Validate rules
         validator.validateEligibility(user, schema, amount);
 
         // Deduct wallet balance
-        WalletDeductRequest request = new WalletDeductRequest(
+        WalletUpdateRequest deductRequest = new WalletUpdateRequest(
                 amount,
-                "Investment subscription: " + schema.getTitle(),
+                TransactionType.INVESTMENT,
+                false,
                 "investment",
-                TransactionType.INVESTMENT
+                "Investment subscription: " + schema.getTitle(),
+                null
         );
-        TransactionDto txn = walletClient.deduct(userId, request);
+        TransactionDto txn = walletApi.updateWalletBalance(userId, deductRequest);
         log.info("Investment deducted: txnId={}, userId={}", txn.getId(), userId);
 
         // Prepare a temporary UserInvestment object for calculation
@@ -159,10 +160,15 @@ public class InvestmentServiceImpl implements InvestmentService{
         if (refundAmount.compareTo(BigDecimal.ZERO) < 0) refundAmount = BigDecimal.ZERO;
 
         // Refund via Wallet
-        TransactionDto refundTxn = walletClient.refund(
-                investment.getUserId(),
-                new WalletRefundRequest(refundAmount, "Investment cancelled: " + schema.getTitle(), "investment-cancel", TransactionType.REFUND)
+        WalletUpdateRequest refundCreditRequest = new WalletUpdateRequest(
+                refundAmount,
+                TransactionType.REFUND,
+                true,
+                "investment-cancel",
+                "Investment cancelled: " + schema.getTitle(),
+                null
         );
+        TransactionDto refundTxn = walletApi.updateWalletBalance(investment.getUserId(), refundCreditRequest);
 
         // Mark investment cancelled
         investment.setCancelled(true);

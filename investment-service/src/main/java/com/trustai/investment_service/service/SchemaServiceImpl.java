@@ -9,7 +9,7 @@ import com.trustai.investment_service.enums.InterestCalculationType;
 import com.trustai.investment_service.enums.ReturnType;
 import com.trustai.investment_service.enums.SchemaType;
 import com.trustai.investment_service.exception.ResourceNotFoundException;
-import com.trustai.investment_service.provider.RankConfigClient;
+import com.trustai.common.api.RankConfigApi;
 import com.trustai.investment_service.repository.ScheduleRepository;
 import com.trustai.investment_service.repository.SchemaRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -32,7 +31,7 @@ import java.util.Map;
 public class SchemaServiceImpl implements SchemaService {
     private final SchemaRepository schemaRepository;
     private final ScheduleRepository scheduleRepository;
-    private final RankConfigClient rankConfigClient;
+    private final RankConfigApi rankConfigApi;
 
     @Override
     public Page<InvestmentSchema> getAllSchemas(Pageable pageable) {
@@ -76,7 +75,7 @@ public class SchemaServiceImpl implements SchemaService {
         InvestmentSchema schema = new InvestmentSchema();
 
         log.debug("Fetching rank config for rank code: {}", request.getLinkedRankCode());
-        RankConfigDto linkedRank = rankConfigClient.getRankConfigByRankCode(request.getLinkedRankCode());
+        RankConfigDto linkedRank = rankConfigApi.getRankConfigByRankCode(request.getLinkedRankCode());
         if (linkedRank == null) {
             log.error("Rank not found for rank code: {}", request.getLinkedRankCode());
             throw new ResourceNotFoundException("Invalid rank: " + request.getLinkedRankCode());
@@ -143,7 +142,7 @@ public class SchemaServiceImpl implements SchemaService {
                     case "minimumInvestmentAmount" -> {
 
                         try{
-                            RankConfigDto linkedRank = rankConfigClient.getRankConfigByRankCode((String) value);
+                            RankConfigDto linkedRank = rankConfigApi.getRankConfigByRankCode((String) value);
                             if (linkedRank == null) {
                                 log.error("Rank not found for rank code: {}", value);
                             } else {
@@ -243,7 +242,7 @@ public class SchemaServiceImpl implements SchemaService {
                     case "linkedRank" -> {
                         log.debug("Updating field 'linkedRank' to '{}'", value);
                         try{
-                            RankConfigDto linkedRank = rankConfigClient.getRankConfigByRankCode((String) value);
+                            RankConfigDto linkedRank = rankConfigApi.getRankConfigByRankCode((String) value);
                             if (linkedRank == null) {
                                 log.error("Rank not found for rank code: {}", value);
                             } else {
@@ -289,7 +288,7 @@ public class SchemaServiceImpl implements SchemaService {
 
         if (request.getLinkedRankCode() != null) {
             log.debug("Fetching rank config for rank code: {}", request.getLinkedRankCode());
-            RankConfigDto linkedRank = rankConfigClient.getRankConfigByRankCode(request.getLinkedRankCode());
+            RankConfigDto linkedRank = rankConfigApi.getRankConfigByRankCode(request.getLinkedRankCode());
             if (linkedRank == null) {
                 log.error("Rank not found for rank code: {}", request.getLinkedRankCode());
                 throw new ResourceNotFoundException("Invalid rank: " + request.getLinkedRankCode());

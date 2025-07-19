@@ -1,8 +1,9 @@
+/*
 package com.trustai.income_service.referral.calculator;
 
+import com.trustai.common.client.UserClient;
 import com.trustai.common.dto.UserInfo;
 import com.trustai.common.enums.CalculationType;
-import com.trustai.income_service.client.UserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,3 +39,4 @@ public class ScaleBonusCalculator implements BonusAmountCalculator {
         return CalculationType.SCALE;
     }
 }
+*/

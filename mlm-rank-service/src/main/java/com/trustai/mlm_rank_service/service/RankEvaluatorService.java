@@ -1,16 +1,13 @@
 package com.trustai.mlm_rank_service.service;
 
-import com.trustai.common.client.UserClient;
+import com.trustai.common.api.UserApi;
 import com.trustai.common.dto.UserInfo;
+import com.trustai.common.dto.UserMetrics;
 import com.trustai.mlm_rank_service.dto.RankEvaluationResultDTO;
 import com.trustai.mlm_rank_service.dto.SpecificationResult;
 import com.trustai.mlm_rank_service.entity.RankConfig;
 import com.trustai.mlm_rank_service.evaluation.RankSpecification;
 import com.trustai.mlm_rank_service.repository.RankConfigRepository;
-import com.trustai.user_service.hierarchy.dto.UserMetrics;
-import com.trustai.user_service.hierarchy.service.UserMetricsService;
-import com.trustai.user_service.user.entity.User;
-import com.trustai.user_service.user.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,8 +21,7 @@ import java.util.Optional;
 public class RankEvaluatorService {
     private final RankConfigRepository rankRepo;
     private final List<RankSpecification> specifications;
-    private final UserMetricsService metricsService;
-    private final UserClient userClient;
+    private final UserApi userClient;
 //    private final UserProfileService userService;
 
     /*public Optional<RankConfig> evaluate(User user) {
@@ -37,7 +33,7 @@ public class RankEvaluatorService {
     }*/
 
     public Optional<RankConfig> evaluate(UserInfo user) {
-        UserMetrics metrics = metricsService.computeMetrics(user.getId());
+        UserMetrics metrics = userClient.computeMetrics(user.getId());
         List<RankConfig> ranks = rankRepo.findAllByActiveTrueOrderByRankOrderDesc();
 
         RankConfig bestMatched = null;
@@ -77,7 +73,7 @@ public class RankEvaluatorService {
     public RankEvaluationResultDTO evaluateAndUpdateRank(Long userId) {
         UserInfo user = userClient.getUserById(userId);
 
-        String oldRankCode = userClient.getRankCode(userId); // assuming you store rankCode
+        String oldRankCode = user.getRankCode(); // assuming you store rankCode
         Optional<RankConfig> matchedRank = evaluate(user);
 
         if (matchedRank.isPresent() && !matchedRank.get().getCode().equals(oldRankCode)) {

@@ -13,4 +13,5 @@ public class RankConfigDto {
     private String displayName;
     private BigDecimal minDepositAmount;
     private BigDecimal minInvestmentAmount;
+    private BigDecimal commissionPercentage;
 }
