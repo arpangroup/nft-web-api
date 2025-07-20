@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /*@FeignClient(
-        name = "ServiceName.UserClient",
-        url = CommonConstants.BASE_URL,
-        path = CommonConstants.PATH_USER_SERVICE,
+        name = "user-service",
+        url = "http://localhost:8080",
+        path = "/api/v1/provider/users",
         configuration = FeignConfig.class
 )*/
 public interface UserApi {

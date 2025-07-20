@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/provider/users")
+@RequestMapping("/api/v1/provider")
 @RequiredArgsConstructor
 @Slf4j
 public class UserProviderController {
@@ -26,7 +26,7 @@ public class UserProviderController {
     private final UserMetricsService userMetricsService;
     private final UserMapper mapper;
 
-    @GetMapping
+    @GetMapping("/users")
     public List<UserInfo> getUsers() {
         log.info("Received request to get all users");
         List<UserInfo> users = userRepository.findAll().stream().map(mapper::mapTo).toList();
@@ -34,7 +34,7 @@ public class UserProviderController {
         return users;
     }
 
-    @GetMapping("/batch")
+    @PostMapping("/users/by-ids")
     public List<UserInfo> getUserByIds(@RequestBody List<Long> ids) {
         log.info("Received request to get users by IDs: {}", ids);
         List<UserInfo> users = userRepository.findByIdIn(ids).stream().map(mapper::mapTo).toList();
@@ -42,7 +42,7 @@ public class UserProviderController {
         return users;
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/users/{userId}")
     public UserInfo getUserById(@PathVariable Long userId) {
         log.info("Received request to get user by ID: {}", userId);
         return userRepository.findById(userId)
@@ -56,8 +56,8 @@ public class UserProviderController {
                 });
     }
 
-    @PutMapping("/{userId}/{rankCode}")
-    public void updateRank(@PathVariable Long userId, String rankCode) {
+    @PutMapping("/users/{userId}/rank")
+    public void updateRank(@PathVariable Long userId, @RequestBody String rankCode) {
         log.info("Received request to update rank for userId: {} with rankCode: {}", userId, rankCode);
         User user = userRepository.findById(userId).orElseThrow(() -> {
             log.error("User not found for ID: {}", userId);
@@ -68,22 +68,9 @@ public class UserProviderController {
         log.info("Updated rankCode to '{}' for userId: {}", rankCode, userId);
     }
 
-    @GetMapping("/hierarchy/{descendant}")
-    public List<UserHierarchy> findByDescendant(@PathVariable Long descendant) {
-        log.info("Received request to get user hierarchy for descendant: {}", descendant);
-        List<UserHierarchy> hierarchy = userHierarchyRepository.findByDescendant(descendant);
-        log.info("Returning {} hierarchy records for descendant: {}", hierarchy.size(), descendant);
-        return hierarchy;
-    }
 
-    @GetMapping("/metrics/{userId}")
-    public UserMetrics computeMetrics(@PathVariable Long userId) {
-        log.info("findByDescendant for userId: {}", userId);
-        return userMetricsService.computeMetrics(userId);
-    }
-
-    @PutMapping("/updateWalletBalance/{userId}/{updatedNewBalance}")
-    public void updateWalletBalance(@PathVariable Long userId, @PathVariable BigDecimal updatedNewBalance) {
+    @PutMapping("/users/{userId}/wallet-balance")
+    public void updateWalletBalance(@PathVariable Long userId, @RequestBody BigDecimal updatedNewBalance) {
         log.info("Received request to update wallet balance for userId: {} with new balance: {}", userId, updatedNewBalance);
 
         // First, check if the user exists
@@ -100,4 +87,19 @@ public class UserProviderController {
 
         log.info("Successfully updated wallet balance to {} for userId: {}", updatedNewBalance, userId);
     }
+
+    @GetMapping("/users/{userId}/metrics")
+    public UserMetrics computeMetrics(@PathVariable Long userId) {
+        log.info("findByDescendant for userId: {}", userId);
+        return userMetricsService.computeMetrics(userId);
+    }
+
+    @GetMapping("/hierarchy/descendant/{descendant}")
+    public List<UserHierarchy> findByDescendant(@PathVariable Long descendant) {
+        log.info("Received request to get user hierarchy for descendant: {}", descendant);
+        List<UserHierarchy> hierarchy = userHierarchyRepository.findByDescendant(descendant);
+        log.info("Returning {} hierarchy records for descendant: {}", hierarchy.size(), descendant);
+        return hierarchy;
+    }
+
 }
