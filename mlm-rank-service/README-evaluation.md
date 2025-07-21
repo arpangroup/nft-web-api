@@ -1,43 +1,158 @@
-## Rank Calculation
-Here is a flexible, extensible rank evaluation system based on your `UserHierarchy` and `RankConfig` entities. The design follows the **Strategy** + **Specification Pattern**, making it easy to add new criteria later.
+# Design Problem Statement: <br/> MLM Rank Evaluation Engine
 
-## 1.  🔧 RankEvaluatorService
+
+### Problem Context:
+You are building a Multi-Level Marketing (MLM) platform where users can earn commissions, bonuses, and rewards based on their investment behavior, direct referrals, and team performance. The system must support a dynamic and extensible rank evaluation engine that determines a user's rank by validating their metrics against a list of pre-defined rank configurations.
+
+### Problem Statement:
+**Design and implement a Rank Evaluation System** for a multi-level marketing platform that determines and updates a user’s rank based on multiple criteria such as:
+- Direct referral count
+- Level-wise downline counts (Level A, Level B, Level C, etc.)
+- Minimum deposit and investment amounts
+- Team size (total users in downline)
+- Team volume (total deposit/investment by downline)
+- Total earnings or transaction history (optional)
+
+**The system should:**
+1. Support configuration of multiple ranks (RANK_0 to RANK_N) with varying requirements.
+2. Evaluate a user's eligibility for the highest possible rank they qualify for.
+3. Be extensible to add new evaluation rules without rewriting core logic.
+4. Allow triggering rank evaluations individually (on-demand) or in batch (cron job/admin action).
+5. Automatically update the user’s rank in the system if it changes.
+6. Persist all rank configurations and allow editing/updating rank requirements via API.
+
+
+### Functional Requirements:
+1. Rank Configuration:
+   - Store rank configurations in the database.
+   - Each rank includes requirements such as min deposit, investment, direct referrals, and depth-based downline counts.
+   - Ranks are ordered and mutually exclusive — each user holds only one rank.
+2. User Metrics:
+   - Total deposit & investment amount
+   - Direct referral count
+   - Level-wise downline counts (Level A = depth 1, etc.)
+   - Team size, team volume
+3. Rank Evaluation Logic:
+   - Evaluate all active ranks in descending order of priority.
+   - Apply a list of specifications (rules) for each rank to determine eligibility.
+   - Return the best matching rank, or `RANK_0` if none matched.
+4. Update & Logging:
+   - If rank changes, persist the update via user service.
+   - Optionally log activity with reason for change (e.g., which rule passed/failed).
+5. Extensibility
+   - Specifications should be pluggable (strategy pattern).
+   - Future rules like "minimum total earnings", "monthly activity", or "ROI score" should be easily addable.
+
+### Non-Functional Requirements:
+- High cohesion and low coupling between evaluation rules.
+- Easy to test with mock user data and rank configs.
+- Support for large-scale batch evaluations with thousands of users.
+- Audit trail or logs for all evaluations and updates.
+- Good performance even with deeply nested hierarchies.
+
+### Optional Extensions:
+- Admin UI to edit rank rules.
+- Simulation mode: show which rank a user could achieve and what they’re missing.
+- Notifications to users when their rank upgrades or they’re close to the next rank.
+
+---
+
+## 🧱 1. High-Level Architecture Diagram
+
+````
+                        +------------------+
+                        |  Admin Dashboard |
+                        +--------+---------+
+                                 |
+                                 v
+                    +-----------------------------+
+                    |   Rank Config Service       |
+                    | (create/edit rank configs)  |
+                    +-----------------------------+
+                                 |
+                                 v
+         +---------------------------------------------+
+         |         Rank Evaluation Orchestration       |
+         |   (evaluate individual or batch user rank)  |
+         +----------------+----------------------------+
+                          |
+       +------------------+------------------+
+       |                                     |
++--------------+                     +------------------+
+|   User API   |                     |  Rank Repository |
+| (user info,  |                     | (active ranks)   |
+|  metrics)    |                     +------------------+
++--------------+
+       |
+       v
++--------------------------+
+|   UserMetrics Aggregator |
+| (deposit, referrals,     |
+|  hierarchy stats, etc.)  |
++--------------------------+
+       |
+       v
++----------------------------+
+|  Specification Engine      |<-- plug-n-play rules
+|  (DepositSpec, ReferralSpec|
+|   LevelSpec, etc.)         |
++----------------------------+
+       |
+       v
++----------------------------+
+|  Rank Matching Engine      |
+|  (evaluate from top rank)  |
++----------------------------+
+       |
+       v
++----------------------------+
+| Update Rank (User API)     |
++----------------------------+
+
+
+````
+
+## 📦 2. Class Design (Key Components)
+### 🧩 RankConfig
 ````java
-@Service
-@RequiredArgsConstructor
-public class RankEvaluatorService {
-    private final RankConfigRepository rankRepo;
-    private final List<RankSpecification> specifications;
-    private final UserMetricsService metricsService;
-
-    public Optional<RankConfig> evaluate(User user) {
-        UserMetrics metrics = metricsService.computeMetrics(user.getId());
-
-        return rankRepo.findAllByActiveTrueOrderByRankOrderDesc().stream()
-                .filter(rank -> isEligible(user, metrics, rank))
-                .findFirst(); // Highest matched rank
-    }
-
-    private boolean isEligible(User user, UserMetrics metrics, RankConfig config) {
-        return specifications.stream()
-                .allMatch(spec -> spec.isSatisfied(user, metrics, config));
-    }
+class RankConfig {
+  String code;                // e.g., RANK_1
+  int rankOrder;              // evaluation priority
+  BigDecimal minDeposit;
+  BigDecimal minInvestment;
+  Map<Integer, Integer> requiredLevelCounts;
+  int minDirectReferrals;
+  int minTeamSize;
+  int minTeamVolume;
+  boolean active;
 }
 ````
 
+### 🧩 UserMetrics
+````java
+class UserMetrics {
+  BigDecimal totalDeposit;
+  BigDecimal totalInvestment;
+  int directReferrals;
+  int teamSize;
+  int teamVolume;
+  Map<Integer, Long> depthWiseCounts; // e.g., {1=5, 2=10, 3=3}
+}
+````
 
+### 🧩 Specification Pattern
 ````java
 public interface RankSpecification {
     boolean isSatisfied(User user, UserMetrics metrics, RankConfig config);
 }
 ````
-📐 Sample Specifications:
+
 ````java
 @Component
-public class MinDirectReferralsSpec implements RankSpecification {
+public class DirectReferralSpec implements RankSpecification {
 
     @Override
-    public boolean isSatisfied(User user, UserMetrics metrics, RankConfig config) {
+    public boolean isSatisfied(UserInfo user, UserMetrics metrics, RankConfig config) {
         int directReferrals = metrics.getDirectReferrals(); // from precomputed stats
         return directReferrals >= config.getMinDirectReferrals();
     }
@@ -75,9 +190,7 @@ public class MinDepositAmountSpec implements RankSpecification {
 ````
 
 
---- 
-
-## 2. 🧮 UserMetricsService
+## 3. 🧮 UserMetricsService
 ````java
 @Service
 @RequiredArgsConstructor
@@ -117,44 +230,36 @@ public class UserMetricsService {
 }
 ````
 
+--- 
 
 
-### 📊 UserMetrics DTO
-in `user-hierarchy-service`
+## 4.  🔧 RankEvaluatorService
 ````java
-@Data
-@Builder
-public class UserMetrics {
-    private int directReferrals;
-    private BigDecimal totalDeposit;
-    private BigDecimal totalInvestment;
-    private BigDecimal walletBalance;
-    private BigDecimal totalEarnings;
-    private UserHierarchyStats userHierarchyStats;
-
-    private BigDecimal totalReferralDeposit;
-    private BigDecimal totalReferralInvestment;
+class RankEvaluatorService {
+    List<RankSpecification> specifications;
+    
+    Optional<RankConfig> evaluate(UserInfo user) {
+        UserMetrics metrics = userClient.computeMetrics(user.getId());
+        for (RankConfig rank : sortedActiveRanksDesc()) {
+            if (allSpecsPass(user, metrics, rank)) {
+                return Optional.of(rank);
+            }
+        }
+        return Optional.empty(); // fallback RANK_0
+    }
 }
+
 ````
 
-### 📊 UserHierarchyStats DTO
-````java
-@Data
-@Builder
-public class UserHierarchyStats {
-    private Map<Integer, Long> depthWiseCounts; // e.g., {1=3, 2=5, 3=10}
-    private long totalTeamSize;                 // sum of depth > 0
-}
-````
 
 ---
 
-## 3. 🔄 Trigger Rank Evaluation:
+## 5. 🔄 Trigger Rank Evaluation:
 - **User makes a deposit/investment:** User's wallet or earnings are updated
 - **User activates:** Triggered when a new user becomes active (e.g., after KYC, payment, etc.)
 - **User refers someone:** Triggered when a user (referral) joins under an existing referrer.
 
-### ✅ 3.1. Event-Driven Evaluation (Best for real-time)
+### ✅ 5.1. Event-Driven Evaluation (Best for real-time)
 ````java
 @Component
 @RequiredArgsConstructor
@@ -175,7 +280,7 @@ public class DepositEventListener {
 }
 ````
 
-### ✅ 3.2. Scheduled (Batch) Evaluation (Best for fallback/accuracy
+### ✅ 5.2. Scheduled (Batch) Evaluation (Best for fallback/accuracy
 Run a daily job that checks ranks of all active users.
 ````java
 @Scheduled(cron = "0 0 2 * * *") // every day at 2 AM
@@ -192,7 +297,7 @@ public void evaluateRanksForAllUsers() {
 }
 ````
 
-### ✅ 3.3. Manual Trigger (Admin Tool or CLI)
+### ✅ 5.3. Manual Trigger (Admin Tool or CLI)
 ````java
 @PostMapping("/admin/rank/evaluate/{userId}")
 public ResponseEntity<String> reEvaluateRank(@PathVariable Long userId) {

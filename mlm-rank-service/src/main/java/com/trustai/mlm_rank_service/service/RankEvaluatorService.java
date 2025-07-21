@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,21 +23,17 @@ public class RankEvaluatorService {
     private final RankConfigRepository rankRepo;
     private final List<RankSpecification> specifications;
     private final UserApi userClient;
-//    private final UserProfileService userService;
-
-    /*public Optional<RankConfig> evaluate(User user) {
-        UserMetrics metrics = metricsService.computeMetrics(user.getId());
-
-        return rankRepo.findAllByActiveTrueOrderByRankOrderDesc().stream()
-                .filter(rank -> isEligible(user, metrics, rank))
-                .findFirst(); // Highest matched rank
-    }*/
 
     public Optional<RankConfig> evaluate(UserInfo user) {
         UserMetrics metrics = userClient.computeMetrics(user.getId());
-        List<RankConfig> ranks = rankRepo.findAllByActiveTrueOrderByRankOrderDesc();
+        if (metrics == null) {
+            log.warn("⚠️ UserMetrics is null for userId: {}", user.getId());
+            return Optional.empty();
+        }
 
+        List<RankConfig> ranks = rankRepo.findAllByActiveTrueOrderByRankOrderDesc();
         RankConfig bestMatched = null;
+
         for (RankConfig rank : ranks) {
             log.info("🔍 Evaluating rank: {} ({}) for userId: {}", rank.getDisplayName(), rank.getCode(), user.getId());
 
@@ -60,6 +57,34 @@ public class RankEvaluatorService {
                 // else no bestMatched yet, so continue checking next (lower) rank
                 log.info("❌ Rank NOT matched: {} ({}), checking next lower rank.", rank.getDisplayName(), rank.getCode());
             }
+
+        }
+
+        // Prevent downgrade
+        String currentRankCode = user.getRankCode();
+        if (currentRankCode != null) {
+            RankConfig currentRank = ranks.stream()
+                    .filter(r -> r.getCode().equals(currentRankCode))
+                    .findFirst()
+                    .orElse(null);
+
+            if (currentRank != null) {
+                if (bestMatched == null || currentRank.getRankOrder() > bestMatched.getRankOrder()) {
+                    log.info("🔒 Preventing downgrade: keeping current rank {} ({}), ignoring lower/equal rank.",
+                            currentRank.getDisplayName(), currentRank.getCode());
+                    return Optional.of(currentRank);
+                }
+            }
+        }
+
+
+        // Fallback to RANK_0 if no other rank matched
+        if (bestMatched == null && !ranks.isEmpty()) {
+            // Return the lowest rank (last in descending order)
+            bestMatched = ranks.stream()
+                    .min(Comparator.comparingInt(RankConfig::getRankOrder))
+                    .orElse(null);
+            log.info("ℹ️ No rank matched. Falling back to lowest rank: {} ({})", bestMatched.getDisplayName(), bestMatched.getCode());
         }
 
         if (bestMatched != null) {

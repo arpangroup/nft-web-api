@@ -81,7 +81,7 @@ public class TestRankDataFactory {
         );
 
         // RANK_7: MinDeposit: 15000; Commission: 3.80%; {LvA : 35, LvB : 350, LvC : 50}
-        RankConfig rank7 = createRank("RANK_6", 7,
+        RankConfig rank7 = createRank("RANK_7", 7,
                 "TrustAI Platinum",
                 new BigDecimal("15000"), // minDepositAmount
                 new BigDecimal("500"), // minInvestmentAmount
