@@ -9,6 +9,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/*
+📊 Rank Evaluation Trigger Points
+- ✅ Daily batch job
+- ✅ After investment/subscription
+- ✅ After successful referral
+- ✅ Admin manual trigger
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j

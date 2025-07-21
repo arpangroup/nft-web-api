@@ -36,6 +36,7 @@ Optional / Advanced Control Fields:
 
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -132,8 +133,8 @@ public class RankConfig {
         this.commissionPercentage = new BigDecimal(String.valueOf(commissionPercentage));
     }
 
-    public int getMinDirectReferrals() {
-        return this.requiredLevelCounts.get(1);
-    }
+//    public int getMinDirectReferrals() {
+//        return this.requiredLevelCounts.get(1);
+//    }
 
 }

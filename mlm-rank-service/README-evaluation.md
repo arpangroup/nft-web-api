@@ -1,4 +1,12 @@
-# Design Problem Statement: <br/> MLM Rank Evaluation Engine
+🧩 Problem Statement: MLM Rank Evaluation Engine
+Design a **Rank Evaluation Service** that assigns the most eligible rank to a user based on configurable evaluation criteria defined in `RankConfig`.
+
+Each rank has its own rule set evaluated against user-specific metrics (e.g., referral count, total deposit, downline distribution).
+- Evaluate ranks in descending priority (highest first).
+- Match all specifications per rank to qualify.
+- Prevent downgrade by retaining user's current rank if it's higher.
+- Fallback to default rank (e.g., RANK_0) if no rank is matched.
+- Return no rank (Optional.empty) when user data or rank config is missing.
 
 
 ### Problem Context:
@@ -900,4 +908,64 @@ public class AdminLogController {
 ````http
 GET /admin/logs/rank-upgrades?rankCode=SILVER
 GET /admin/logs/bonus-payouts?userId=101&bonusType=TEAM_BONUS&from=2025-07-01T00:00:00
+````
+
+--- 
+
+## 🔧 Possible Improvements & Missing Features
+| Area                      | Suggestion                                                                      | Why it helps                                                       |
+| ------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| **Fail-fast logging**     | Add metrics-null and empty-rank guard clauses early                             | Prevents null checks later and improves error traceability         |
+| **Audit trail**           | Persist rank change history in DB (userId, oldRank, newRank, reason)            | Useful for transparency and rollback/debugging                     |
+| **Rank stability policy** | Add configurable `minHoldDays` to prevent rank flapping                         | Reduces rapid up/down movement in dynamic metrics                  |
+| **Dry-run option**        | Add a method `evaluatePreview(UserInfo)` that doesn't persist                   | Useful for showing UI previews before applying changes             |
+| **Time-based metrics**    | Add support for `monthly deposit`, `last 30-day referrals`, etc.                | Enables more advanced rank criteria in the future                  |
+| **Multi-path strategies** | Support multiple paths to the same rank (e.g., high referrals *or* team volume) | Increases flexibility for rank qualification                       |
+| **Explainability API**    | Return `EvaluationReport` with pass/fail reasons per spec                       | Great for admin panels or user education (why they didn’t qualify) |
+
+## 📦 Optional Enhancements
+- **Event trigger:** Auto-trigger rank evaluation after key actions (e.g., deposit, referral).
+- **Manual override:** Allow admin to assign or lock a rank (bypassing rules).
+- **Simulation tool:** Estimate what rank user might reach based on goal inputs (good for gamification).
+
+## 📊 Rank Evaluation Trigger Points
+- ✅ Daily batch job
+- ✅ After investment/subscription
+- ✅ After successful referral
+- ✅ Admin manual trigger
+
+## 🔒 Audit Trail Table (optional)
+| Column        | Type      | Description                                        |
+| ------------- | --------- | -------------------------------------------------- |
+| id            | UUID      | Primary key                                        |
+| user\_id      | Long      | User evaluated                                     |
+| old\_rank     | String    | Previous rank code                                 |
+| new\_rank     | String    | New matched rank code                              |
+| reason        | Text      | Optional downgrade prevention or evaluation reason |
+| evaluated\_at | Timestamp | Evaluation time                                    |
+| triggered\_by | ENUM      | \[SYSTEM, ADMIN, EVENT]                            |
+
+````http
+GET /api/v1/ranks/preview/{userId}
+````
+
+````json
+{
+  "matchedRank": {
+    "code": "RANK_2",
+    "displayName": "Silver"
+  },
+  "downgradePrevented": false,
+  "specResults": [
+    {
+      "satisfied": true,
+      "reason": "Total deposit (₹1000) >= min required (₹500)"
+    },
+    {
+      "satisfied": false,
+      "reason": "Direct referrals (1) < required (3)"
+    }
+  ]
+}
+
 ````

@@ -4,10 +4,12 @@ import com.trustai.common.api.RankConfigApi;
 import com.trustai.common.dto.RankConfigDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 @Service
+@Primary
 @Slf4j
 public class RankConfigApiRestClientImpl implements RankConfigApi {
     private final RestClient restClient;

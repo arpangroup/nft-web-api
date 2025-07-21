@@ -1,7 +1,7 @@
 package com.trustai.mlm_rank_service.controller;
 
 import com.trustai.mlm_rank_service.dto.RankEvaluationResultDTO;
-import com.trustai.mlm_rank_service.service.RankEvaluatorService;
+import com.trustai.mlm_rank_service.service.RankEvaluatorServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class RankEvaluationController {
-    private final RankEvaluatorService rankEvaluationService;
+    private final RankEvaluatorServiceImpl rankEvaluationService;
 
     /**
      * Trigger rank evaluation for a specific user.

@@ -8,6 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+/*
+📊 Rank Evaluation Trigger Points
+- ✅ Daily batch job
+- ✅ After investment/subscription
+- ✅ After successful referral
+- ✅ Admin manual trigger
+ */
 @Component
 @RequiredArgsConstructor
 public class RankEventListener {

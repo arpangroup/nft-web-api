@@ -1,137 +1,52 @@
 package com.trustai.mlm_rank_service.service;
 
-import com.trustai.common.api.UserApi;
 import com.trustai.common.dto.UserInfo;
-import com.trustai.common.dto.UserMetrics;
-import com.trustai.mlm_rank_service.dto.RankEvaluationResultDTO;
-import com.trustai.mlm_rank_service.dto.SpecificationResult;
+import com.trustai.mlm_rank_service.dto.EvaluationReport;
 import com.trustai.mlm_rank_service.entity.RankConfig;
-import com.trustai.mlm_rank_service.evaluation.RankSpecification;
-import com.trustai.mlm_rank_service.repository.RankConfigRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 
-@Service
-@RequiredArgsConstructor
-@Slf4j
-public class RankEvaluatorService {
-    private final RankConfigRepository rankRepo;
-    private final List<RankSpecification> specifications;
-    private final UserApi userClient;
+public interface RankEvaluatorService {
+    /**
+     * Performs an actual evaluation of the user's rank and returns the best matched rank they currently qualify for.
+     *
+     * <p>This method is intended to be used in rank update workflows where the system may update a user's rank
+     * based on their current performance metrics and eligibility.</p>
+     *
+     * <p>Evaluation process:
+     * <ul>
+     *     <li>Fetches all active ranks sorted by descending priority (highest to lowest).</li>
+     *     <li>Checks each rank against all configured specifications.</li>
+     *     <li>Selects the highest rank where all specifications pass.</li>
+     *     <li>Prevents rank downgrade: if the user already holds a higher rank, it is retained.</li>
+     *     <li>If no rank qualifies, falls back to the lowest rank (e.g., RANK_0).</li>
+     * </ul>
+     *
+     * @param user the user to evaluate
+     * @return an Optional containing the matched RankConfig, or empty if user metrics are unavailable
+     */
+    Optional<RankConfig> evaluate(UserInfo user);  // Applies rank
 
-    public Optional<RankConfig> evaluate(UserInfo user) {
-        UserMetrics metrics = userClient.computeMetrics(user.getId());
-        if (metrics == null) {
-            log.warn("⚠️ UserMetrics is null for userId: {}", user.getId());
-            return Optional.empty();
-        }
-
-        List<RankConfig> ranks = rankRepo.findAllByActiveTrueOrderByRankOrderDesc();
-        RankConfig bestMatched = null;
-
-        for (RankConfig rank : ranks) {
-            log.info("🔍 Evaluating rank: {} ({}) for userId: {}", rank.getDisplayName(), rank.getCode(), user.getId());
-
-            List<SpecificationResult> results = specifications.stream()
-                    .map(spec -> spec.evaluate(user, metrics, rank))
-                    .toList();
-
-            results.forEach(result -> log.info(" - [{}] Spec check: {}", rank.getCode(), result));
-
-            boolean allPassed = results.stream().allMatch(SpecificationResult::isSatisfied);
-
-            if (allPassed) {
-                bestMatched = rank; // update best matched rank
-            } else {
-                // If no bestMatched yet, continue to check lower ranks
-                // If bestMatched already found, break early because no need to check lower ranks
-                if (bestMatched != null) {
-                    log.info("❌ Rank NOT matched: {} ({}), stopping further evaluation.", rank.getDisplayName(), rank.getCode());
-                    break;
-                }
-                // else no bestMatched yet, so continue checking next (lower) rank
-                log.info("❌ Rank NOT matched: {} ({}), checking next lower rank.", rank.getDisplayName(), rank.getCode());
-            }
-
-        }
-
-        // Prevent downgrade
-        String currentRankCode = user.getRankCode();
-        if (currentRankCode != null) {
-            RankConfig currentRank = ranks.stream()
-                    .filter(r -> r.getCode().equals(currentRankCode))
-                    .findFirst()
-                    .orElse(null);
-
-            if (currentRank != null) {
-                if (bestMatched == null || currentRank.getRankOrder() > bestMatched.getRankOrder()) {
-                    log.info("🔒 Preventing downgrade: keeping current rank {} ({}), ignoring lower/equal rank.",
-                            currentRank.getDisplayName(), currentRank.getCode());
-                    return Optional.of(currentRank);
-                }
-            }
-        }
-
-
-        // Fallback to RANK_0 if no other rank matched
-        if (bestMatched == null && !ranks.isEmpty()) {
-            // Return the lowest rank (last in descending order)
-            bestMatched = ranks.stream()
-                    .min(Comparator.comparingInt(RankConfig::getRankOrder))
-                    .orElse(null);
-            log.info("ℹ️ No rank matched. Falling back to lowest rank: {} ({})", bestMatched.getDisplayName(), bestMatched.getCode());
-        }
-
-        if (bestMatched != null) {
-            log.info("✅ Rank matched: {} ({})", bestMatched.getDisplayName(), bestMatched.getCode());
-        } else {
-            log.info("❌ No rank matched for user {}", user.getId());
-        }
-        return Optional.ofNullable(bestMatched);
-    }
-
-    public RankEvaluationResultDTO evaluateAndUpdateRank(Long userId) {
-        UserInfo user = userClient.getUserById(userId);
-
-        String oldRankCode = user.getRankCode(); // assuming you store rankCode
-        Optional<RankConfig> matchedRank = evaluate(user);
-
-        if (matchedRank.isPresent() && !matchedRank.get().getCode().equals(oldRankCode)) {
-            userClient.updateRank(userId, matchedRank.get().getCode()); // persist the new rank
-            return new RankEvaluationResultDTO(userId, oldRankCode, matchedRank.get().getCode(), true, "Rank upgraded");
-        }
-
-        return new RankEvaluationResultDTO(userId, oldRankCode, oldRankCode, false, "No upgrade criteria met");
-    }
-
-    public List<RankEvaluationResultDTO> evaluateAndUpdateRanks(List<Long> userIds) {
-        if (userIds == null || userIds.isEmpty()) {
-            userIds = userClient.getUsers().stream().map(UserInfo::getId).toList();
-        }
-        return userIds.stream()
-                .map(this::evaluateAndUpdateRank)
-                .toList();
-    }
-
-    /*private boolean isEligible(User user, UserMetrics metrics, RankConfig config) {
-        log.info("🔍 Evaluating rank: {} ({})", config.getDisplayName(), config.getCode());
-//        return specifications.stream()
-//                .allMatch(spec -> spec.isSatisfied(user, metrics, config));
-
-        List<SpecificationResult> results = specifications.stream()
-                .map(spec -> spec.evaluate(user, metrics, config))
-                .toList();
-
-        //results.forEach(result -> log.info("Rank check: {}", result));
-        results.forEach(result -> {
-            log.info(" - [{}] Spec check: {}", config.getCode(), result);
-        });
-
-        return results.stream().allMatch(SpecificationResult::isSatisfied);
-    }*/
+    /**
+     * Performs a non-intrusive evaluation of the user's potential rank based on current metrics.
+     *
+     * <p>This method is designed to provide a **preview** of the highest rank a user can qualify for
+     * without making any changes to their current rank. It is useful for:
+     * <ul>
+     *     <li>Admin dashboards and reporting tools that show what rank a user would earn if evaluated today.</li>
+     *     <li>Explaining rank eligibility to users (e.g., “You're missing X criteria to become Silver”).</li>
+     *     <li>Debugging and testing the rank evaluation logic with full visibility into rule failures or passes.</li>
+     * </ul>
+     *
+     * <p>Features:
+     * <ul>
+     *     <li>Evaluates all active ranks in descending order of priority.</li>
+     *     <li>Collects detailed results of all specification checks per rank.</li>
+     *     <li>Applies downgrade protection logic — prevents a lower rank from being selected if the user already holds a higher one.</li>
+     * </ul>
+     *
+     * @param user the user whose rank is to be previewed
+     * @return EvaluationReport containing the matched rank (if any), spec results, and downgrade flag
+     */
+    EvaluationReport previewEvaluation(UserInfo user);  // Dry run
 }
