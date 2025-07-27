@@ -26,8 +26,13 @@ public class InvestmentSchema {
 
     @Column(nullable = false, unique = true)
     private String title;
-
     private String schemaBadge;
+    private String imageUrl;
+
+    // For distinguishing between regular investment and stake
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private InvestmentSubType investmentSubType = InvestmentSubType.STANDARD;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -37,6 +42,10 @@ public class InvestmentSchema {
     private BigDecimal minimumInvestmentAmount = BigDecimal.ZERO;
     @Column(name = "max_invest_amt", precision = 19, scale = 4)
     private BigDecimal maximumInvestmentAmount = BigDecimal.ZERO;
+    @Column(precision = 19, scale = 4)
+    private BigDecimal handlingFee = BigDecimal.ZERO;
+    @Column(precision = 19, scale = 4)
+    private BigDecimal minimumWithdrawalAmount = BigDecimal.ZERO;
 
     @Column(precision = 19, scale = 4)
     private BigDecimal returnRate = BigDecimal.ZERO;
@@ -90,6 +99,11 @@ public class InvestmentSchema {
     private Set<Integer> payoutDates; //  For MONTHLY mode ==> Valid values: 1 to 31
     // ########################### ./PAYOUT #####################################
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "investment_schema_participation_levels", joinColumns = @JoinColumn(name = "schema_id"))
+    @Column(name = "required_level")
+    private Set<String> participationLevels;
+
 
     @Column(nullable = false, updatable = false) private LocalDateTime createdAt;
     @Column(nullable = false, updatable = true) private LocalDateTime updatedAt;
@@ -105,5 +119,10 @@ public class InvestmentSchema {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public enum InvestmentSubType {
+        STANDARD,
+        STAKE
     }
 }

@@ -4,6 +4,7 @@ import com.trustai.common.api.UserApi;
 import com.trustai.common.dto.TransactionDto;
 import com.trustai.common.dto.UserInfo;
 import com.trustai.common.dto.WalletUpdateRequest;
+import com.trustai.common.enums.CalculationType;
 import com.trustai.common.enums.TransactionType;
 import com.trustai.investment_service.dto.InvestmentResponse;
 import com.trustai.investment_service.dto.UserInvestmentSummary;
@@ -50,9 +51,12 @@ public class InvestmentServiceImpl implements InvestmentService{
         // Validate rules
         validator.validateEligibility(user, schema, amount);
 
+        // Calculate deduct amount
+        BigDecimal totalDeduct = amount.add(schema.getHandlingFee());
+
         // Deduct wallet balance
         WalletUpdateRequest deductRequest = new WalletUpdateRequest(
-                amount,
+                totalDeduct,
                 TransactionType.INVESTMENT,
                 false,
                 "investment",
@@ -85,6 +89,7 @@ public class InvestmentServiceImpl implements InvestmentService{
                 .perPeriodProfit(perPeriodProfit)
                 .expectedTotalReturnAmount(expectedReturn)
                 .receivedReturnAmount(receivedReturn)
+                .profitCalculationType(CalculationType.valueOf(schema.getInterestCalculationMethod().name()))
                 .capitalReturned(false)
                 .subscribedAt(tempInvestment.getSubscribedAt())
                 .nextPayoutAt(nextPayout)

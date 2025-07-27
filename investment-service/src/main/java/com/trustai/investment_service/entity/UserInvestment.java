@@ -84,6 +84,8 @@ public class UserInvestment {
     private String txnRefId; // Reference to the transaction ID used for investment deduction. Useful for traceability.
     private BigDecimal capitalAmountReturned; // If capital is partially returned or returned in steps, this helps track it.
     private int earnedPeriods; // Cache of completed profit cycles (for quick UI display or analytics).
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private CalculationType profitCalculationType; // Can store FLAT or PERCENTAGE at investment time, even if schema later changes.
     private boolean isReinvested; // Indicates if this investment is auto-renewed or reinvested into another plan.
 

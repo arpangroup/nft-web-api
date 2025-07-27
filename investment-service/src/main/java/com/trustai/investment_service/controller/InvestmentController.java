@@ -3,7 +3,6 @@ package com.trustai.investment_service.controller;
 import com.trustai.investment_service.dto.InvestmentRequest;
 import com.trustai.investment_service.dto.InvestmentResponse;
 import com.trustai.investment_service.dto.UserInvestmentSummary;
-import com.trustai.investment_service.entity.UserInvestment;
 import com.trustai.investment_service.enums.InvestmentStatus;
 import com.trustai.investment_service.service.InvestmentService;
 import jakarta.validation.Valid;
@@ -26,7 +25,13 @@ public class InvestmentController {
 
     @PostMapping("/subscribe")
     public ResponseEntity<InvestmentResponse> subscribe(@RequestBody @Valid InvestmentRequest request) {
-        return ResponseEntity.ok(investmentService.subscribeToInvestment(request.getUserId(), request.getSchemaId(), request.getAmount()));
+        log.info("Received investment subscription request: userId={}, schemaId={}, amount={}", request.getUserId(), request.getSchemaId(), request.getAmount());
+        InvestmentResponse response = investmentService.subscribeToInvestment(
+                request.getUserId(), request.getSchemaId(), request.getAmount());
+
+        log.info("Subscription successful: investmentId={}, userId={}", response.investmentId(), request.getUserId());
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
