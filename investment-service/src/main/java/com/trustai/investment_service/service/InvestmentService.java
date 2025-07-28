@@ -2,7 +2,6 @@ package com.trustai.investment_service.service;
 
 import com.trustai.investment_service.dto.InvestmentResponse;
 import com.trustai.investment_service.dto.UserInvestmentSummary;
-import com.trustai.investment_service.entity.UserInvestment;
 import com.trustai.investment_service.enums.InvestmentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

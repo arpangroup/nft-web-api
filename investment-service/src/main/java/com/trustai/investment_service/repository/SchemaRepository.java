@@ -12,4 +12,6 @@ import java.util.List;
 public interface SchemaRepository extends JpaRepository<InvestmentSchema, Long> {
     List<InvestmentSchema> findByLinkedRank(String linkedRank);
     Page<InvestmentSchema> findByLinkedRank(String linkedRank, Pageable pageable);
+    Page<InvestmentSchema> findByLinkedRankAndInvestmentSubType(String rankCode, InvestmentSchema.InvestmentSubType investmentSubType, Pageable pageable);
+    Page<InvestmentSchema> findByInvestmentSubType(InvestmentSchema.InvestmentSubType investmentSubType, Pageable pageable);
 }

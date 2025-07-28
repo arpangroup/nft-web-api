@@ -1,6 +1,8 @@
-package com.trustai.investment_service.entity;
+package com.trustai.investment_service.entity.data;
 
 import com.trustai.common.enums.CurrencyType;
+import com.trustai.investment_service.entity.InvestmentSchema;
+import com.trustai.investment_service.entity.Schedule;
 import com.trustai.investment_service.enums.InterestCalculationType;
 import com.trustai.investment_service.enums.PayoutMode;
 import com.trustai.investment_service.enums.ReturnType;
@@ -9,6 +11,7 @@ import com.trustai.investment_service.repository.ScheduleRepository;
 import com.trustai.investment_service.repository.SchemaRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -18,6 +21,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 @Component
+@DependsOn("scheduleData")
 @RequiredArgsConstructor
 public class InvestmentSchemaDataInitializer {
     private final SchemaRepository schemaRepository;
@@ -25,29 +29,13 @@ public class InvestmentSchemaDataInitializer {
 
     @PostConstruct
     public void init() {
-        // Create Schedules
-        /*Schedule schedule1 = new Schedule(null, "2 Week", 336); // 14 days
-        Schedule schedule2 = new Schedule(null, "Hourly", 1);
-        Schedule schedule3 = new Schedule(null, "Daily", 24);
-        Schedule schedule4 = new Schedule(null, "Weekly", 168);
-        Schedule schedule5 = new Schedule(null, "Monthly", 720);*/
+        Schedule scheduleHourly = scheduleRepository.findByScheduleNameIgnoreCase("Hourly");
+        Schedule scheduleDaily = scheduleRepository.findByScheduleNameIgnoreCase("Daily");
+        Schedule scheduleWeekly = scheduleRepository.findByScheduleNameIgnoreCase("Weekly");
+        Schedule schedule2Weekly = scheduleRepository.findByScheduleNameIgnoreCase("2 Week");
+        Schedule scheduleMonthly = scheduleRepository.findByScheduleNameIgnoreCase("Monthly");
+        Schedule noSchedule = scheduleRepository.findByScheduleNameIgnoreCase("No Schedule");
 
-        Schedule scheduleHourly  = new Schedule(null, "Hourly", 60, "Every hour");                     // 60 minutes
-        Schedule scheduleDaily   = new Schedule(null, "Daily", 24 * 60, "Every day");                  // 1440 minutes
-        Schedule scheduleWeekly  = new Schedule(null, "Weekly", 7 * 24 * 60, "Every week");            // 10080 minutes
-        Schedule schedule2Weekly = new Schedule(null, "2 Week", 14 * 24 * 60, "Every 2 weeks");        // 20160 minutes <== 14 days
-        Schedule scheduleMonthly = new Schedule(null, "Monthly", 30 * 24 * 60, "Every month (approx)");// 43200 minutes
-        Schedule noSchedule = new Schedule(null, "No Schedule", 100 * 30 * 24 * 60, "100Yrs (approx)");// 43200 minutes
-
-
-
-
-        scheduleHourly = scheduleRepository.save(scheduleHourly);
-        scheduleDaily = scheduleRepository.save(scheduleDaily);
-        scheduleWeekly = scheduleRepository.save(scheduleWeekly);
-        schedule2Weekly = scheduleRepository.save(schedule2Weekly);
-        scheduleMonthly = scheduleRepository.save(scheduleMonthly);
-        noSchedule = scheduleRepository.save(noSchedule);
 
         // Investment Schema 1 - FIXED + PERIOD + cancellable
         InvestmentSchema schema1 = new InvestmentSchema();

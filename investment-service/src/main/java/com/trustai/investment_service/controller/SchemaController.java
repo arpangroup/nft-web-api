@@ -27,16 +27,26 @@ public class SchemaController {
     public ResponseEntity<Page<InvestmentSchema>> getAllSchemas(
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size,
-            @RequestParam(required = false, defaultValue = "") String rankCode
+            @RequestParam(required = false, defaultValue = "") String rankCode,
+            @RequestParam(value = "type", required = false, defaultValue = "") String type
     ) {
         log.info("Received request for all investment schemas");
         Pageable pageable = PageRequest.of(page, size);
 
+        InvestmentSchema.InvestmentSubType investmentSubType = null;
+        if (StringUtils.isNotEmpty(type)) {
+            try {
+                investmentSubType = InvestmentSchema.InvestmentSubType.valueOf(type);
+            } catch (Exception e) {
+                log.warn("invalid investmentSubType: {}", investmentSubType);
+            }
+        }
+
         Page<InvestmentSchema> schemas;
         if (StringUtils.isNotEmpty(rankCode)) {
-            schemas = schemaService.getSchemaByLinkedRank(rankCode, pageable);
+            schemas = schemaService.getSchemaByLinkedRank(rankCode, investmentSubType, pageable);
         } else {
-            schemas = schemaService.getAllSchemas(pageable);
+            schemas = schemaService.getAllSchemas(investmentSubType, pageable);
         }
         return ResponseEntity.ok(schemas);
     }

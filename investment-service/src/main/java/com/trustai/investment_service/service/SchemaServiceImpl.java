@@ -1,5 +1,6 @@
 package com.trustai.investment_service.service;
 
+import com.trustai.common.constants.CommonConstants;
 import com.trustai.common.dto.RankConfigDto;
 import com.trustai.common.enums.CurrencyType;
 import com.trustai.investment_service.dto.SchemaUpsertRequest;
@@ -18,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -34,15 +37,24 @@ public class SchemaServiceImpl implements SchemaService {
     private final RankConfigApi rankConfigApi;
 
     @Override
-    public Page<InvestmentSchema> getAllSchemas(Pageable pageable) {
-        log.info("Fetching all investment schemas...");
+    public Page<InvestmentSchema> getAllSchemas(
+            @Nullable InvestmentSchema.InvestmentSubType investmentSubType,
+            @Nullable Pageable pageable
+    ) {
+        log.info("Fetching all investment schemas for investmentSubType: {}...", investmentSubType);
+        if (pageable == null) pageable = PageRequest.of(0, CommonConstants.DEFAULT_PAGE_SIZE);
+
         //pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
         pageable = PageRequest.of(
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
+                pageable != null ? pageable.getPageNumber() : 0,
+                pageable != null ? pageable.getPageSize(): 10,
                 Sort.by(Sort.Order.asc("linkedRank"), Sort.Order.asc("minimumInvestmentAmount"))
         );
-        return schemaRepository.findAll(pageable);
+        if (investmentSubType != null) {
+            return schemaRepository.findByInvestmentSubType(investmentSubType, pageable);
+        } else {
+            return schemaRepository.findAll(pageable);
+        }
     }
 
     @Override
@@ -52,8 +64,19 @@ public class SchemaServiceImpl implements SchemaService {
     }
 
     @Override
-    public Page<InvestmentSchema> getSchemaByLinkedRank(String rankCode, Pageable pageable) {
-        return schemaRepository.findByLinkedRank(rankCode, pageable);
+    public Page<InvestmentSchema> getSchemaByLinkedRank(
+            @NonNull String rankCode,
+            @Nullable InvestmentSchema.InvestmentSubType investmentSubType,
+            @Nullable Pageable pageable
+    ) {
+        log.info("Fetching investment schemas for rankCode: {} and investmentSubType: {}", rankCode, investmentSubType);
+        if (pageable == null) pageable = PageRequest.of(0, CommonConstants.DEFAULT_PAGE_SIZE);
+
+        if (investmentSubType != null) {
+            return schemaRepository.findByLinkedRankAndInvestmentSubType(rankCode, investmentSubType, pageable);
+        } else {
+            return schemaRepository.findByLinkedRank(rankCode, pageable);
+        }
     }
 
     @Override

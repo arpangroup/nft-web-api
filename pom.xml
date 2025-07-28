@@ -34,6 +34,7 @@
         <module>transaction-service</module>
         <module>investment-service</module>
         <module>income-service</module>
+        <module>storage-service</module>
         <module>nft-core</module>
     </modules>
 
