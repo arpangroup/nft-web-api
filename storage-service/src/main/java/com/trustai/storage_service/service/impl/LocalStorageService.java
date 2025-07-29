@@ -1,8 +1,12 @@
 package com.trustai.storage_service.service.impl;
 
+import com.trustai.storage_service.dto.FileInfo;
+import com.trustai.storage_service.mapper.FileInfoMapper;
 import com.trustai.storage_service.service.StorageService;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,8 +20,13 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @Service("localStorageService")
+@RequiredArgsConstructor
 public class LocalStorageService implements StorageService {
     private final Path root = Paths.get("uploads");
+    private final FileInfoMapper mapper;
+
+    @Autowired
+    private HttpServletRequest request; // this will be request-scoped
 
     @PostConstruct
     public void init() throws IOException {
@@ -25,12 +34,13 @@ public class LocalStorageService implements StorageService {
     }
 
     @Override
-    public List<String> listAllFiles() {
+    public List<FileInfo> listAllFiles() {
         try {
             return Files.list(root)
                     .filter(Files::isRegularFile)
+                    .map(path -> mapper.mapToFileInfo(path, request))
                     //.map(path -> baseUrl + DOWNLOAD_PATH + path.getFileName().toString())
-                    .map(path -> path.getFileName().toString())
+                    //.map(path -> path.getFileName().toString())
                     .toList();
         } catch (IOException e) {
             throw new RuntimeException("Could not list files", e);
@@ -38,11 +48,29 @@ public class LocalStorageService implements StorageService {
     }
 
     @Override
-    public String upload(MultipartFile file) {
+    public FileInfo getFile(String id) {
+        Path filePath = root.resolve(id);
+        if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
+            return mapper.mapToFileInfo(filePath, request);
+        } else {
+            throw new RuntimeException("File not found: " + id);
+        }
+    }
+
+    @Override
+    public boolean isFileExist(String id) {
+        Path filePath = root.resolve(id);
+        return Files.exists(filePath) && Files.isRegularFile(filePath);
+    }
+
+    @Override
+    public FileInfo upload(MultipartFile file) {
         try {
             Path destination = root.resolve(file.getOriginalFilename());
             Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-            return destination.toString();
+            //return destination.toString();
+
+            return mapper.mapToFileInfo(destination, request);
         } catch (IOException e) {
             throw new RuntimeException("Could not store the file", e);
         }

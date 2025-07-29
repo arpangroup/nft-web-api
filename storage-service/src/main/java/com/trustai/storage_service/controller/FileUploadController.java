@@ -1,17 +1,14 @@
 package com.trustai.storage_service.controller;
 
+import com.trustai.storage_service.dto.FileInfo;
 import com.trustai.storage_service.service.StorageService;
-import com.trustai.storage_service.util.StorageUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,14 +22,15 @@ public class FileUploadController {
     }
 
     @PostMapping("/upload-multiple")
-    public ResponseEntity<Map<String, String>> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, HttpServletRequest request) {
-        Map<String, String> uploadedFiles = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, HttpServletRequest request) {
+        Map<String, Object> uploadedFiles = new HashMap<>();
 
         for (MultipartFile file : files) {
             try {
-                String fileId = storageService.upload(file);
+                Thread.sleep(2000);
+                FileInfo fileInfo = storageService.upload(file);
                 //uploadedFiles.put(file.getOriginalFilename(), fileId);
-                uploadedFiles.put(fileId, StorageUtil.getDownloadUrl(request, file.getOriginalFilename()));
+                uploadedFiles.put(fileInfo.getId(), fileInfo);
             } catch (Exception e) {
                 uploadedFiles.put(file.getOriginalFilename(), "Failed: " + e.getMessage());
             }

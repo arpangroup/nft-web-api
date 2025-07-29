@@ -5,6 +5,10 @@ spring:
     active: DEV
   config:
     import: "optional:configserver:http://localhost:8888"
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 50MB
 #  cloud:
 #    config:
 #      uri: http://localhost:8888

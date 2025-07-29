@@ -1,12 +1,9 @@
 package com.trustai.storage_service.controller;
 
+import com.trustai.storage_service.dto.FileInfo;
 import com.trustai.storage_service.service.StorageService;
-import com.trustai.storage_service.util.StorageUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,11 +27,9 @@ public class FileDownloadController {
     }
 
     @GetMapping
-    public List<String> listFiles(HttpServletRequest request) {
-        List<String> files = storageService.listAllFiles().stream()
-                .map(fileName -> StorageUtil.getDownloadUrl(request, fileName))
-                .toList();
-        return files;
+    public ResponseEntity<List<FileInfo>> listFiles() {
+        List<FileInfo> files = storageService.listAllFiles();
+        return ResponseEntity.ok(files);
     }
 
     /*@GetMapping("/download/{filename:.+}")
