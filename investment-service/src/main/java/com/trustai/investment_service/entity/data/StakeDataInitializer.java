@@ -11,6 +11,8 @@ import com.trustai.investment_service.enums.ReturnType;
 import com.trustai.investment_service.enums.SchemaType;
 import com.trustai.investment_service.repository.ScheduleRepository;
 import com.trustai.investment_service.repository.SchemaRepository;
+import com.trustai.storage_service.dto.FileInfo;
+import com.trustai.storage_service.service.StorageService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.DependsOn;
@@ -19,7 +21,9 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 @Component
@@ -30,6 +34,11 @@ public class StakeDataInitializer {
     private final ScheduleRepository scheduleRepository;
     private final RankConfigApi rankConfigApi;
 
+
+    int count = 0;
+    List<String> imageList = new ArrayList<>();
+
+
     @PostConstruct
     public void init() {
         //Schedule scheduleHourly = scheduleRepository.findByScheduleNameIgnoreCase("Hourly");
@@ -39,6 +48,7 @@ public class StakeDataInitializer {
         //Schedule scheduleMonthly = scheduleRepository.findByScheduleNameIgnoreCase("Monthly");
         //Schedule noSchedule = scheduleRepository.findByScheduleNameIgnoreCase("No Schedule");
 
+        imageList = loadImages();
 
         createStake("RANK_1", 100, 200, 60, 1.5f, scheduleDaily);
         createStake("RANK_1", 100, 200, 90, 1.8f, scheduleDaily);
@@ -56,7 +66,7 @@ public class StakeDataInitializer {
         stake1.setLinkedRank(rank);
         stake1.setTitle(rank + " " + days +" days plan");
         stake1.setSchemaBadge("STAKE_" + rank + "_" + days);
-        stake1.setImageUrl(null);
+        stake1.setImageUrl(imageList.get(++count));
         stake1.setInvestmentSubType(InvestmentSchema.InvestmentSubType.STAKE);
         stake1.setSchemaType(SchemaType.RANGE);
         stake1.setMinimumInvestmentAmount(new BigDecimal(minInvest));
@@ -84,5 +94,30 @@ public class StakeDataInitializer {
         stake1.setEarlyExitPenalty(new BigDecimal("50.00"));
         stake1.setTermsAndConditionsUrl("https://example.com/tc/fixed1yr");
         schemaRepository.save(stake1);
+    }
+
+    private  List<String> loadImages() {
+        return List.of(
+                "http://localhost:8080/api/v1/files/download/stake_1.png",
+                "http://localhost:8080/api/v1/files/download/stake_2.png",
+                "http://localhost:8080/api/v1/files/download/stake_3.png",
+                "http://localhost:8080/api/v1/files/download/stake_4.png",
+                "http://localhost:8080/api/v1/files/download/stake_5.png",
+                "http://localhost:8080/api/v1/files/download/stake_6.png",
+                "http://localhost:8080/api/v1/files/download/stake_7.png",
+                "http://localhost:8080/api/v1/files/download/stake_8.png",
+                "http://localhost:8080/api/v1/files/download/stake_9.png",
+                "http://localhost:8080/api/v1/files/download/stake_10.png",
+                "http://localhost:8080/api/v1/files/download/stake_11.png",
+                "http://localhost:8080/api/v1/files/download/stake_12.png",
+                "http://localhost:8080/api/v1/files/download/stake_13.png",
+                "http://localhost:8080/api/v1/files/download/stake_14.png",
+                "http://localhost:8080/api/v1/files/download/stake_15.png",
+                "http://localhost:8080/api/v1/files/download/stake_16.png",
+                "http://localhost:8080/api/v1/files/download/stake_17.png",
+                "http://localhost:8080/api/v1/files/download/stake_18.png",
+                "http://localhost:8080/api/v1/files/download/stake_19.png",
+                "http://localhost:8080/api/v1/files/download/stake_20.png"
+        );
     }
 }
