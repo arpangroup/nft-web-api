@@ -8,23 +8,27 @@ import org.springframework.web.client.RestClient;
 
 import java.math.BigDecimal;
 
+import static com.trustai.common.util.RestCallHandler.handleRestCall;
+
 @Service
 @Slf4j
 public class TransactionApiRestClientImpl implements TransactionApi {
     private final RestClient restClient;
 
-    public TransactionApiRestClientImpl(
-            @Qualifier("v1ApiRestClient") RestClient restClient
-    ) {
+    public TransactionApiRestClientImpl(@Qualifier("v1ApiRestClient") RestClient restClient) {
         this.restClient = restClient;
     }
 
     @Override
     public BigDecimal getDepositBalance(Long userId) {
         log.info("Calling getDepositBalance with userId={}", userId);
-        return restClient.get()
+
+        return handleRestCall(() ->
+            restClient.get()
                 .uri("/{userId}", userId)
                 .retrieve()
-                .body(BigDecimal.class);
+                .body(BigDecimal.class)
+        );
+
     }
 }

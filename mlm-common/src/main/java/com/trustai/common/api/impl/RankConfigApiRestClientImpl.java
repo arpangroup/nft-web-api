@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import static com.trustai.common.util.RestCallHandler.handleRestCall;
+
 @Service
 @Primary
 @Slf4j
@@ -23,9 +25,12 @@ public class RankConfigApiRestClientImpl implements RankConfigApi {
     @Override
     public RankConfigDto getRankConfigByRankCode(String rankCode) {
         log.info("Calling getRankConfigByRankCode with rankCode={}", rankCode);
-        return restClient.get()
-                .uri("/code/{rankCode}", rankCode)
-                .retrieve()
-                .body(RankConfigDto.class);
+
+        return handleRestCall(() ->
+                restClient.get()
+                        .uri("/rankings/code/{rankCode}", rankCode)
+                        .retrieve()
+                        .body(RankConfigDto.class)
+        );
     }
 }

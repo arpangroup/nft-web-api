@@ -4,8 +4,9 @@ import com.trustai.common.api.RankConfigApi;
 import com.trustai.common.api.WalletApi;
 import com.trustai.common.dto.RankConfigDto;
 import com.trustai.common.dto.UserInfo;
+import com.trustai.common.exception.ErrorCode;
+import com.trustai.common.exception.ValidationException;
 import com.trustai.investment_service.entity.InvestmentSchema;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -47,18 +48,18 @@ public class InvestmentValidator {
             case FIXED:
                 if (amount.compareTo(schema.getMinimumInvestmentAmount()) != 0) {
                     log.warn("Amount {} does not match fixed minimum {}", amount, schema.getMinimumInvestmentAmount());
-                    throw new IllegalArgumentException("Amount must be exactly " + schema.getMinimumInvestmentAmount());
+                    throw new ValidationException("Amount must be exactly " + schema.getMinimumInvestmentAmount(), ErrorCode.FIXED_AMOUNT_MISMATCH);
                 }
                 break;
             case RANGE:
                 if (amount.compareTo(schema.getMinimumInvestmentAmount()) < 0 || amount.compareTo(schema.getMaximumInvestmentAmount()) > 0) {
                     log.warn("Amount {} not within range [{}, {}]", amount, schema.getMinimumInvestmentAmount(), schema.getMaximumInvestmentAmount());
-                    throw new ValidationException("Amount must be between " + schema.getMinimumInvestmentAmount() + " and " + schema.getMaximumInvestmentAmount());
+                    throw new ValidationException("Amount must be between " + schema.getMinimumInvestmentAmount() + " and " + schema.getMaximumInvestmentAmount(), ErrorCode.INVESTMENT_AMOUNT_OUT_OF_RANGE);
                 }
                 break;
             default:
                 log.warn("Unknown schema type for schema {}", schema.getId());
-                throw new ValidationException("Unknown schema type");
+                throw new ValidationException("Unknown schema type", ErrorCode.UNKNOWN_SCHEMA_TYPE);
         }
 
         log.debug("Amount {} is valid for schema {}", amount, schema.getId());
@@ -72,7 +73,7 @@ public class InvestmentValidator {
         BigDecimal walletBalance = user.getWalletBalance();
         if (walletBalance.compareTo(amount) < 0) {
             log.warn("User {} has insufficient balance: required={}, actual={}", user.getId(), amount, walletBalance);
-            throw new ValidationException("Insufficient wallet balance");
+            throw new ValidationException("Insufficient wallet balance", ErrorCode.INSUFFICIENT_BALANCE);
         }
 
         // Rank config check
@@ -80,12 +81,12 @@ public class InvestmentValidator {
         RankConfigDto rankConfig = rankConfigClient.getRankConfigByRankCode(user.getRankCode());
         if (rankConfig == null) {
             log.error("RankConfig not found for rankCode={}", user.getRankCode());
-            throw new ValidationException("Invalid rank configuration");
+            throw new ValidationException("Invalid rank configuration", ErrorCode.INVALID_RANK_CONFIG);
         }
 
         if (amount.compareTo(rankConfig.getMinInvestmentAmount()) < 0) {
             log.warn("Amount {} is below min required {} for user rank {}", amount, rankConfig.getMinInvestmentAmount(), user.getRankCode());
-            throw new ValidationException("Doesn't meet min investment for current rank");
+            throw new ValidationException("Doesn't meet min investment for current rank", ErrorCode.MIN_INVESTMENT_NOT_MET);
         }
         log.debug("User {} passed wallet and rank eligibility", user.getId());
     }
@@ -95,12 +96,12 @@ public class InvestmentValidator {
 
         if (!schema.getParticipationLevels().isEmpty() && !schema.getParticipationLevels().contains(user.getRankCode())) {
             log.warn("User {} with rankCode={} not in schema's participation levels", user.getId(), user.getRankCode());
-            throw new IllegalStateException("User level not eligible for this stake");
+            throw new ValidationException("User level not eligible for this stake", ErrorCode.USER_RANK_NOT_IN_PARTICIPATION_LEVELS);
         }
 
         if (schema.getLinkedRank() != null && !schema.getLinkedRank().equals(user.getRankCode())) {
             log.warn("User {} rankCode={} does not match schema's linked rank {}", user.getId(), user.getRankCode(), schema.getLinkedRank());
-            throw new IllegalStateException("User rank not eligible for this stake");
+            throw new ValidationException("User rank not eligible for this stake", ErrorCode.USER_RANK_MISMATCH_LINKED_RANK );
         }
         log.debug("User {} passed schema-specific eligibility checks", user.getId());
     }

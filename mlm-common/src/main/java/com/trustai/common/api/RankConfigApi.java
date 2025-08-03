@@ -5,6 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 public interface RankConfigApi {//code/{rankCode}
-    @GetMapping("/code/{rankCode}")
+    @GetMapping("/rankings/code/{rankCode}")
     RankConfigDto getRankConfigByRankCode(@PathVariable String rankCode);
 }

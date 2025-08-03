@@ -16,10 +16,10 @@ import java.math.BigDecimal;
         configuration = FeignConfig.class
 )*/
 public interface WalletApi {
-    @GetMapping("/balance/{userId}")
+    @GetMapping("/wallet/balance/{userId}")
     BigDecimal getWalletBalance(@PathVariable("userId") Long userId);
 
-    @PostMapping("/update/{userId}")
+    @PostMapping("/wallet/update/{userId}")
     TransactionDto updateWalletBalance(
             @PathVariable("userId") Long userId,
             @RequestBody WalletUpdateRequest request

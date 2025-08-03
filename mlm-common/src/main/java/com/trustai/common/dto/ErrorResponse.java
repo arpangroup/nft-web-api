@@ -16,6 +16,7 @@ public class ErrorResponse {
     private Instant timestamp;
     private int status;
     private String error;
+    private String errorCode;
     private String message;
     private String path;
 
@@ -29,5 +30,10 @@ public class ErrorResponse {
         this.error = error;
         this.message = message;
         this.path = path;
+    }
+
+    public ErrorResponse(int status, String error, String errorCode, String message, String path) {
+        this(status, error, message, path);
+        this.errorCode = errorCode;
     }
 }
