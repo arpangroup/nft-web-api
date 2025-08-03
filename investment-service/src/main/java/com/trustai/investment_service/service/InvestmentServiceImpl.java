@@ -212,6 +212,7 @@ public class InvestmentServiceImpl implements InvestmentService{
                 .investmentId(investment.getId())
                 .schemaName(schema.getTitle())
                 .amountRange(formatAmountRange(schema.getMinimumInvestmentAmount(), schema.getMaximumInvestmentAmount()))
+                .imageUrl(schema.getImageUrl())
                 .investedAmount(investment.getInvestedAmount())
                 .roiType(schema.getInterestCalculationMethod().name())
                 .roiValue(schema.getReturnRate())

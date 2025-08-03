@@ -44,6 +44,7 @@ public class UserInvestmentSummary {
     private Long investmentId;
     private String schemaName;
     private String amountRange;
+    private String imageUrl;
 
     private BigDecimal investedAmount;
     private String roiType;         // FLAT / PERCENTAGE
