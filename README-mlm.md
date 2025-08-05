@@ -1,4 +1,11 @@
 ## In a mlm system how points are calculated?
+
+## Level
+> **Level Upgrades:**
+> 1. There must be a minimum of 2 members in both B and C levels, not counting unilateral referrals (meaning both B and C levels must have members).
+> 2. If any Level 1 or Level 2-3 members withdraw funds and leave with an account balance below the minimum recharge of $50 within 96 hours, they will be considered inactive lower-level members and will be downgraded to the corresponding level.
+
+
 | Personal Level | Required Points | Valid Grade A Referred | Valid Grade B and C Referred | Notes                            | Assets Held |
 |----------------|------------------|--------------------------|-------------------------------|----------------------------------|--------------|
 | LV1            | /                | /                        | /                             |                                  | 50           |
@@ -10,6 +17,8 @@
 
 
 ## Cash Withdrawal Limit
+> The second withdrawal can only be initiated after the arrival of the first withdrawal, each withdrawal fee of 5% Withdrawal within 96 hours to the account, the minimum withdrawal amount from 50. See chart for details:
+
 | Personal Level | Assets Held |
 |----------------|-------------|
 | LV1            | 500         |
@@ -32,8 +41,8 @@ These are the rights and benefits for users at different levels on the TreasureN
 
 ### Descriptions of Rights and Earnings:
 1. Different levels of users can make different numbers of reservations per day. As the user's level upgrades, they can make more reservations and choose from more price ranges, thus resulting in a higher income.
-2. Minting: Users can apply for the right to participate in the issuance of NFTs.
-3. Novice Zone Task: After new users register their accounts, they can trade in the novice zone.
+2. **Minting:** Users can apply for the right to participate in the issuance of NFTs.
+3. **Novice Zone Task:** After new users register their accounts, they can trade in the novice zone.
 
 ---
 
