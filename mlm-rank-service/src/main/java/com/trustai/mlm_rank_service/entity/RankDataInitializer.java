@@ -26,7 +26,8 @@ public class RankDataInitializer {
         RankConfig rank0 = createRank("RANK_0", 0,
                 "TrustAI Member",
                 new BigDecimal("15"), // minDepositAmount
-                new BigDecimal("15"), // minInvestmentAmount
+                new BigDecimal("100"), // minInvestmentAmount
+                new BigDecimal("200"), // maxInvestmentAmount
                 new BigDecimal("0"), // commissionPercentage
                 10, // rankBonus
                 Map.of(1, 0, 2, 0, 3, 0) // requiredLevelCounts
@@ -36,7 +37,8 @@ public class RankDataInitializer {
         RankConfig rank1 = createRank("RANK_1", 1,
                 "TrustAI Leader",
                 new BigDecimal("40"),  // minDepositAmount
-                new BigDecimal("0"),   // minInvestmentAmount
+                new BigDecimal("200"),   // minInvestmentAmount
+                new BigDecimal("300"), // maxInvestmentAmount
                 new BigDecimal("1.0"), // commissionPercentage
                 20, // rankBonus
                 Map.of(1, 0, 2, 0, 3, 0) // requiredLevelCounts
@@ -46,7 +48,8 @@ public class RankDataInitializer {
         RankConfig rank2 = createRank("RANK_2", 2,
                 "TrustAI Captain",
                 new BigDecimal("300"), // minDepositAmount
-                new BigDecimal("100"), // minInvestmentAmount
+                new BigDecimal("300"), // minInvestmentAmount
+                new BigDecimal("400"), // maxInvestmentAmount
                 new BigDecimal("1.7"), // commissionPercentage
                 20, // rankBonus
                 Map.of(1, 4, 2, 5, 3, 1) // requiredLevelCounts
@@ -56,7 +59,8 @@ public class RankDataInitializer {
         RankConfig rank3 = createRank("RANK_3", 3,
                 "TrustAI Victor",
                 new BigDecimal("600"), // minDepositAmount
-                new BigDecimal("200"), // minInvestmentAmount
+                new BigDecimal("400"), // minInvestmentAmount
+                new BigDecimal("500"), // maxInvestmentAmount
                 new BigDecimal("2.30"), // commissionPercentage
                 20, // rankBonus
                 Map.of(1, 6, 2, 25, 3, 5) // requiredLevelCounts
@@ -67,6 +71,7 @@ public class RankDataInitializer {
                 "TrustAI Champion",
                 new BigDecimal("1500"), // minDepositAmount
                 new BigDecimal("300"), // minInvestmentAmount
+                new BigDecimal("400"), // maxInvestmentAmount
                 new BigDecimal("2.80"), // commissionPercentage
                 20, // rankBonus
                 Map.of(1, 12, 2, 35, 3, 10) // requiredLevelCounts
@@ -77,6 +82,7 @@ public class RankDataInitializer {
                 "TrustAI Silver",
                 new BigDecimal("3000"), // minDepositAmount
                 new BigDecimal("400"), // minInvestmentAmount
+                new BigDecimal("500"), // maxInvestmentAmount
                 new BigDecimal("3.30"), // commissionPercentage
                 20, // rankBonus
                 Map.of(1, 16, 2, 70, 3, 20) // requiredLevelCounts
@@ -87,6 +93,7 @@ public class RankDataInitializer {
                 "TrustAI Gold",
                 new BigDecimal("6000"), // minDepositAmount
                 new BigDecimal("500"), // minInvestmentAmount
+                new BigDecimal("600"), // maxInvestmentAmount
                 new BigDecimal("3.80"), // commissionPercentage
                 20, // rankBonus
                 Map.of(1, 20, 2, 160, 3, 40) // requiredLevelCounts
@@ -97,6 +104,7 @@ public class RankDataInitializer {
                 "TrustAI Platinum",
                 new BigDecimal("15000"), // minDepositAmount
                 new BigDecimal("500"), // minInvestmentAmount
+                new BigDecimal("600"), // maxInvestmentAmount
                 new BigDecimal("4.5"), // commissionPercentage
                 20, // rankBonus
                 Map.of(1, 35, 2, 350, 3, 50) // requiredLevelCounts
@@ -105,7 +113,16 @@ public class RankDataInitializer {
         return List.of(rank0, rank1, rank2, rank3, rank4, rank5, rank6, rank7);
     }
 
-    public static RankConfig createRank(String code, int order, String displayName, BigDecimal minDeposit, BigDecimal minInvestmentAmount, BigDecimal commissionPercentage, int rankBonus, Map<Integer, Integer> levelCounts) {
+    public static RankConfig createRank(
+            String code,
+            int order,
+            String displayName,
+            BigDecimal minDeposit,
+            BigDecimal minInvestmentAmount,
+            BigDecimal maxInvestmentAmount,
+            BigDecimal commissionPercentage,
+            int rankBonus, Map<Integer, Integer> levelCounts
+    ) {
         RankConfig config = new RankConfig();
         config.setCode(code);
         config.setDisplayName(displayName);
@@ -113,6 +130,7 @@ public class RankDataInitializer {
         config.setActive(true);
         config.setMinDepositAmount(minDeposit);
         config.setMinInvestmentAmount(minInvestmentAmount);
+        config.setMaxInvestmentAmount(maxInvestmentAmount);
         config.setCommissionPercentage(commissionPercentage);
         config.setRankBonus(rankBonus);
         config.setRequiredLevelCounts(levelCounts);

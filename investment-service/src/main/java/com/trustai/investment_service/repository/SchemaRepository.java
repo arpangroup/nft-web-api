@@ -14,4 +14,8 @@ public interface SchemaRepository extends JpaRepository<InvestmentSchema, Long> 
     Page<InvestmentSchema> findByLinkedRank(String linkedRank, Pageable pageable);
     Page<InvestmentSchema> findByLinkedRankAndInvestmentSubType(String rankCode, InvestmentSchema.InvestmentSubType investmentSubType, Pageable pageable);
     Page<InvestmentSchema> findByInvestmentSubType(InvestmentSchema.InvestmentSubType investmentSubType, Pageable pageable);
+
+    List<InvestmentSchema> findByIsActiveTrueAndInvestmentSubType(InvestmentSchema.InvestmentSubType investmentSubType);
+
+    //List<InvestmentSchema> findByLinkedRankAndIsActiveTrue(String linkedRank);
 }

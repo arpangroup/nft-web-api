@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -22,6 +23,10 @@ public class RankConfigService {
 
     public Page<RankConfig> getAllRankConfigs(Pageable pageable) {
         return rankConfigRepository.findAll(pageable);
+    }
+
+    public List<RankConfig> getAllRankConfigs() {
+        return rankConfigRepository.findAll();
     }
 
     public RankConfig getRankById(Long id) {
@@ -91,7 +96,6 @@ public class RankConfigService {
                 case "rankBonus" -> rank.setRankBonus(castToInt(value));
                 case "description" -> rank.setDescription((String) value);
                 case "active" -> rank.setActive((Boolean) value);
-                case "achievable" -> rank.setAchievable((Boolean) value);
                 case "imageUrl" -> rank.setImageUrl((String) value);
                 case "rewardType" -> rank.setRewardType(RankConfig.RewardType.valueOf(value.toString()));
                 case "rankType" -> rank.setRankType(RankConfig.RankType.valueOf(value.toString()));

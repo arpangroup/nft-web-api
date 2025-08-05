@@ -89,9 +89,9 @@ public class RankConfig {
     @Column(precision = 19, scale = 4)
     private BigDecimal minDepositAmount = BigDecimal.ZERO;
     @Column(precision = 19, scale = 4)
-    private BigDecimal minInvestmentAmount = BigDecimal.ZERO;
+    private BigDecimal minInvestmentAmount = BigDecimal.ZERO; // minAssetHeld <---The current value of assets held (e.g., crypto tokens, shares, etc.)
     @Column(precision = 19, scale = 4)
-    private BigDecimal maxInvestmentAmount = BigDecimal.ZERO;
+    private BigDecimal maxInvestmentAmount = BigDecimal.ZERO; // // minAssetHeld
     @Column(precision = 19, scale = 4)
     private BigDecimal minReferralTotalDeposit = BigDecimal.ZERO;
     @Column(precision = 19, scale = 4)
@@ -111,6 +111,7 @@ public class RankConfig {
     @MapKeyColumn(name = "depth") // The key of the map will be stored as depth (e.g., 1 = level A, 2 = level B...).
     @Column(name = "required_count") // The value of the map — how many users are required at that depth.
     private Map<Integer, Integer> requiredLevelCounts = new HashMap<>();
+    private int requiredPoints;
 
     private BigDecimal commissionPercentage; // commissionPercentage = 5 means 5%.
     private int rankBonus;

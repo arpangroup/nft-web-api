@@ -13,4 +13,5 @@ public interface RankConfigRepository extends JpaRepository<RankConfig, Long> {
 
     // Finds all active rank configs, ordered from highest to lowest rank order
     List<RankConfig> findAllByActiveTrueOrderByRankOrderDesc();
+    //List<RankConfig> findAllByActiveTrueOrderByRankOrder();
 }

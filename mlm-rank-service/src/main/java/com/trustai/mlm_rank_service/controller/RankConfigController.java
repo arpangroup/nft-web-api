@@ -22,7 +22,7 @@ import java.util.Map;
 public class RankConfigController {
     private final RankConfigService rankConfigService;
 
-    @GetMapping
+    /*@GetMapping
     public  ResponseEntity<Page<RankConfig>> getRankConfig(Pageable pageable) {
         Pageable sortedPageable = PageRequest.of(
                 pageable.getPageNumber(),
@@ -31,6 +31,10 @@ public class RankConfigController {
         );
 
         return ResponseEntity.ok(rankConfigService.getAllRankConfigs(sortedPageable));
+    }*/
+    @GetMapping
+    public  ResponseEntity<List<RankConfig>> getRankConfig() {
+        return ResponseEntity.ok(rankConfigService.getAllRankConfigs());
     }
 
     @GetMapping("/{id}")
