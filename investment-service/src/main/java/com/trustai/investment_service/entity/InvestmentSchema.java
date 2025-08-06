@@ -38,6 +38,8 @@ public class InvestmentSchema {
     @Column(nullable = false)
     private SchemaType schemaType = SchemaType.RANGE;
 
+    @Column(precision = 19, scale = 4)
+    private BigDecimal price; // default investment price
     @Column(name = "min_invest_amt", precision = 19, scale = 4)
     private BigDecimal minimumInvestmentAmount = BigDecimal.ZERO;
     @Column(name = "max_invest_amt", precision = 19, scale = 4)
@@ -46,8 +48,6 @@ public class InvestmentSchema {
     private BigDecimal handlingFee = BigDecimal.ZERO;
     @Column(precision = 19, scale = 4)
     private BigDecimal minimumWithdrawalAmount = BigDecimal.ZERO;
-    @Column(precision = 19, scale = 4)
-    private BigDecimal price; // default investment price
 
     @Column(precision = 19, scale = 4)
     private BigDecimal returnRate = BigDecimal.ZERO;

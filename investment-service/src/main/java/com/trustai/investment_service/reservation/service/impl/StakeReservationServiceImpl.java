@@ -1,14 +1,21 @@
 package com.trustai.investment_service.reservation.service.impl;
 
 import com.trustai.common.api.UserApi;
+import com.trustai.common.api.WalletApi;
+import com.trustai.common.dto.TransactionDto;
 import com.trustai.common.dto.UserInfo;
+import com.trustai.common.dto.WalletUpdateRequest;
+import com.trustai.common.enums.TransactionType;
+import com.trustai.common.util.DateUtil;
 import com.trustai.investment_service.entity.InvestmentSchema;
+import com.trustai.investment_service.enums.InvestmentStatus;
 import com.trustai.investment_service.repository.SchemaRepository;
 import com.trustai.investment_service.reservation.dto.UserReservationDto;
 import com.trustai.investment_service.reservation.entity.UserReservation;
 import com.trustai.investment_service.reservation.mapper.UserReservationMapper;
 import com.trustai.investment_service.reservation.repository.StakeReservationRepository;
 import com.trustai.investment_service.reservation.service.StakeReservationService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -29,44 +36,57 @@ public class StakeReservationServiceImpl implements StakeReservationService {
     private final SchemaRepository schemaRepository;
     private final UserReservationMapper mapper;
     private final UserApi userApi;
+    private final WalletApi walletApi;
 
+    /**
+     * Automatically reserves a stake for a given user based on available schemas.
+     * Checks user's eligibility, wallet balance, and reserves the highest-priced schema.
+     *
+     * @param userId ID of the user making the reservation
+     * @return Saved reservation object
+     */
     @Override
+    @Transactional
     public UserReservation autoReserve(Long userId) {
         log.info("Attempting to reserve - userId: {}", userId);
         UserInfo user = userApi.getUserById(userId);
 
-        // 1. Check existing reservation for today
+        // Step 1. Check existing reservation for today
         boolean alreadyReserved = reservationRepository.existsByUserIdAndReservationDate(userId, LocalDate.now());
         if (alreadyReserved) {
-            log.warn("User has already reserved today - userId: {}", userId);
+            log.warn("Reservation failed: User has already reserved today - userId: {}", userId);
             throw new IllegalStateException("User has already reserved a stake today");
         }
 
-        // 2. Get max-priced eligible stake schema
+        // Step 2. Get max-priced eligible stake schema
         InvestmentSchema schema = schemaRepository
                 .findTopByInvestmentSubTypeAndIsActiveTrueOrderByPriceDesc(InvestmentSchema.InvestmentSubType.STAKE)
                 .orElseThrow(() -> {
-                    log.error("No suitable stake schema found for reservation");
+                    log.error("Reservation failed: No suitable stake schema found");
                     return new IllegalArgumentException("No suitable stake schema found for reservation");
                 });
 
-        // 3. Validate user wallet balance
+        // Step 3. Validate user wallet balance
         BigDecimal walletBalance = user.getWalletBalance();
-        if (walletBalance.compareTo(schema.getMinimumInvestmentAmount()) < 0 ||
-                walletBalance.compareTo(schema.getMaximumInvestmentAmount()) > 0) {
+        if (walletBalance.compareTo(schema.getMinimumInvestmentAmount()) < 0) {
+            log.warn("Reservation failed: Insufficient wallet balance. userId={}, balance={}, required={}",
+                    userId, walletBalance, schema.getMinimumInvestmentAmount());
             throw new IllegalStateException("Wallet balance not in range for reservation");
         }
 
-        // 4. Create and save reservation
+        // Step 4. Create and save reservation
         UserReservation reservation = UserReservation.builder()
                 .userId(userId)
                 .schema(schema)
-                .price(schema.getPrice())
+                .reservedAmount(schema.getPrice())
                 .reservedAt(LocalDateTime.now())
                 .expiryAt(LocalDateTime.now().plusDays(1))
                 .incomeEarned(BigDecimal.ZERO)
                 .isSold(false)
                 .build();
+
+        // Step 5. Update Wallet Balance:
+        TransactionDto walletTxn = deductWalletBalance(userId, schema.getPrice());
 
         UserReservation savedReservation = reservationRepository.save(reservation);
         log.info("Reservation successful - reservationId: {}, userId: {}", savedReservation.getId(), userId);
@@ -75,6 +95,10 @@ public class StakeReservationServiceImpl implements StakeReservationService {
     }
 
 
+    /**
+     * Deprecated reservation method with manual inputs. Not supported.
+     */
+
     @Deprecated
     @Override
     public UserReservation reserve(Long userId, Long schemaId, BigDecimal amount) {
@@ -82,6 +106,13 @@ public class StakeReservationServiceImpl implements StakeReservationService {
     }
 
 
+    /**
+     * Sells an existing reservation by marking it as sold and setting the sold timestamp.
+     * Future implementation can include profit calculation.
+     *
+     * @param reservationId ID of the reservation to sell
+     * @param userId        User who owns the reservation
+     */
     @Override
     public void sellReservation(Long reservationId, Long userId) {
         log.info("Attempting to sell reservation - reservationId: {}, userId: {}", reservationId, userId);
@@ -93,6 +124,8 @@ public class StakeReservationServiceImpl implements StakeReservationService {
                     return new IllegalArgumentException("Reservation not found or already sold.");
                 });
 
+        // TODO: Implement logic to calculate profit (reservedAmount * dailyIncomePercentage)
+        // TODO: Implement logic to mark the reservation as sold for the specified user.
         reservation.setSold(true);
         reservation.setSoldAt(LocalDateTime.now());
 
@@ -101,6 +134,12 @@ public class StakeReservationServiceImpl implements StakeReservationService {
     }
 
 
+    /**
+     * Fetch all active (unsold and unexpired) reservations for a user.
+     *
+     * @param userId ID of the user
+     * @return List of active reservation DTOs
+     */
     @Override
     public List<UserReservationDto> getActiveReservations(Long userId) {
         log.info("Fetching active reservations - userId: {}", userId);
@@ -114,7 +153,10 @@ public class StakeReservationServiceImpl implements StakeReservationService {
         return dtos;
     }
 
-
+    /**
+     * Expires all unclaimed reservations that are past their expiry time.
+     * Currently marks them only; logic can be extended to refund or log investments.
+     */
     @Override
     public void expireUnclaimedReservations() {
         log.info("Running expiration of unclaimed reservations...");
@@ -132,5 +174,32 @@ public class StakeReservationServiceImpl implements StakeReservationService {
 
         reservationRepository.saveAll(expired);
         log.info("Expired {} reservations.", expired.size());
+    }
+
+    /**
+     * Deducts the reserved amount from the user's wallet by creating an investment transaction.
+     * Can be part of a larger transaction block if wallet supports rollback.
+     *
+     * @param userId        ID of the user
+     * @param reservedAmount Amount to deduct from the wallet
+     */
+    private TransactionDto deductWalletBalance(Long userId, BigDecimal reservedAmount) {
+        log.info("Deducting wallet balance - userId: {}, amount: {}", userId, reservedAmount);
+
+        WalletUpdateRequest walletUpdateRequest = new WalletUpdateRequest(
+                reservedAmount,
+                TransactionType.INVESTMENT_RESERVE,
+                false,
+                "investment-reserved",
+                "Investment reserved at " + DateUtil.formatDisplayDate(LocalDateTime.now()),
+                null
+        );
+        TransactionDto txn = walletApi.updateWalletBalance(userId, walletUpdateRequest);
+        if (txn == null || txn.getId() == null) {
+            log.error("Wallet deduction failed - userId: {}, amount: {}", userId, reservedAmount);
+            throw new IllegalStateException("Wallet deduction failed");
+        }
+        log.info("Wallet deduction successful - txnId: {}, userId: {}", txn.getId(), userId);
+        return txn;
     }
 }

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class UserReservationDto {
+    private Long reservationId;
     private String schemaTitle;
     private String imageUrl;
     private BigDecimal reservedAmount;

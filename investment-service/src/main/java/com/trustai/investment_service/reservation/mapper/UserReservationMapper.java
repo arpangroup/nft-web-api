@@ -8,9 +8,10 @@ import org.springframework.stereotype.Component;
 public class UserReservationMapper {
     public UserReservationDto toDto(UserReservation reservation) {
         return UserReservationDto.builder()
+                .reservationId(reservation.getId())
                 .schemaTitle(reservation.getSchema().getTitle())
                 .imageUrl(reservation.getSchema().getImageUrl())
-                .reservedAmount(reservation.getPrice())
+                .reservedAmount(reservation.getReservedAmount())
                 .reservedAt(reservation.getReservedAt())
                 .expiryAt(reservation.getExpiryAt())
                 .incomeEarned(reservation.getIncomeEarned())

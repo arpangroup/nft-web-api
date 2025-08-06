@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity // stake_reservations
@@ -29,10 +30,13 @@ public class UserReservation {
     private InvestmentSchema schema;
 
     @Column(nullable = false, precision = 19, scale = 4)
-    private BigDecimal price;
+    private BigDecimal reservedAmount;
 
     @Column(name = "reserved_at", nullable = false)
     private LocalDateTime reservedAt;
+
+    @Column(nullable = true, precision = 19, scale = 4)
+    private BigDecimal profit;
 
     @Column(name = "expiry_at", nullable = false)
     private LocalDateTime expiryAt; // = reservedAt + 1 day
@@ -42,8 +46,8 @@ public class UserReservation {
 
     private BigDecimal incomeEarned = BigDecimal.ZERO;
 
-    @Column(name = "reserved_at_date", nullable = false)
-    private LocalDateTime reservationDate; // for uniqueness per day
+    @Column(name = "reservation_date", nullable = false)
+    private LocalDate reservationDate; // for uniqueness per day
 
     @PrePersist
     public void prePersist() {
@@ -51,7 +55,7 @@ public class UserReservation {
             reservedAt = LocalDateTime.now();
         }
         if (reservationDate == null) {
-            reservationDate = reservedAt.toLocalDate().atStartOfDay();
+            reservationDate = reservedAt.toLocalDate();
         }
         if (expiryAt == null) {
             expiryAt = reservedAt.plusDays(1);
@@ -61,6 +65,4 @@ public class UserReservation {
     public boolean isActive() {
         return !isSold && LocalDateTime.now().isBefore(expiryAt);
     }
-
-
 }

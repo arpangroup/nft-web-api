@@ -41,29 +41,39 @@ public class StakeDataInitializer {
         //Schedule scheduleWeekly = scheduleRepository.findByScheduleNameIgnoreCase("Weekly");
         //Schedule schedule2Weekly = scheduleRepository.findByScheduleNameIgnoreCase("2 Week");
         //Schedule scheduleMonthly = scheduleRepository.findByScheduleNameIgnoreCase("Monthly");
-        //Schedule noSchedule = scheduleRepository.findByScheduleNameIgnoreCase("No Schedule");
+        Schedule noSchedule = scheduleRepository.findByScheduleNameIgnoreCase("No Schedule");
 
         imageList = loadImages();
 
-        createStake("RANK_1", 200, 200, 60, 1.5f, scheduleDaily);
-        createStake("RANK_1", 100, 200, 90, 1.8f, scheduleDaily);
-        createStake("RANK_1", 100, 200, 150, 2.4f, scheduleDaily);
-        createStake("RANK_1", 100, 200, 210, 3.0f, scheduleDaily);
-        createStake("RANK_1", 100, 200, 270, 3.4f, scheduleDaily);
-        createStake("RANK_1", 100, 200, 360, 4.0f, scheduleDaily);
-        createStake("RANK_2", 200, 300, 360, 5.0f, scheduleDaily);
-        createStake("RANK_3", 300, 400, 360, 6.0f, scheduleDaily);
+        // RANK_0: 100-200
+        createStake("RANK_0", 100, 200, 200, 90, 0, noSchedule);
+        // RANK_1: 200-300
+        createStake("RANK_1", 200, 300, 300, 90, 1.5f, scheduleDaily);
+        createStake("RANK_1", 200, 300, 290, 90, 1.8f, scheduleDaily);
+        createStake("RANK_1", 200, 300, 280, 90, 2.4f, scheduleDaily);
+        createStake("RANK_1", 200, 300, 270, 90, 3.0f, scheduleDaily);
+        createStake("RANK_1", 200, 300, 260, 90, 3.4f, scheduleDaily);
+        createStake("RANK_1", 200, 300, 250, 90, 4.0f, scheduleDaily);
+        // RANK_2: 300-400
+        createStake("RANK_2", 300, 400, 390, 90, 5.0f, scheduleDaily);
+        // RANK_3: 400-500
+        createStake("RANK_3", 400, 500, 490, 90, 6.0f, scheduleDaily);
     }
 
-    private void createStake(String rank, int minInvest, int maxInvest, int days, float roi, Schedule schedule) {
+    private void createStake(String rank, int minInvest, int maxInvest, int stakePrice, int days, float roi, Schedule schedule) {
+        if (stakePrice < minInvest || stakePrice > maxInvest) {
+            throw new RuntimeException("StakePrice should be between the investment schema range");
+        }
+
         // Investment Schema 1 - FIXED + PERIOD + cancellable
         InvestmentSchema stake1 = new InvestmentSchema();
         stake1.setLinkedRank(rank);
-        stake1.setTitle(rank + " " + days +" days plan");
+        stake1.setTitle(rank + " " + days +" days plan of " + stakePrice + " for roi " + roi);
         stake1.setSchemaBadge("STAKE_" + rank + "_" + days);
         stake1.setImageUrl(imageList.get(++count));
         stake1.setInvestmentSubType(InvestmentSchema.InvestmentSubType.STAKE);
         stake1.setSchemaType(SchemaType.RANGE);
+        stake1.setPrice(new BigDecimal(stakePrice));
         stake1.setMinimumInvestmentAmount(new BigDecimal(minInvest));
         stake1.setMaximumInvestmentAmount(new BigDecimal(maxInvest));
         stake1.setHandlingFee(BigDecimal.ZERO);

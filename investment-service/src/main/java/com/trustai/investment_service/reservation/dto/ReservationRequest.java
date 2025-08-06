@@ -11,13 +11,13 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 public class ReservationRequest {
-    @NotNull(message = "schemaId is required")
-    @Positive(message = "invalid schemaId")
-    private Long schemaId;
-
     @NotNull(message = "userId is required")
     @Positive(message = "invalid userId")
     private Long userId;
+
+    //@NotNull(message = "schemaId is required")
+    //@Positive(message = "invalid schemaId")
+    private Long schemaId;
 
     //@NotNull(message = "amount is required")
     //@DecimalMin(value = "0.01", inclusive = true, message = "amount must be at least 0.01")

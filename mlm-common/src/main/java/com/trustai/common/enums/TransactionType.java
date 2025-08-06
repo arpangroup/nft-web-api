@@ -10,6 +10,7 @@ public enum TransactionType {
     SEND_MONEY,    // TRANSFER
     RECEIVE_MONEY, // TRANSFER
     INVESTMENT,
+    INVESTMENT_RESERVE,
     EXCHANGE,
 
     SIGNUP_BONUS,
