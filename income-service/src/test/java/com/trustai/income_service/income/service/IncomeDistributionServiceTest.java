@@ -11,7 +11,7 @@ import com.trustai.common.dto.UserInfo;
 import com.trustai.common.dto.WalletUpdateRequest;
 import com.trustai.income_service.income.entity.IncomeHistory;
 import com.trustai.income_service.income.repository.IncomeHistoryRepository;
-import com.trustai.income_service.income.repository.TeamRebateConfigRepository;
+import com.trustai.income_service.income.repository.TeamIncomeConfigRepository;
 import com.trustai.income_service.income.strategy.TeamIncomeStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +35,7 @@ public class IncomeDistributionServiceTest {
     @Mock
     private IncomeHistoryRepository incomeRepo;
     @Mock
-    private TeamRebateConfigRepository teamIncomeRepo;
+    private TeamIncomeConfigRepository teamIncomeRepo;
     @Mock
     private TeamIncomeStrategy teamIncomeStrategy;
     @Mock

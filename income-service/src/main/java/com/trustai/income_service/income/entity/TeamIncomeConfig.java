@@ -12,7 +12,7 @@ import java.util.Map;
 @Table(name = "config_team_income")
 @Data
 @NoArgsConstructor
-public class TeamRebateConfig {
+public class TeamIncomeConfig {
     @Id
     @Column(name = "rank_code")
     private String rankCode;
@@ -23,7 +23,7 @@ public class TeamRebateConfig {
     @Column(name = "percentage")
     private Map<Integer, BigDecimal> incomePercentages = new HashMap<>();
 
-    public TeamRebateConfig(String rankCode, Map<Integer, BigDecimal> incomePercentages) {
+    public TeamIncomeConfig(String rankCode, Map<Integer, BigDecimal> incomePercentages) {
         this.rankCode = rankCode;
         this.incomePercentages = incomePercentages;
     }

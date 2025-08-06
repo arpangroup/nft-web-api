@@ -1,7 +1,7 @@
 package com.trustai.income_service.income.service;
 
-import com.trustai.income_service.income.entity.TeamRebateConfig;
-import com.trustai.income_service.income.repository.TeamRebateConfigRepository;
+import com.trustai.income_service.income.entity.TeamIncomeConfig;
+import com.trustai.income_service.income.repository.TeamIncomeConfigRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import java.math.RoundingMode;
 @RequiredArgsConstructor
 @Slf4j
 public class TeamCommissionService {
-    private final TeamRebateConfigRepository teamRebateConfigRepository;
+    private final TeamIncomeConfigRepository teamIncomeConfigRepository;
 
     public BigDecimal getTeamCommissionPercentage(String rank, int depth) {
         log.info("getTeamCommissionPercentage for Rank: {}, depth: {}", rank,depth);
@@ -25,7 +25,7 @@ public class TeamCommissionService {
         return BigDecimal.ZERO;
         */
 
-        TeamRebateConfig config = teamRebateConfigRepository.findById(rank)
+        TeamIncomeConfig config = teamIncomeConfigRepository.findById(rank)
                 .orElseThrow(() -> new IllegalStateException("No team config for rankCode: " + rank));
 
         BigDecimal teamIncomePercentage = config.getIncomePercentages().getOrDefault(depth, BigDecimal.ZERO);

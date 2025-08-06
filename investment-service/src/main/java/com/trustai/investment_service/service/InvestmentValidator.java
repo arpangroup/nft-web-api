@@ -13,9 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-import static com.trustai.investment_service.enums.SchemaType.FIXED;
-import static com.trustai.investment_service.enums.SchemaType.RANGE;
-
 
 @Component
 @RequiredArgsConstructor
@@ -24,10 +21,10 @@ public class InvestmentValidator {
     private final RankConfigApi rankConfigClient;
     private final WalletApi walletClient;
 
-    public void validateEligibility(UserInfo user, InvestmentSchema schema, BigDecimal amount) {
-        log.debug("Validating eligibility for userId={}, schemaId={}, amount={}", user.getId(), schema.getId(), amount);
-        validateAmountAgainstSchema(schema, amount);
-        validateUserEligibility(user, amount);
+    public void validateEligibility(UserInfo user, InvestmentSchema schema, BigDecimal investmentAmount) {
+        log.debug("Validating eligibility for userId={}, schemaId={}, amount={}", user.getId(), schema.getId(), investmentAmount);
+        validateAmountAgainstSchema(schema, investmentAmount);
+        validateInvestAmountEligibility(user, investmentAmount);
         validateUserEligibilityAgainstSchema(user, schema);
         log.debug("User {} passed all eligibility validations", user.getId());
     }
@@ -65,14 +62,14 @@ public class InvestmentValidator {
         log.debug("Amount {} is valid for schema {}", amount, schema.getId());
     }
 
-    private void validateUserEligibility(UserInfo user, BigDecimal amount) {
-        log.debug("Validating wallet and rank eligibility for userId={}, rankCode={}, amount={}", user.getId(), user.getRankCode(), amount);
+    private void validateInvestAmountEligibility(UserInfo user, BigDecimal investmentAmount) {
+        log.debug("Validating wallet and rank eligibility for userId={}, rankCode={}, amount={}", user.getId(), user.getRankCode(), investmentAmount);
 
         // Wallet Check
         //BigDecimal walletBalance = walletClient.getWalletBalance(user.getId());
         BigDecimal walletBalance = user.getWalletBalance();
-        if (walletBalance.compareTo(amount) < 0) {
-            log.warn("User {} has insufficient balance: required={}, actual={}", user.getId(), amount, walletBalance);
+        if (walletBalance.compareTo(investmentAmount) < 0) {
+            log.warn("User {} has insufficient balance: required={}, actual={}", user.getId(), investmentAmount, walletBalance);
             throw new ValidationException("Insufficient wallet balance", ErrorCode.INSUFFICIENT_BALANCE);
         }
 
@@ -84,9 +81,9 @@ public class InvestmentValidator {
             throw new ValidationException("Invalid rank configuration", ErrorCode.INVALID_RANK_CONFIG);
         }
 
-        if (amount.compareTo(rankConfig.getMinInvestmentAmount()) < 0) {
-            log.warn("Amount {} is below min required {} for user rank {}", amount, rankConfig.getMinInvestmentAmount(), user.getRankCode());
-            throw new ValidationException("Doesn't meet min investment for current rank", ErrorCode.MIN_INVESTMENT_NOT_MET);
+        if (investmentAmount.compareTo(rankConfig.getMinInvestmentAmount()) < 0) {
+            log.warn("Amount {} is below min required {} for user rank {}", investmentAmount, rankConfig.getMinInvestmentAmount(), user.getRankCode());
+            throw new ValidationException("Doesn't meet min investment for current rank, minimum investment should be = " + rankConfig.getMinInvestmentAmount(), ErrorCode.MIN_INVESTMENT_NOT_MET);
         }
         log.debug("User {} passed wallet and rank eligibility", user.getId());
     }

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SchemaRepository extends JpaRepository<InvestmentSchema, Long> {
@@ -18,4 +19,6 @@ public interface SchemaRepository extends JpaRepository<InvestmentSchema, Long> 
     List<InvestmentSchema> findByIsActiveTrueAndInvestmentSubType(InvestmentSchema.InvestmentSubType investmentSubType);
 
     //List<InvestmentSchema> findByLinkedRankAndIsActiveTrue(String linkedRank);
+
+    Optional<InvestmentSchema> findTopByInvestmentSubTypeAndIsActiveTrueOrderByPriceDesc(InvestmentSchema.InvestmentSubType subType);
 }

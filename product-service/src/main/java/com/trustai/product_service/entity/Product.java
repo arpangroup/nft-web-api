@@ -1,6 +1,7 @@
 package com.trustai.product_service.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.trustai.common.enums.CurrencyType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -82,14 +83,7 @@ public class Product {
         this.price = price;
     }
 
-    public enum CurrencyType {
-        BTC,  // Bitcoin
-        ETH,  // Ethereum
-        LTC,  // Litecoin
-        INR,  // Indian Rupee
-        USD,  // US Dollar
-        EUR,  // Euro
-    }
+
 
 
 }

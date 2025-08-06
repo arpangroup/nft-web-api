@@ -1,6 +1,6 @@
 package com.trustai.income_service.income.entity;
 
-import com.trustai.income_service.income.repository.TeamRebateConfigRepository;
+import com.trustai.income_service.income.repository.TeamIncomeConfigRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -11,8 +11,8 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class TeamRebateDataInitializer {
-    private final TeamRebateConfigRepository teamRebateConfigRepository;
+public class TeamIncomeConfigDataInitializer {
+    private final TeamIncomeConfigRepository teamIncomeConfigRepository;
 
 
     /*@PostConstruct
@@ -51,7 +51,7 @@ public class TeamRebateDataInitializer {
 
     @PostConstruct
     public void init() {
-        TeamRebateConfig level2 = new TeamRebateConfig();
+        TeamIncomeConfig level2 = new TeamIncomeConfig();
         level2.setRankCode("RANK_2");
         level2.setIncomePercentages(Map.of(
                 1, new BigDecimal("5"),  // Lv.A ==> 5%
@@ -59,7 +59,7 @@ public class TeamRebateDataInitializer {
                 3, new BigDecimal("1")    // Lv.C
         ));
 
-        TeamRebateConfig level3 = new TeamRebateConfig();
+        TeamIncomeConfig level3 = new TeamIncomeConfig();
         level3.setRankCode("RANK_3");
         level3.setIncomePercentages(Map.of(
                 1, new BigDecimal("6"), // 6%
@@ -67,7 +67,7 @@ public class TeamRebateDataInitializer {
                 3, new BigDecimal("2")
         ));
 
-        TeamRebateConfig level4 = new TeamRebateConfig();
+        TeamIncomeConfig level4 = new TeamIncomeConfig();
         level4.setRankCode("RANK_4");
         level4.setIncomePercentages(Map.of(
                 1, new BigDecimal("0"),
@@ -75,7 +75,7 @@ public class TeamRebateDataInitializer {
                 3, new BigDecimal("0")
         ));
 
-        TeamRebateConfig level5 = new TeamRebateConfig();
+        TeamIncomeConfig level5 = new TeamIncomeConfig();
         level5.setRankCode("RANK_5");
         level5.setIncomePercentages(Map.of(
                 1, new BigDecimal("0"),
@@ -83,6 +83,6 @@ public class TeamRebateDataInitializer {
                 3, new BigDecimal("0")
         ));
 
-        teamRebateConfigRepository.saveAll(List.of(level2, level3, level4, level5));
+        teamIncomeConfigRepository.saveAll(List.of(level2, level3, level4, level5));
     }
 }

@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
-public class TeamRebateConfigDto {
+public class TeamIncomeConfigDto {
     private String rank;
     private int minWalletBalance;
     private int maxWalletBalance;

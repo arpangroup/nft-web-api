@@ -11,20 +11,15 @@ import com.trustai.investment_service.enums.ReturnType;
 import com.trustai.investment_service.enums.SchemaType;
 import com.trustai.investment_service.repository.ScheduleRepository;
 import com.trustai.investment_service.repository.SchemaRepository;
-import com.trustai.storage_service.dto.FileInfo;
-import com.trustai.storage_service.service.StorageService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 @Component
 @DependsOn("scheduleData")
@@ -50,7 +45,7 @@ public class StakeDataInitializer {
 
         imageList = loadImages();
 
-        createStake("RANK_1", 100, 200, 60, 1.5f, scheduleDaily);
+        createStake("RANK_1", 200, 200, 60, 1.5f, scheduleDaily);
         createStake("RANK_1", 100, 200, 90, 1.8f, scheduleDaily);
         createStake("RANK_1", 100, 200, 150, 2.4f, scheduleDaily);
         createStake("RANK_1", 100, 200, 210, 3.0f, scheduleDaily);

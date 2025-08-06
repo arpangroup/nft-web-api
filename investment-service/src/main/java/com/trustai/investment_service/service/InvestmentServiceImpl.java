@@ -44,15 +44,15 @@ public class InvestmentServiceImpl implements InvestmentService{
 
 
     @Override
-    public InvestmentResponse subscribeToInvestment(Long userId, Long schemaId, BigDecimal amount) {
+    public InvestmentResponse subscribeToInvestment(Long userId, Long schemaId, BigDecimal investmentAmount) {
         InvestmentSchema schema = schemaRepo.findById(schemaId).orElseThrow(() -> new ResourceNotFoundException("Invalid schemaId"));
         UserInfo user = userClient.getUserById(userId);
 
         // Validate rules
-        validator.validateEligibility(user, schema, amount);
+        validator.validateEligibility(user, schema, investmentAmount);
 
         // Calculate deduct amount
-        BigDecimal totalDeduct = amount.add(schema.getHandlingFee());
+        BigDecimal totalDeduct = investmentAmount.add(schema.getHandlingFee());
 
         // Deduct wallet balance
         WalletUpdateRequest deductRequest = new WalletUpdateRequest(
@@ -70,7 +70,7 @@ public class InvestmentServiceImpl implements InvestmentService{
         UserInvestment tempInvestment = UserInvestment.builder()
                 .userId(userId)
                 .schema(schema)
-                .investedAmount(amount)
+                .investedAmount(investmentAmount)
                 .subscribedAt(LocalDateTime.now())
                 .build();
 
@@ -85,7 +85,7 @@ public class InvestmentServiceImpl implements InvestmentService{
         UserInvestment finalInvestment = UserInvestment.builder()
                 .userId(userId)
                 .schema(schema)
-                .investedAmount(amount)
+                .investedAmount(investmentAmount)
                 .perPeriodProfit(perPeriodProfit)
                 .expectedTotalReturnAmount(expectedReturn)
                 .receivedReturnAmount(receivedReturn)

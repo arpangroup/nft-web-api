@@ -1,4 +1,4 @@
-package com.trustai.investment_service.service;
+package com.trustai.investment_service.reservation.service.impl;
 
 import com.trustai.common.api.RankConfigApi;
 import com.trustai.common.api.UserApi;
@@ -8,6 +8,7 @@ import com.trustai.investment_service.dto.EligibleInvestmentSummary;
 import com.trustai.investment_service.dto.SchemaSummary;
 import com.trustai.investment_service.entity.InvestmentSchema;
 import com.trustai.investment_service.repository.SchemaRepository;
+import com.trustai.investment_service.reservation.service.ReservationEligibilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,13 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class InvestmentEligibilityService {
+public class ReservationEligibilityServiceImpl implements ReservationEligibilityService {
     private final SchemaRepository schemaRepository;
     private final RankConfigApi rankConfigApi;
     private final UserApi userApi;
     private final DecimalFormat df = new DecimalFormat("0.##");
 
+    @Override
     public List<EligibleInvestmentSummary> getEligibleInvestmentSummaries(Long userId) {
         log.info("Fetching investment summary for userId={}", userId);
 

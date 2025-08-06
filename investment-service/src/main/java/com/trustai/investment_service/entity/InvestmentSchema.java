@@ -46,6 +46,8 @@ public class InvestmentSchema {
     private BigDecimal handlingFee = BigDecimal.ZERO;
     @Column(precision = 19, scale = 4)
     private BigDecimal minimumWithdrawalAmount = BigDecimal.ZERO;
+    @Column(precision = 19, scale = 4)
+    private BigDecimal price; // default investment price
 
     @Column(precision = 19, scale = 4)
     private BigDecimal returnRate = BigDecimal.ZERO;

@@ -1,7 +1,7 @@
 package com.trustai.income_service.income.service;
 
-import com.trustai.income_service.income.entity.TeamRebateConfig;
-import com.trustai.income_service.income.repository.TeamRebateConfigRepository;
+import com.trustai.income_service.income.entity.TeamIncomeConfig;
+import com.trustai.income_service.income.repository.TeamIncomeConfigRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,7 +22,7 @@ public class TeamCommissionServiceTest {
     private TeamCommissionService service;
 
     @Mock
-    private TeamRebateConfigRepository repo;
+    private TeamIncomeConfigRepository repo;
 
     @Test
     void shouldReturnCorrectPercentage_whenRankAndDepthExist() {
@@ -30,7 +30,7 @@ public class TeamCommissionServiceTest {
         int depth = 1;
         BigDecimal percentage = new BigDecimal("12");
 
-        TeamRebateConfig config = new TeamRebateConfig(rank, Map.of(depth, percentage));
+        TeamIncomeConfig config = new TeamIncomeConfig(rank, Map.of(depth, percentage));
         when(repo.findById(rank)).thenReturn(Optional.of(config));
 
         BigDecimal result = service.getTeamCommissionPercentage(rank, depth);
@@ -40,7 +40,7 @@ public class TeamCommissionServiceTest {
     @Test
     void shouldReturnZero_whenDepthNotInMap() {
         String rank = "RANK_3";
-        TeamRebateConfig config = new TeamRebateConfig(rank, Map.of());
+        TeamIncomeConfig config = new TeamIncomeConfig(rank, Map.of());
         when(repo.findById(rank)).thenReturn(Optional.of(config));
 
         BigDecimal result = service.getTeamCommissionPercentage(rank, 5);

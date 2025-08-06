@@ -14,7 +14,7 @@ import com.trustai.income_service.constant.Remarks;
 import com.trustai.income_service.income.dto.UplineIncomeLog;
 import com.trustai.income_service.income.entity.IncomeHistory;
 import com.trustai.income_service.income.repository.IncomeHistoryRepository;
-import com.trustai.income_service.income.repository.TeamRebateConfigRepository;
+import com.trustai.income_service.income.repository.TeamIncomeConfigRepository;
 import com.trustai.income_service.income.strategy.TeamIncomeStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class IncomeDistributionService {
     private final IncomeHistoryRepository incomeRepo;
-    private final TeamRebateConfigRepository teamIncomeRepo;
+    private final TeamIncomeConfigRepository teamIncomeRepo;
     private final TeamIncomeStrategy teamIncomeStrategy;
     private final ObjectMapper objectMapper;
     private final UserApi userClient;
