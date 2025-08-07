@@ -6,6 +6,8 @@ import com.trustai.common.dto.TransactionDto;
 import com.trustai.common.dto.UserInfo;
 import com.trustai.common.dto.WalletUpdateRequest;
 import com.trustai.common.enums.TransactionType;
+import com.trustai.common.exception.ErrorCode;
+import com.trustai.common.exception.ValidationException;
 import com.trustai.common.util.DateUtil;
 import com.trustai.investment_service.entity.InvestmentSchema;
 import com.trustai.investment_service.enums.InvestmentStatus;
@@ -55,7 +57,7 @@ public class StakeReservationServiceImpl implements StakeReservationService {
         boolean alreadyReserved = reservationRepository.existsByUserIdAndReservationDate(userId, LocalDate.now());
         if (alreadyReserved) {
             log.warn("Reservation failed: User has already reserved today - userId: {}", userId);
-            throw new IllegalStateException("User has already reserved a stake today");
+            throw new ValidationException("User has already reserved a stake today", ErrorCode.STAKE_ALREADY_RESERVED );
         }
 
         // Step 2. Get max-priced eligible stake schema
@@ -63,7 +65,7 @@ public class StakeReservationServiceImpl implements StakeReservationService {
                 .findTopByInvestmentSubTypeAndIsActiveTrueOrderByPriceDesc(InvestmentSchema.InvestmentSubType.STAKE)
                 .orElseThrow(() -> {
                     log.error("Reservation failed: No suitable stake schema found");
-                    return new IllegalArgumentException("No suitable stake schema found for reservation");
+                    throw new ValidationException("No suitable stake schema found for reservation", ErrorCode.STAKE_SCHEMA_NOT_FOUND );
                 });
 
         // Step 3. Validate user wallet balance
@@ -71,7 +73,7 @@ public class StakeReservationServiceImpl implements StakeReservationService {
         if (walletBalance.compareTo(schema.getMinimumInvestmentAmount()) < 0) {
             log.warn("Reservation failed: Insufficient wallet balance. userId={}, balance={}, required={}",
                     userId, walletBalance, schema.getMinimumInvestmentAmount());
-            throw new IllegalStateException("Wallet balance not in range for reservation");
+            throw new ValidationException("Insufficient Wallet Balance", ErrorCode.INSUFFICIENT_WALLET_BALANCE );
         }
 
         // Step 4. Create and save reservation
@@ -121,7 +123,7 @@ public class StakeReservationServiceImpl implements StakeReservationService {
                 .findByIdAndUserIdAndIsSoldFalse(reservationId, userId)
                 .orElseThrow(() -> {
                     log.warn("Sell failed - reservation not found or already sold. reservationId: {}, userId: {}", reservationId, userId);
-                    return new IllegalArgumentException("Reservation not found or already sold.");
+                    throw new ValidationException("Reservation not found or already sold.", ErrorCode.RESERVATION_NOT_FOUND_OR_SOLD );
                 });
 
         // TODO: Implement logic to calculate profit (reservedAmount * dailyIncomePercentage)
@@ -197,7 +199,7 @@ public class StakeReservationServiceImpl implements StakeReservationService {
         TransactionDto txn = walletApi.updateWalletBalance(userId, walletUpdateRequest);
         if (txn == null || txn.getId() == null) {
             log.error("Wallet deduction failed - userId: {}, amount: {}", userId, reservedAmount);
-            throw new IllegalStateException("Wallet deduction failed");
+            throw new ValidationException("Wallet deduction failed", ErrorCode.WALLET_DEDUCTION_FAILED );
         }
         log.info("Wallet deduction successful - txnId: {}, userId: {}", txn.getId(), userId);
         return txn;

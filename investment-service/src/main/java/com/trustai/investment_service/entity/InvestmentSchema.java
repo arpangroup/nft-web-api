@@ -127,4 +127,8 @@ public class InvestmentSchema {
         STANDARD,
         STAKE
     }
+
+    public BigDecimal getPrice() {
+        return price == null || price.compareTo(BigDecimal.ZERO) == 0 ? this.maximumInvestmentAmount : price;
+    }
 }
