@@ -20,6 +20,7 @@ import com.trustai.investment_service.reservation.service.StakeReservationServic
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,10 @@ public class StakeReservationServiceImpl implements StakeReservationService {
     private final UserReservationMapper mapper;
     private final UserApi userApi;
     private final WalletApi walletApi;
+
+    @Value("${investment.stake.valuationDelta}")
+    private BigDecimal stakeValuationDelta;
+
 
     /**
      * Automatically reserves a stake for a given user based on available schemas.
@@ -81,6 +86,7 @@ public class StakeReservationServiceImpl implements StakeReservationService {
                 .userId(userId)
                 .schema(schema)
                 .reservedAmount(schema.getPrice())
+                .valuationDelta(stakeValuationDelta == null ? BigDecimal.ZERO : stakeValuationDelta)
                 .reservedAt(LocalDateTime.now())
                 .expiryAt(LocalDateTime.now().plusDays(1))
                 .incomeEarned(BigDecimal.ZERO)

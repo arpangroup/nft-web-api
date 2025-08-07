@@ -16,4 +16,8 @@ public class UserReservationDto {
     private LocalDateTime reservedAt;
     private LocalDateTime expiryAt;
     private BigDecimal incomeEarned;
+
+    private BigDecimal returnRate;
+    private BigDecimal handlingFee;
+    private BigDecimal valuationDelta;
 }
