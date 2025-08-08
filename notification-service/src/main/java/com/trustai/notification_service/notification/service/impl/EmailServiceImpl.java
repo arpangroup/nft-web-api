@@ -23,6 +23,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendSimpleMail(String to, String subject, String text) {
+        log.info("Sending simple text email to: {}, subject: {}", to, subject);
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             //message.setFrom("arpangroup1@gmail.com");
@@ -31,13 +32,16 @@ public class EmailServiceImpl implements EmailService {
             message.setSubject(subject);
             message.setText(text);
             mailSender.send(message);
+            log.info("Simple email sent successfully to {}", to);
         } catch (Exception e) {
+            log.error("Failed to send simple email to {}. Error: {}", to, e.getMessage(), e);
             e.printStackTrace();
         }
     }
 
     @Override
     public void sendMail(String to, String subject, String htmlContent) {
+        log.info("Sending HTML email to: {}, subject: {}", to, subject);
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -46,20 +50,23 @@ public class EmailServiceImpl implements EmailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlContent, true); // true = send as HTML
+
             mailSender.send(mimeMessage);
+            log.info("HTML email sent successfully to {}", to);
         } catch (Exception e) {
+            log.error("Failed to send HTML email to {}. Error: {}", to, e.getMessage(), e);
             e.printStackTrace();
         }
     }
 
     @Override
     public void sendMailWithAttachment(String to, String subject, String text, String pathToAttachment) {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper mimeMessageHelper;
-
+        log.info("Sending email with attachment to: {}, subject: {}, attachment: {}", to, subject, pathToAttachment);
         try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
             // Setting multipart as true for attachments to be send
-            mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             mimeMessageHelper.setFrom("noreply@baeldung.com");
             mimeMessageHelper.setTo(to);
             mimeMessageHelper.setSubject(subject);
@@ -69,8 +76,11 @@ public class EmailServiceImpl implements EmailService {
             // Adding the attachment
             FileSystemResource file = new FileSystemResource(new File(pathToAttachment));
             mimeMessageHelper.addAttachment(file.getFilename(), file);
+
             mailSender.send(mimeMessage);
+            log.info("Email with attachment sent successfully to {}", to);
         } catch (MessagingException e) {
+            log.error("Failed to send email with attachment to {}. Error: {}", to, e.getMessage(), e);
             e.printStackTrace();
         }
     }

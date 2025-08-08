@@ -25,7 +25,9 @@ public class NotificationController extends BaseRestController {
     // 1️⃣ Send Notification
     @PostMapping("/send")
     public ResponseEntity<Void> sendNotification(@RequestBody NotificationRequest request) {
+        log.info("Sending notification: {}", request);
         notificationService.send(request);
+        log.info("Notification sent successfully");
         return ResponseEntity.ok().build();
     }
 
@@ -37,35 +39,51 @@ public class NotificationController extends BaseRestController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") String sortDir) {
+        Long currentUserId = getCurrentUserId();
+        log.info("Fetching notifications for user: {}, page: {}, size: {}, sortBy: {}, sortDir: {}", currentUserId, page, size, sortBy, sortDir);
 
-        return inAppNotificationService.getUserNotifications(getCurrentUserId(), page, size, sortBy, sortDir);
+        Page<InAppNotificationDto> notifications = inAppNotificationService.getUserNotifications(currentUserId, page, size, sortBy, sortDir);
+        log.info("Fetched {} notifications for user: {}", notifications.getNumberOfElements(), currentUserId);
+        return notifications;
     }
 
     // 3️⃣ Mark single notification as viewed/read
     @PatchMapping("/{id}/view")
     public ResponseEntity<Void> markAsViewed(@PathVariable Long id) {
-        inAppNotificationService.markAsViewed(getCurrentUserId(), id);
+        Long currentUserId = getCurrentUserId();
+        log.info("Marking notification {} as viewed for user: {}", id, currentUserId);
+        inAppNotificationService.markAsViewed(currentUserId, id);
+        log.info("Notification {} marked as viewed", id);
         return ResponseEntity.noContent().build();
     }
 
     // 4️⃣ Mark multiple notifications as viewed
     @PatchMapping("/view")
     public ResponseEntity<Void> markMultipleAsViewed(@RequestBody List<Long> ids) {
-        inAppNotificationService.markMultipleAsViewed(getCurrentUserId(), ids);
+        Long currentUserId = getCurrentUserId();
+        log.info("Marking multiple notifications as viewed for user: {}, IDs: {}", currentUserId, ids);
+        inAppNotificationService.markMultipleAsViewed(currentUserId, ids);
+        log.info("Marked notifications as viewed: {}", ids);
         return ResponseEntity.noContent().build();
     }
 
     // 5️⃣ Delete single notification
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNotification(@PathVariable Long id) {
-        inAppNotificationService.deleteNotification(getCurrentUserId(), id);
+        Long currentUserId = getCurrentUserId();
+        log.info("Deleting notification {} for user: {}", id, currentUserId);
+        inAppNotificationService.deleteNotification(currentUserId, id);
+        log.info("Notification {} deleted", id);
         return ResponseEntity.noContent().build();
     }
 
     // 7️⃣ Delete multiple notifications
     @DeleteMapping
     public ResponseEntity<Void> deleteMultipleNotifications(@RequestBody List<Long> ids) {
-        inAppNotificationService.deleteMultipleNotifications(getCurrentUserId(), ids);
+        Long currentUserId = getCurrentUserId();
+        log.info("Deleting multiple notifications for user: {}, IDs: {}", currentUserId, ids);
+        inAppNotificationService.deleteMultipleNotifications(currentUserId, ids);
+        log.info("Deleted notifications: {}", ids);
         return ResponseEntity.noContent().build();
     }
 

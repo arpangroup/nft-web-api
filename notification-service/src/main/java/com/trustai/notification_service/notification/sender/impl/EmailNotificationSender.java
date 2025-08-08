@@ -5,10 +5,12 @@ import com.trustai.notification_service.notification.enums.NotificationChannel;
 import com.trustai.notification_service.notification.sender.NotificationSender;
 import com.trustai.notification_service.notification.service.EmailService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class EmailNotificationSender implements NotificationSender {
     private final EmailService emailService;
 

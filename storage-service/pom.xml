@@ -48,11 +48,11 @@
 		</dependency>
 
 		<!-- Google Drive API -->
-		<dependency>
+		<!--<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-drive</artifactId>
 			<version>v3-rev20220815-2.0.0</version>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>

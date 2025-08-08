@@ -17,9 +17,16 @@ public class NotificationSenderFactory {
     public NotificationSenderFactory(List<NotificationSender> senders) {
         this.senderMap = senders.stream()
                 .collect(Collectors.toMap(NotificationSender::getChannel, Function.identity()));
+        log.info("NotificationSenderFactory initialized with channels: {}", senderMap.keySet());
     }
 
     public NotificationSender getSender(NotificationChannel channel) {
-        return senderMap.get(channel);
+        NotificationSender sender = senderMap.get(channel);
+        if (sender != null) {
+            log.info("Found sender for channel: {}", channel);
+        } else {
+            log.warn("No sender found for channel: {}", channel);
+        }
+        return sender;
     }
 }
