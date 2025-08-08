@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class PushNotificationTemplateService extends BaseTemplateService<PushNotificationTemplate, PushNotificationTemplateRepository> {
+public class PushTemplateService extends BaseTemplateService<PushNotificationTemplate, PushNotificationTemplateRepository> {
 
-    protected PushNotificationTemplateService(PushNotificationTemplateRepository repository) {
+    protected PushTemplateService(PushNotificationTemplateRepository repository) {
         super(repository);
     }
 

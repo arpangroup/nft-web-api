@@ -1,6 +1,6 @@
 package com.trustai.notification_service.notification.controller;
 
-import com.trustai.notification_service.dto.NotificationRequest;
+import com.trustai.notification_service.notification.dto.NotificationRequest;
 import com.trustai.notification_service.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

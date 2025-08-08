@@ -1,4 +1,4 @@
-package com.trustai.notification_service.dto;
+package com.trustai.notification_service.notification.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

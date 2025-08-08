@@ -3,7 +3,7 @@ package com.trustai.notification_service.template.service;
 import com.trustai.notification_service.template.enums.TemplateType;
 import com.trustai.notification_service.template.entity.Template;
 import com.trustai.notification_service.template.service.impl.EmailTemplateService;
-import com.trustai.notification_service.template.service.impl.PushNotificationTemplateService;
+import com.trustai.notification_service.template.service.impl.PushTemplateService;
 import com.trustai.notification_service.template.service.impl.SmsTemplateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ public class TemplateServiceRegistry {
     private final Map<TemplateType, TemplateService<? extends Template>> serviceMap; // If more channels are expected in the future:
     private final EmailTemplateService emailService;
     private final SmsTemplateService smsService;
-    private final PushNotificationTemplateService pushService;
+    private final PushTemplateService pushService;
 
     public TemplateService<?> getService(TemplateType type) {
         TemplateService<?> service = serviceMap.get(type);

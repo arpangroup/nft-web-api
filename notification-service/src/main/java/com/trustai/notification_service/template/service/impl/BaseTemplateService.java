@@ -1,6 +1,6 @@
 package com.trustai.notification_service.template.service.impl;
 
-import com.trustai.notification_service.exception.TemplateNotFoundException;
+import com.trustai.notification_service.template.exception.TemplateNotFoundException;
 import com.trustai.notification_service.template.entity.Template;
 import com.trustai.notification_service.template.repository.CodeBasedTemplateRepository;
 import com.trustai.notification_service.template.service.TemplateService;

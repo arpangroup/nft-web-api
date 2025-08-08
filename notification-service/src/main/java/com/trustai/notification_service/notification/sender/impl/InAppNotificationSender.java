@@ -1,6 +1,6 @@
 package com.trustai.notification_service.notification.sender.impl;
 
-import com.trustai.notification_service.dto.NotificationRequest;
+import com.trustai.notification_service.notification.dto.NotificationRequest;
 import com.trustai.notification_service.notification.enums.NotificationChannel;
 import com.trustai.notification_service.notification.sender.NotificationSender;
 

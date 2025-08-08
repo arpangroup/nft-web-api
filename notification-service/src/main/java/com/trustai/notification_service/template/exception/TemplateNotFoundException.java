@@ -1,4 +1,4 @@
-package com.trustai.notification_service.exception;
+package com.trustai.notification_service.template.exception;
 
 public class TemplateNotFoundException extends RuntimeException{
 
