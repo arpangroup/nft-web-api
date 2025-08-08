@@ -25,7 +25,7 @@ mlm-rank-service
 | ---------------------- | -------------------------------------------- |
 | `user-service`         | Can update user’s rankCode based on result   |
 | `income-service`       | Can compute commission based on current rank |
-| `notification-service` | Send congratulatory messages on rank up      |
+| `inAppNotification-service` | Send congratulatory messages on rank up      |
 | `hierarchy-service`    | Supplies team structure/depth info           |
 | `referral-service`     | Supplies direct referral counts or status    |
 

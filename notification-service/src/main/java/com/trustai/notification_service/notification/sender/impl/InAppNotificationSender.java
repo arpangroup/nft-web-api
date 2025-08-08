@@ -1,10 +1,25 @@
 package com.trustai.notification_service.notification.sender.impl;
 
+import com.trustai.common.api.UserApi;
 import com.trustai.notification_service.notification.dto.NotificationRequest;
+import com.trustai.notification_service.notification.entity.InAppNotification;
 import com.trustai.notification_service.notification.enums.NotificationChannel;
+import com.trustai.notification_service.notification.mapper.InAppNotificationMapper;
+import com.trustai.notification_service.notification.repository.InAppNotificationRepository;
 import com.trustai.notification_service.notification.sender.NotificationSender;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
 public class InAppNotificationSender implements NotificationSender {
+    private final InAppNotificationRepository inAppNotificationRepository;
+    private final InAppNotificationMapper mapper;
+    private final UserApi userApi;
 
     @Override
     public NotificationChannel getChannel() {
@@ -13,19 +28,12 @@ public class InAppNotificationSender implements NotificationSender {
 
     @Override
     public void send(NotificationRequest request) {
-        // TODO Save to DB logic for in-app notification...
-//        Notification notification = new Notification(...);
-//        notification.setMessage(request.getMessage());
-//        notification.setTitle(request.getTitle());
-//        notification.setCreatedAt(LocalDateTime.now());
-//
-//        notificationRepo.save(notification);
-//
-//        List<Long> targetUserIds = request.isSendToAll()
-//                ? userNotificationRepo.findAllActiveUserIds() // method to implement
-//                : List.of(Long.parseLong(request.getRecipient()));
-//
-//        targetUserIds.forEach(uid ->
-//                userNotificationRepo.save(new UserNotification(null, notification, uid, false, null, LocalDateTime.now())));
+
+        List<Long> targetUserIds = request.isSendToAll()
+                ? userApi.findAllActiveUserIds() // method to implement
+                : List.of(Long.parseLong(request.getRecipient()));
+
+        List<InAppNotification> notifications = targetUserIds.stream().map(uid -> mapper.toEntity(request, uid)).toList();
+        inAppNotificationRepository.saveAll(notifications);
     }
 }

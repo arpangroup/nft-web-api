@@ -18,6 +18,8 @@ public interface UserApi {
     @GetMapping
     List<UserInfo> getUsers();
 
+    @GetMapping("/users/activeIds")
+    List<Long> findAllActiveUserIds();
 
     @GetMapping("/batch")
     List<UserInfo> getUsers(List<Long> userIds);

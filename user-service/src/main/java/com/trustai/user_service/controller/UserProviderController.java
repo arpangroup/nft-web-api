@@ -34,6 +34,15 @@ public class UserProviderController {
         return users;
     }
 
+    @GetMapping("/users/activeIds")
+    public List<Long> getAllActiveUserIds() {
+        log.info("Received request to get all active user ids");
+        List<User> users = userRepository.findByAccountStatus(User.AccountStatus.ACTIVE);
+        List<Long> ids = users.stream().map(User::getId).toList();
+        log.info("Returning {} users", ids.size());
+        return ids;
+    }
+
     @PostMapping("/users/by-ids")
     public List<UserInfo> getUserByIds(@RequestBody List<Long> ids) {
         log.info("Received request to get users by IDs: {}", ids);

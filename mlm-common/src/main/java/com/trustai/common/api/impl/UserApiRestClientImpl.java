@@ -57,6 +57,16 @@ public class UserApiRestClientImpl implements UserApi {
     }
 
     @Override
+    public List<Long> findAllActiveUserIds() {
+        return handleRestCall(() -> Arrays.asList(
+                restClient.get()
+                        .uri("/users/activeIds")
+                        .retrieve()
+                        .body(Long[].class)
+        ));
+    }
+
+    @Override
     public List<UserInfo> getUsers(List<Long> userIds) {
         log.info("Calling getUsers with userIds={}", userIds);
         /*UserInfo[] response = restClient.post()

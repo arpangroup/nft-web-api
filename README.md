@@ -125,7 +125,7 @@ mlm-platform/
 │       ├── controller/
 │       └── repository/
 │
-├── notification-service/  # (optional)
+├── inAppNotification-service/  # (optional)
 │   ├── pom.xml
 │   └── src/main/java/com/example/notificationservice/
 │       ├── email/
@@ -276,7 +276,7 @@ mlm-platform
 │                           ├── rule
 │                           ├── service
 │                           └── util
-├── notification-service
+├── inAppNotification-service
 │   └── src
 │       └── main
 │           └── java
@@ -368,7 +368,7 @@ This structure supports:
         <module>rank-service</module>
         <module>transaction-service</module>
         <module>product-service</module>
-        <module>notification-service</module>
+        <module>inAppNotification-service</module>
         <module>report-service</module>
         <module>job-service</module>
     </modules>

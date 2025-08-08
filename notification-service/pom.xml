@@ -9,9 +9,9 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>notification-service</artifactId>
+	<artifactId>inAppNotification-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>notification-service</name>
+	<name>inAppNotification-service</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
