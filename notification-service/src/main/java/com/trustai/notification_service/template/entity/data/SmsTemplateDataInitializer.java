@@ -1,4 +1,4 @@
-package com.trustai.notification_service.notification.entity.data;
+package com.trustai.notification_service.template.entity.data;
 
 import com.trustai.notification_service.notification.enums.NotificationCode;
 import com.trustai.notification_service.template.entity.SmsTemplate;
@@ -18,13 +18,12 @@ public class SmsTemplateDataInitializer {
 
     @PostConstruct
     public void init() {
-        List<SmsTemplate> smsTemplates = getTemplates();
-        smsTemplateRepository.saveAll(smsTemplates);
+        smsTemplateRepository.saveAll(getTemplates());
     }
 
     private List<SmsTemplate> getTemplates() {
         return List.of(
-            new SmsTemplate(NotificationCode.USER_MAIL_SEND)
+            new SmsTemplate(NotificationCode.NEW_USER)
                     .setMessageBody("""
                             Thanks for joining us  {{full_name}}
                             {{message}}

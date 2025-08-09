@@ -1,4 +1,4 @@
-package com.trustai.notification_service.notification.entity.data;
+package com.trustai.notification_service.template.entity.data;
 
 import com.trustai.notification_service.notification.enums.NotificationCode;
 import com.trustai.notification_service.template.entity.PushNotificationTemplate;

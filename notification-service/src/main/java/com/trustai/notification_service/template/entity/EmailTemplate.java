@@ -19,7 +19,7 @@ public class EmailTemplate implements Template {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+//    @Column(unique = true, nullable = false)
     private String code; // templateName
 
     @Column(nullable = false)

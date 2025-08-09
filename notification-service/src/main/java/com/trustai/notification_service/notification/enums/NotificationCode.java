@@ -8,6 +8,7 @@ public enum NotificationCode {
 
     // EMAIL:
     USER_MAIL_SEND,
+    USER_MAIL_SEND1,
     SUBSCRIBER_MAIL_SEND,
     EMAIL_VERIFICATION,
     FORGOT_PASSWORD,
