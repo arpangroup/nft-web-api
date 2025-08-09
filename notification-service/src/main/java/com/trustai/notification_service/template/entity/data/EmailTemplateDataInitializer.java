@@ -24,7 +24,7 @@ public class EmailTemplateDataInitializer {
 
     private List<EmailTemplate> getTemplates() {
         return List.of(
-                new EmailTemplate(NotificationCode.USER_MAIL_SEND1, "{{subject}} for {{full_name}}")
+                new EmailTemplate(NotificationCode.USER_MAIL_SEND, "{{subject}} for {{full_name}}")
                         .setBanner(null)
                         .setTitle("Sample Email")
                         .setSalutation("Hi {{full_name}},")
