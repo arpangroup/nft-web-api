@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "kyc_details")
 @Data
@@ -25,6 +27,8 @@ public class Kyc {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private KycDocumentType documentType = KycDocumentType.NATIONAL_ID;
+    private String identityNumber;
+    private String documentImage;
 
     // ########################### Status #############################
     @Enumerated(EnumType.STRING)
@@ -49,6 +53,11 @@ public class Kyc {
     private Long approver;
 
 
+    @Column(nullable = false, updatable = true)
+    private LocalDateTime createdAt;
+
+
+
     public enum EpaStatus {
         UNVERIFIED,
         VERIFIED,
@@ -70,6 +79,11 @@ public class Kyc {
         VOTER_ID,
         TAX_ID,
         SSN;  // For international cases like the US
+    }
+
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now();
     }
 
 

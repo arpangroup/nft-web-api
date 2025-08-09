@@ -5,6 +5,10 @@ spring:
     active: DEV
   config:
     import: "optional:configserver:http://localhost:8888"
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 50MB
 #  cloud:
 #    config:
 #      uri: http://localhost:8888
@@ -15,6 +19,15 @@ spring:
       password: password
       roles: ADMIN
 
+feign:
+  client:
+    enabled:
+      income: false
+      rank: false
+      investment: false
+      transaction: false
+      user: false
+      core: true
 
 management:
   endpoints:
@@ -22,9 +35,10 @@ management:
       exposure:
         include: refresh, health, info
 
-
 logging:
   level:
     org:
       springframework:
         cloud: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] %-5level %logger{36} - %msg%n"

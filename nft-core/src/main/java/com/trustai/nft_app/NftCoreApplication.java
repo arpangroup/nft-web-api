@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.math.BigDecimal;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.trustai.*"})
+//@EnableFeignClients(basePackages = {"com.trustai.*"})
 public class NftCoreApplication implements CommandLineRunner {
 	@Autowired UserRepository userRepository;
 
@@ -25,7 +27,8 @@ public class NftCoreApplication implements CommandLineRunner {
 		User user = userRepository.findById(1L).orElse(null);
 
 		if (user != null) return;
-		User rootUser = new User("U1", 3, BigDecimal.ZERO);
+		User rootUser = new User("U1", "RANK_1", BigDecimal.ZERO);
+		rootUser.setEmail("root@trustai.com");
 		rootUser.setKycInfo(new Kyc());
 		userRepository.save(rootUser);
 	}

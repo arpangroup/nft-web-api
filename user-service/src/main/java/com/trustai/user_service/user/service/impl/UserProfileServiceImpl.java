@@ -1,15 +1,22 @@
 package com.trustai.user_service.user.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.trustai.common.dto.UserInfo;
 import com.trustai.user_service.user.entity.Kyc;
 import com.trustai.user_service.user.entity.User;
 import com.trustai.user_service.user.exception.IdNotFoundException;
+import com.trustai.user_service.user.mapper.UserMapper;
 import com.trustai.user_service.user.repository.UserRepository;
 import com.trustai.user_service.user.service.UserProfileService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -17,18 +24,20 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*
 When a new user registers, bonuses can be propagated upwards through the referral hierarchy. Here's a simple approach:
     Direct Bonus: The referrer receives a direct bonus when a new user registers using their referral code
     Community Team Rebate: Calculate rebates based on the users level and propagate them upwards.
  */
-@Service("userServiceImpl")
-@Primary
+@Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserProfileServiceImpl implements UserProfileService {
     private final UserRepository userRepository;
+    private final UserMapper mapper;
+    private final int DEFAULT_PAGE_SIZE = 10;
 //    private final TransactionService transactionService;
 //    private final DepositService depositService;
 
@@ -49,17 +58,21 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
+    @CacheEvict(value = "users", key = "#user.id")
     public User updateUser(Long userId, Map<String, Object> fieldsToUpdate) {
         User user = getUserById(userId);
 
+        // Only allow updates for firstname and lastname
+        Set<String> allowedFields = Set.of("firstname", "lastname");
+
         fieldsToUpdate.forEach((key, value) -> {
-            Field field = ReflectionUtils.findField(User.class, key);
-            if (field != null) {
-                field.setAccessible(true);
-                Object convertedValue = new ObjectMapper().convertValue(value, field.getType());
-                ReflectionUtils.setField(field, user, convertedValue );
-            } else {
-                log.warn("Attempted to patch unknown field: {}", key);
+            if (allowedFields.contains(key)) {
+                Field field = ReflectionUtils.findField(User.class, key);
+                if (field != null) {
+                    field.setAccessible(true);
+                    Object convertedValue = new ObjectMapper().convertValue(value, field.getType());
+                    ReflectionUtils.setField(field, user, convertedValue);
+                }
             }
         });
         return userRepository.save(user);
@@ -72,9 +85,9 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public User updateUserRank(Long userId, int newRank) {
+    public User updateUserRank(Long userId, String newRankCode) {
         User user = userRepository.findById(userId).orElseThrow(()-> new IdNotFoundException("userId: " + userId + " not found"));
-        user.setRank(newRank);
+        user.setRankCode(newRankCode);
         return user;
     }
 
@@ -83,14 +96,46 @@ public class UserProfileServiceImpl implements UserProfileService {
         return userRepository.findAll();
     }
 
+    @Override
+    public List<User> getUserByIds(List<Long> userIds) {
+        return userRepository.findByIdIn(userIds);
+    }
+
+    @Override
+    public List<User> getUsers(User.AccountStatus status) {
+        return userRepository.findByAccountStatus(status);
+    }
+
+    @Override
+    public Page<UserInfo> getUsers(User.AccountStatus status, Integer page, Integer size) {
+        int pageNumber = (page != null) ? page : 0;
+        int pageSize = (size != null) ? size : 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        Page<User> userPage;
+        if (status != null) {
+            userPage = userRepository.findByAccountStatus(status, pageable);
+        } else {
+            userPage = userRepository.findAll(pageable);
+        }
+        return userPage.map(mapper::mapTo);
+    }
+
+
 //    @Override
 //    public List<User> getUserByIds(List<Long> userIds) {
 //        return userRepository.findByIdIn(userIds);
 //    }
 
     @Override
+    @Cacheable(value = "users", key = "#userId")
     public User getUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(()-> new IdNotFoundException("userId: " + userId + " not found"));
+    }
+
+    @Override
+    public boolean updatePassword(Long userId, String oldPassword, String newPassword) {
+        return false;
     }
 
 //    @Override

@@ -1,8 +1,10 @@
 package com.trustai.user_service.user.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,30 +22,34 @@ public class User {
     private String firstname;
     private String lastname;
     private String password;
+    @Column(unique = true, nullable = false, length = 100)
     private String email;
     private String mobile;
 
-    // Balance Related
+    // Balance Related....................
     @Column(name = "wallet_balance", precision = 19, scale = 4)
     private BigDecimal walletBalance = BigDecimal.ZERO;
     @Column(name = "profit_balance", precision = 19, scale = 4)
     private BigDecimal profitBalance = BigDecimal.ZERO;
+//    @Column(name = "deposit_balance", precision = 19, scale = 4)
+//    private BigDecimal depositBalance = BigDecimal.ZERO;
 
-    // Referral & User Hierarchy Related:
+    // Referral & User Hierarchy Related..................
     @Column(name = "referral_code", unique = true, length = 255)
+    @Setter(AccessLevel.NONE)
     private String referralCode;
+
     @ManyToOne
     @JoinColumn(name = "referrer_id", referencedColumnName = "id")
     private User referrer;
-    @Column(name = "rank_level")
-    private int rank = 1;
 
+    @Column(name = "rank_code", nullable = true)
+    private String rankCode;
+
+    // KycInfo..................
     @OneToOne(optional = false, cascade = CascadeType.ALL) // Makes the association required (not null)
     @JoinColumn(name = "kyc_info", nullable = false) // Maps to the actual foreign key column
     private Kyc kycInfo;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 
     // Status
     @Enumerated(EnumType.STRING)
@@ -62,6 +68,8 @@ public class User {
     @Column(nullable = false)
     public TransactionStatus sendMoneyStatus = TransactionStatus.DISABLED;
 
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     private boolean emailVerified;
     private boolean mobileVerified;
@@ -111,15 +119,15 @@ public class User {
         this.setAccountStatus(AccountStatus.PENDING);
     }
 
-    public User(String username, int rank, BigDecimal walletBalance) {
+    public User(String username, String rankCode, BigDecimal walletBalance) {
         this(username);
-        this.rank = rank;
+        this.rankCode = rankCode;
         this.walletBalance = walletBalance;
         this.setAccountStatus(AccountStatus.PENDING);
     }
 
-    public User(Long id, String username, int rank, BigDecimal walletBalance) {
-        this(username, rank, walletBalance);
+    public User(Long id, String username, String rankCode, BigDecimal walletBalance) {
+        this(username, rankCode, walletBalance);
         this.id = id;
     }
 
@@ -129,7 +137,6 @@ public class User {
            PENDING  --> ACTIVE  ---> SUSPENDED / BANNED / LOCKED
                    |
                     --> DISABLED
-
 
      */
     public enum AccountStatus {

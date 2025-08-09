@@ -23,7 +23,7 @@ public class IpLocationService {
         if ("0:0:0:0:0:0:0:1".equals(ip) || "127.0.0.1".equals(ip)) {
             ip = "103.120.51.73"; // replace with known test IP or simulate in dev
         }
-        try {
+        /*try {
             String url = "http://ip-api.com/json/" + ip;
             //Map<String, Object> response = restTemplate.getForObject(url, Map.class);
             ResponseEntity<IpApiResponse> response = restTemplate.getForEntity(url, IpApiResponse.class);
@@ -31,6 +31,7 @@ public class IpLocationService {
         } catch (Exception e) {
             // fallback or log error
             return null;
-        }
+        }*/
+        return null;
     }
 }

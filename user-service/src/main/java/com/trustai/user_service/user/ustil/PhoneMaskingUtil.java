@@ -2,6 +2,9 @@ package com.trustai.user_service.user.ustil;
 
 public class PhoneMaskingUtil {
     public static String maskPhoneNumber(String phoneNumber) {
+        if ( phoneNumber == null || phoneNumber.length() < 10) {
+            return phoneNumber;
+        }
         if (phoneNumber == null || phoneNumber.length() != 10 || !phoneNumber.matches("\\d{10}")) {
             throw new IllegalArgumentException("Invalid phone number. Must be a 10-digit number.");
         }

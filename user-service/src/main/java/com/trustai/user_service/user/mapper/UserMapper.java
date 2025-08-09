@@ -1,6 +1,7 @@
 package com.trustai.user_service.user.mapper;
 
 import com.trustai.common.dto.*;
+import com.trustai.common.util.DateUtil;
 import com.trustai.user_service.user.entity.Kyc;
 import com.trustai.user_service.user.entity.User;
 import com.trustai.user_service.user.ustil.PhoneMaskingUtil;
@@ -28,12 +29,14 @@ public class UserMapper {
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .rankCode(user.getRankCode())
                 // Balance:
                 .walletBalance(user.getWalletBalance())
                 .profitBalance(user.getProfitBalance())
                 // Referral:
                 .referralCode(user.getReferralCode())
                 // Status:
+                .isActive(user.getAccountStatus() == User.AccountStatus.ACTIVE)
                 .accountStatus(user.getAccountStatus().name())
                 .kycStatus(user.getKycInfo().getStatus().name())
                 // AuditLog
@@ -55,34 +58,41 @@ public class UserMapper {
                 .profitBalance(user.getProfitBalance())
                 // Referral:
                 .referralCode(user.getReferralCode())
-                .referrer(new UserInfo(referrer.getId(), referrer.getUsername()))
-                .rank(user.getRank())
+                .referrer(referrer == null ? null : new UserInfo(referrer.getId(), referrer.getUsername()))
+                .rankCode(user.getRankCode())
                 // KYC:
                 .kyc(convert(user.getKycInfo()))
                 // Status:
                 .accountStatus(convert(user))
                 // AuditLog
-                .createdAt(user.getCreatedAt())
+                .createdAt(DateUtil.formatDisplayDate(user.getCreatedAt()))
                 .build();
     }
 
     private AccountStatus convert(User user) {
+        Kyc kyc = user.getKycInfo();
         return AccountStatus.builder()
                 .isAccountActive(user.getAccountStatus() == User.AccountStatus.ACTIVE)
-                .isKycVerified(user.getKycInfo().status == Kyc.KycStatus.VERIFIED)
-                .isDepositEnabled(user.depositStatus == User.TransactionStatus.DISABLED)
-                .isWithdrawEnabled(user.withdrawStatus == User.TransactionStatus.DISABLED)
-                .isSendMoneyEnabled(user.sendMoneyStatus == User.TransactionStatus.DISABLED)
+                .isKycVerified(kyc.status == Kyc.KycStatus.VERIFIED)
+                .isEmailVerified(kyc.getEmailVerifyStatus() == Kyc.EpaStatus.VERIFIED)
+                .isPhoneVerified(kyc.getPhoneVerifyStatus() == Kyc.EpaStatus.VERIFIED)
+
+                .isDepositEnabled(user.depositStatus == User.TransactionStatus.ENABLED)
+                .isWithdrawEnabled(user.withdrawStatus == User.TransactionStatus.ENABLED)
+                .isSendMoneyEnabled(user.sendMoneyStatus == User.TransactionStatus.ENABLED)
+
                 .accountStatus(user.accountStatus.name())
-                .kycStatus(user.getKycInfo().status.name())
-                .emailVerifyStatus(user.getKycInfo().getEmailVerifyStatus().name())
-                .phoneVerifyStatus(user.getKycInfo().getPhoneVerifyStatus().name())
-                .kycRejectionReason(user.getKycInfo().getKycRejectionReason())
+                .kycStatus(kyc.status.name())
+                .emailVerifyStatus(kyc.getEmailVerifyStatus().name())
+                .phoneVerifyStatus(kyc.getPhoneVerifyStatus().name())
+
+                .kycRejectionReason(kyc.getKycRejectionReason())
                 .build();
     }
 
-    private KycInfo convert(Kyc kyc) {
+    public KycInfo convert(Kyc kyc) {
         return KycInfo.builder()
+                .kycId(kyc.getId())
                 .email(kyc.getEmail())
                 .phone(kyc.getPhone())
                 .address(kyc.getAddress())
@@ -95,7 +105,7 @@ public class UserMapper {
                 .build();
     }
 
-    public User mapTo(UserInfoOld info) {
-        return null;
-    }
+//    public User mapTo(UserInfoOld info) {
+//        return null;
+//    }
 }

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.0</version>
+        <version>3.5.4</version>
         <relativePath/> <!-- No parent above this -->
     </parent>
 
@@ -26,11 +26,16 @@
     </properties>
 
     <modules>
-        <module>common</module>
+        <module>mlm-common</module>
         <module>user-service</module>
         <module>product-service</module>
-        <module>income-service</module>
         <module>notification-service</module>
+        <module>mlm-rank-service</module>
+        <module>transaction-service</module>
+        <module>investment-service</module>
+        <module>income-service</module>
+        <module>storage-service</module>
+        <module>nft-core</module>
     </modules>
 
     <dependencyManagement>

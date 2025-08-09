@@ -10,9 +10,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class KycApproveRequest {
+    private String action;
     private boolean isEmailVerified;
     private boolean isPhoneVerified;
     private boolean isAddressVerified;
     private String kycRejectionReason;
-
 }

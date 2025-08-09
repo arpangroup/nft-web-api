@@ -20,7 +20,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.trustai</groupId>
-			<artifactId>common</artifactId>
+			<artifactId>mlm-common</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.trustai</groupId>
+			<artifactId>storage-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
@@ -47,11 +53,11 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>-->
 
-		<dependency>
-			<groupId>com.github.ua-parser</groupId>
-			<artifactId>uap-java</artifactId>
-			<version>1.5.4</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.github.ua-parser</groupId>-->
+<!--			<artifactId>uap-java</artifactId>-->
+<!--			<version>1.5.4</version>-->
+<!--		</dependency>-->
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
