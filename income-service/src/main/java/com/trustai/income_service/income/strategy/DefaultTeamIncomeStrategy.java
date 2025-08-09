@@ -57,7 +57,7 @@ public class DefaultTeamIncomeStrategy implements TeamIncomeStrategy {
                 IncomeHistory incomeHistory = incomeHistoryRepo.save(IncomeHistory.builder()
                         .userId(upline.getId())
                         .amount(teamIncome)
-                        .type(IncomeHistory.IncomeType.TEAM)
+                        .incomeType(IncomeHistory.IncomeType.TEAM)
                         .sourceUserId(sourceUserId)
                         .sourceUserRank(sourceUserRank)
                         .note("Team income")

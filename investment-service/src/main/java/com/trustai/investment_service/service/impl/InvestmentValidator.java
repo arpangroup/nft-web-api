@@ -1,4 +1,4 @@
-package com.trustai.investment_service.service;
+package com.trustai.investment_service.service.impl;
 
 import com.trustai.common.api.RankConfigApi;
 import com.trustai.common.api.WalletApi;

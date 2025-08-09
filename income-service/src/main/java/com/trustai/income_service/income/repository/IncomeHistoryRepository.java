@@ -10,12 +10,12 @@ import java.util.List;
 
 public interface IncomeHistoryRepository extends JpaRepository<IncomeHistory, Long> {
     @Query("""
-        SELECT ih.type,
+        SELECT ih.incomeType,
                SUM(CASE WHEN FUNCTION('DATE', ih.createdAt) = :today THEN ih.amount ELSE 0 END) AS dailyIncome,
                SUM(ih.amount) AS totalIncome
         FROM IncomeHistory ih
         WHERE ih.userId = :userId
-        GROUP BY ih.type
+        GROUP BY ih.incomeType
     """)
     List<Object[]> findIncomeSummaryByUserId(@Param("userId") Long userId, @Param("today") LocalDate today);
 }

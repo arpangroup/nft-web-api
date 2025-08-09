@@ -1,4 +1,4 @@
-package com.trustai.investment_service.service;
+package com.trustai.investment_service.service.impl;
 
 import com.trustai.common.constants.CommonConstants;
 import com.trustai.common.dto.RankConfigDto;
@@ -13,6 +13,7 @@ import com.trustai.investment_service.exception.ResourceNotFoundException;
 import com.trustai.common.api.RankConfigApi;
 import com.trustai.investment_service.repository.ScheduleRepository;
 import com.trustai.investment_service.repository.SchemaRepository;
+import com.trustai.investment_service.service.SchemaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

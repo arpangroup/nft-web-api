@@ -34,16 +34,16 @@ public class IncomeDistributionService {
     private final TeamIncomeConfigRepository teamIncomeRepo;
     private final TeamIncomeStrategy teamIncomeStrategy;
     private final ObjectMapper objectMapper;
-    private final UserApi userClient;
-    private final RankConfigApi rankConfigClient;
-    private final WalletApi walletClient;
+    private final UserApi userApi;
+    private final WalletApi walletApi;
+    private final RankConfigApi rankConfigApi;
 
     public void distributeIncome(Long sellerId, BigDecimal saleAmount) {
         log.info("distributeIncome for sellerId: {}, productValue: {}.........", sellerId, saleAmount);
-        UserInfo seller = userClient.getUserById(sellerId);
+        UserInfo seller = userApi.getUserById(sellerId);
         String sellerRank = seller.getRankCode();
         log.info("seller userId: {}, Rank: {}", sellerId, sellerRank);
-        RankConfigDto config  = rankConfigClient.getRankConfigByRankCode(sellerRank);
+        RankConfigDto config  = rankConfigApi.getRankConfigByRankCode(sellerRank);
 
 
         //BigDecimal profitRate = config.getCommissionRate().divide(BigDecimal.valueOf(100)vide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
@@ -60,10 +60,10 @@ public class IncomeDistributionService {
         IncomeHistory incomeHistory = IncomeHistory.builder()
                 .userId(sellerId)
                 .amount(dailyIncome)
-                .type(IncomeHistory.IncomeType.DAILY)
+                .incomeType(IncomeHistory.IncomeType.DAILY)
                 .sourceUserId(sellerId)
                 .sourceUserRank(sellerRank)
-                .note("Self income")
+                .note(Remarks.DAILY_INCOME) // Self income
                 .build();
         incomeRepo.save(incomeHistory);
         log.info("Saved direct income of {} for user {}", dailyIncome, seller.getId());
@@ -79,7 +79,7 @@ public class IncomeDistributionService {
                 Remarks.DAILY_INCOME,
                 metaInfo
         );
-        walletClient.updateWalletBalance(sellerId, depositRequest);
+        walletApi.updateWalletBalance(sellerId, depositRequest);
         //userClient.deposit(sellerId, dailyIncome, Remarks.DAILY_INCOME, metaInfo);
 
         // 2. Fetch all uplines with rankCode info in a single query
@@ -114,19 +114,19 @@ public class IncomeDistributionService {
 
         // 2. Load full hierarchy in one query
         log.info("Propagate team income for user: {}...........", sellerId);
-        List<UserHierarchyDto> hierarchy = userClient.findByDescendant(sellerId);
+        List<UserHierarchyDto> hierarchy = userApi.findByDescendant(sellerId);
         Map<Long, Integer> uplinesWithDepth = hierarchy.stream()
                 .filter(UserHierarchyDto::isActive)
                 .collect(Collectors.toMap(UserHierarchyDto::getAncestor, UserHierarchyDto::getDepth));
         log.info("All uplines for user: {} is: {}", sellerId, uplinesWithDepth);
 
         // Load all upline users in a single query
-        List<UserInfo> uplines = userClient.getUsers(uplinesWithDepth.keySet().stream().toList());
+        List<UserInfo> uplines = userApi.getUsers(uplinesWithDepth.keySet().stream().toList());
 
         // Distribute team income
         log.info("Distribute team income for user: {}.............", sellerId);
         List<UplineIncomeLog> logs = teamIncomeStrategy.distributeTeamIncome(sellerId, sellerRank, dailyIncome, uplines, uplinesWithDepth);
-        printLog(logs, sellerId, sellerRank, dailyIncome);
+        printLog(logs, sellerId, saleAmount, sellerRank, config.getCommissionPercentage(), dailyIncome);
     }
 
     private String getMetaInfo(Object object) {
@@ -154,7 +154,7 @@ public class IncomeDistributionService {
     ========================================
      */
 
-    private void printLog(List<UplineIncomeLog> logs, Long sellerId, String sellerRank, BigDecimal dailyIncome) {
+    private void printLog(List<UplineIncomeLog> logs, Long sellerId, BigDecimal sellAmount, String sellerRank, BigDecimal commissionPercentage, BigDecimal dailyIncome) {
         if (logs == null) {
             logs = List.of(); // prevent NPE
         }
@@ -162,7 +162,7 @@ public class IncomeDistributionService {
                 .map(UplineIncomeLog::income)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        StringBuilder summary = new StringBuilder("\n====== INCOME DISTRIBUTION SUMMARY ======\n");
+        StringBuilder summary = new StringBuilder("\n============= INCOME DISTRIBUTION SUMMARY =============\n");
 
         summary.append("▶️ Seller ID: ").append(sellerId)
                 .append(", Rank: ").append(sellerRank)
@@ -172,7 +172,7 @@ public class IncomeDistributionService {
         summary.append("▶️ Upline Team Income:\n");
 
         if (logs.isEmpty()) {
-            summary.append("  No upline members qualified for team income.\n");
+            summary.append("   No upline members qualified for team income.\n");
         } else {
             logs.forEach(log -> summary.append(String.format(
                     "  - Upline ID: %d | Rank: %-7s | Level: %d | %%: %5s | Income: %s\n",
@@ -183,7 +183,7 @@ public class IncomeDistributionService {
             summary.append("▶️ Total Team Income Distributed: ").append(totalTeamIncome.setScale(2, RoundingMode.HALF_UP)).append("\n");
         }
 
-        summary.append("========================================\n");
+        summary.append("==================================================\n");
         System.out.println(summary);  // or log.info(summary.toString());
     }
 }

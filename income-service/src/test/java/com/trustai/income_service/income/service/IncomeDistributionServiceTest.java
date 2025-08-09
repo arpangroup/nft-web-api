@@ -75,7 +75,7 @@ public class IncomeDistributionServiceTest {
         IncomeHistory savedIncome = IncomeHistory.builder()
                 .userId(sellerId)
                 .amount(new BigDecimal("30.00"))
-                .type(IncomeHistory.IncomeType.DAILY)
+                .incomeType(IncomeHistory.IncomeType.DAILY)
                 .sourceUserId(sellerId)
                 .sourceUserRank(sellerRank)
                 .note("Self income")
@@ -96,7 +96,7 @@ public class IncomeDistributionServiceTest {
         // Then
         verify(incomeRepo).save(argThat(income ->
                 income.getUserId().equals(sellerId)
-                        && income.getType() == IncomeHistory.IncomeType.DAILY
+                        && income.getIncomeType() == IncomeHistory.IncomeType.DAILY
                         && income.getAmount().compareTo(new BigDecimal("30.00")) == 0
         ));
 
