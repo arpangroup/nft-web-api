@@ -39,7 +39,10 @@ public class IncomeHistory {
     }
 
     public enum IncomeType {
-        DAILY, TEAM
+        DAILY,
+        TEAM,
+        REFERRAL,
+        RESERVE
     }
 
     public IncomeHistory(Long userId, BigDecimal amount, String sourceUserRank) {

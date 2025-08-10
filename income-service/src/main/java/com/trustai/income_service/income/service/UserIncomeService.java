@@ -82,6 +82,8 @@ public class UserIncomeService {
         return switch (type) {
             case DAILY -> "Comprehensive";
             case TEAM -> "Team";
+            case REFERRAL -> "Referral";
+            case RESERVE ->  "Reserve";
         };
     }
 }
