@@ -27,6 +27,12 @@
 
 		<dependency>
 			<groupId>com.trustai</groupId>
+			<artifactId>core-domain</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.trustai</groupId>
 			<artifactId>user-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
