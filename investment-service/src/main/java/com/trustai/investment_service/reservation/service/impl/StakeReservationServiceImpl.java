@@ -6,6 +6,7 @@ import com.trustai.common.dto.TransactionDto;
 import com.trustai.common.dto.UserInfo;
 import com.trustai.common.dto.WalletUpdateRequest;
 import com.trustai.common.enums.TransactionType;
+import com.trustai.common.event.StakeSoldEvent;
 import com.trustai.common.exception.ErrorCode;
 import com.trustai.common.exception.ValidationException;
 import com.trustai.common.util.DateUtil;
@@ -21,6 +22,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +42,7 @@ public class StakeReservationServiceImpl implements StakeReservationService {
     private final UserReservationMapper mapper;
     private final UserApi userApi;
     private final WalletApi walletApi;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Value("${investment.stake.valuationDelta}")
     private BigDecimal stakeValuationDelta;
@@ -134,11 +137,19 @@ public class StakeReservationServiceImpl implements StakeReservationService {
 
         // TODO: Implement logic to calculate profit (reservedAmount * dailyIncomePercentage)
         // TODO: Implement logic to mark the reservation as sold for the specified user.
+        //reservation.setIncomeEarned(); // <----Calculate income earned
+        //var profit = (reservation.getReservedAmount() + reservation.getValuationDelta() ) * dailyIncomePercentage;
         reservation.setSold(true);
         reservation.setSoldAt(LocalDateTime.now());
 
         reservationRepository.save(reservation);
+
         log.info("Reservation sold successfully - reservationId: {}, userId: {}", reservationId, userId);
+
+        // Publish event to trigger daily income
+        BigDecimal saleAmount = reservation.getReservedAmount(); // or your calculation
+        eventPublisher.publishEvent(new StakeSoldEvent(userId, saleAmount));
+        log.info("Published StakeSoldEvent for userId: {}, saleAmount: {}", userId, saleAmount);
     }
 
 

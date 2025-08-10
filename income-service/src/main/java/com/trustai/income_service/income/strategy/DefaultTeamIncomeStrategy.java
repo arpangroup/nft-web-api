@@ -48,7 +48,7 @@ public class DefaultTeamIncomeStrategy implements TeamIncomeStrategy {
                 continue;
             }
 
-            BigDecimal percentage = teamCommissionService.getTeamCommissionPercentage(uplineUserRank, depth);
+            BigDecimal percentage = teamCommissionService.getPercentage(uplineUserRank, depth);
             log.info("TeamIncome Rate of {} for uplineUser: {} for rankCode: {} and depth: {}", percentage, upline.getId(), uplineUserRank, depth);
             if (percentage.compareTo(BigDecimal.ZERO) > 0) {
                 BigDecimal teamIncome = baseIncome.multiply(percentage);
@@ -57,7 +57,7 @@ public class DefaultTeamIncomeStrategy implements TeamIncomeStrategy {
                 IncomeHistory incomeHistory = incomeHistoryRepo.save(IncomeHistory.builder()
                         .userId(upline.getId())
                         .amount(teamIncome)
-                        .type(IncomeHistory.IncomeType.TEAM)
+                        .incomeType(IncomeHistory.IncomeType.TEAM)
                         .sourceUserId(sourceUserId)
                         .sourceUserRank(sourceUserRank)
                         .note("Team income")

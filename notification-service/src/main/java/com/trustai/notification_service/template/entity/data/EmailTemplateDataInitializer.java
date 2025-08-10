@@ -1,4 +1,4 @@
-package com.trustai.notification_service.notification.entity.data;
+package com.trustai.notification_service.template.entity.data;
 
 import com.trustai.notification_service.template.entity.EmailTemplate;
 import com.trustai.notification_service.notification.enums.NotificationCode;
@@ -19,8 +19,7 @@ public class EmailTemplateDataInitializer {
 
     @PostConstruct
     public void init() {
-        List<EmailTemplate> emailTemplates = getTemplates();
-        emailTemplateRepository.saveAll(emailTemplates);
+        emailTemplateRepository.saveAll(getTemplates());
     }
 
     private List<EmailTemplate> getTemplates() {

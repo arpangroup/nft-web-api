@@ -1,4 +1,4 @@
-package com.trustai.investment_service.service;
+package com.trustai.investment_service.service.impl;
 
 import com.trustai.common.api.UserApi;
 import com.trustai.common.dto.TransactionDto;
@@ -17,6 +17,7 @@ import com.trustai.investment_service.exception.ResourceNotFoundException;
 import com.trustai.common.api.WalletApi;
 import com.trustai.investment_service.repository.SchemaRepository;
 import com.trustai.investment_service.repository.UserInvestmentRepository;
+import com.trustai.investment_service.service.InvestmentService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class InvestmentServiceImpl implements InvestmentService{
+public class InvestmentServiceImpl implements InvestmentService {
     private final SchemaRepository schemaRepo;
     private final UserInvestmentRepository userInvestmentRepo;
     private final InvestmentValidator validator;

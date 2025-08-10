@@ -248,6 +248,4 @@ public class RankEvaluatorServiceTest {
 
         assertTrue(result.isEmpty(), "Should return empty when metrics are null");
     }
-
-
 }

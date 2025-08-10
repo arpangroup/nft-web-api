@@ -1,4 +1,4 @@
-package com.trustai.investment_service.service;
+package com.trustai.investment_service.service.impl;
 
 import com.trustai.investment_service.entity.InvestmentSchema;
 import com.trustai.investment_service.entity.UserInvestment;

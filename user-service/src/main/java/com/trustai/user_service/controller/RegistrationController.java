@@ -110,6 +110,7 @@ public class RegistrationController {
     }
 
     private User registerUser(User user, final String referralCode){
+        user.setRankCode("RANK_1");
         return registrationService.directRegister(user, referralCode);
     }
 }
