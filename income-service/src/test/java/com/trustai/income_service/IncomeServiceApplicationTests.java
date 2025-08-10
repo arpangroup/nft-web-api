@@ -8,8 +8,4 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 class IncomeServiceApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
 }

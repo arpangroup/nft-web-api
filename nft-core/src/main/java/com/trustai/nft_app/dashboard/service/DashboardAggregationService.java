@@ -1,3 +1,4 @@
+/*
 package com.trustai.nft_app.dashboard.service;
 
 import com.trustai.income_service.income.entity.IncomeHistory;
@@ -79,3 +80,4 @@ public class DashboardAggregationService {
                 .build();
     }
 }
+*/

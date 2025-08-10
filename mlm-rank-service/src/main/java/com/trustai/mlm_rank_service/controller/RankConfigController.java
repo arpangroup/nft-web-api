@@ -32,6 +32,7 @@ public class RankConfigController {
 
         return ResponseEntity.ok(rankConfigService.getAllRankConfigs(sortedPageable));
     }*/
+
     @GetMapping
     public  ResponseEntity<List<RankConfig>> getRankConfig() {
         return ResponseEntity.ok(rankConfigService.getAllRankConfigs());

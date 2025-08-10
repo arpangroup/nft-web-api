@@ -1,6 +1,7 @@
 package com.trustai.income_service.income.service;
 
 import com.trustai.income_service.income.entity.TeamIncomeConfig;
+import com.trustai.income_service.income.entity.TeamIncomeKey;
 import com.trustai.income_service.income.repository.TeamIncomeConfigRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,21 +29,27 @@ public class TeamIncomeConfigServiceTest {
 
     @Test
     void shouldReturnAllConfigs() {
-        TeamIncomeConfig config = new TeamIncomeConfig("RANK_1", Map.of(1, BigDecimal.TEN));
+        TeamIncomeConfig config = new TeamIncomeConfig(new TeamIncomeKey("RANK_1", 1), BigDecimal.TEN);
         when(repo.findAll()).thenReturn(List.of(config));
 
         List<TeamIncomeConfig> result = service.getAll();
         assertEquals(1, result.size());
-        assertEquals("RANK_1", result.get(0).getRankCode());
+        assertEquals("RANK_1", result.get(0).getId().getUplineRank());
     }
 
     @Test
     void shouldUpdateOrInsertConfigs() {
-        TeamIncomeConfig config = new TeamIncomeConfig("RANK_1", Map.of(1, BigDecimal.TEN));
+        TeamIncomeKey key = new TeamIncomeKey("RANK_1", 1);
+        TeamIncomeConfig newConfig = new TeamIncomeConfig(key, BigDecimal.TEN);
+        TeamIncomeConfig existingConfig = new TeamIncomeConfig(key, BigDecimal.ONE); // existing value is different
 
-        when(repo.findById("RANK_1")).thenReturn(Optional.of(config));
-        service.updateTeamConfigs(List.of(config));
+        when(repo.findById(key)).thenReturn(Optional.of(existingConfig));
 
-        verify(repo).save(config);
+        service.updateTeamConfigs(List.of(newConfig));
+
+        // Ensure the payout percentage was updated
+        assertEquals(BigDecimal.TEN, existingConfig.getPayoutPercentage());
+
+        verify(repo).save(existingConfig);
     }
 }

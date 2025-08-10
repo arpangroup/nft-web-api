@@ -37,7 +37,7 @@ public class RankConfigControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Test
+    /*@Test
     void getAllRanks_shouldReturnPagedResult() throws Exception {
         RankConfig mockRank = new RankConfig();
         mockRank.setId(1L);
@@ -45,12 +45,30 @@ public class RankConfigControllerTest {
         mockRank.setDisplayName("Rank 1");
         mockRank.setRankOrder(1);
 
-        Page<RankConfig> page = new PageImpl<>(List.of(mockRank));
+        List<RankConfig> page = new PageImpl<>(List.of(mockRank));
         when(rankConfigService.getAllRankConfigs(any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get("/api/v1/rankings"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].code").value("R1"));
+    }*/
+
+    @Test
+    void getAllRanks_shouldReturnListResult() throws Exception {
+        RankConfig mockRank = new RankConfig();
+        mockRank.setId(1L);
+        mockRank.setCode("R1");
+        mockRank.setDisplayName("Rank 1");
+        mockRank.setRankOrder(1);
+
+        List<RankConfig> mockList = List.of(mockRank);
+        when(rankConfigService.getAllRankConfigs()).thenReturn(mockList);
+
+        mockMvc.perform(get("/api/v1/rankings"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].code").value("R1"))
+                .andExpect(jsonPath("$[0].displayName").value("Rank 1"))
+                .andExpect(jsonPath("$[0].rankOrder").value(1));
     }
 
     @Test

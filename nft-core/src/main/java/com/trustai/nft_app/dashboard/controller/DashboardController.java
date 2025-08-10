@@ -1,3 +1,4 @@
+/*
 package com.trustai.nft_app.dashboard.controller;
 
 
@@ -22,3 +23,4 @@ public class DashboardController {
         return ResponseEntity.ok(dashboard);
     }
 }
+*/
