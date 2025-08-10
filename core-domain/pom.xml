@@ -10,7 +10,7 @@
 	</parent>
 
 
-	<artifactId>mlm-common</artifactId>
+	<artifactId>core-domain</artifactId>
 	<packaging>jar</packaging>
 
 

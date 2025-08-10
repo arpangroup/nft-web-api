@@ -26,7 +26,7 @@
     </properties>
 
     <modules>
-        <module>mlm-common</module>
+        <module>core-domain</module>
         <module>user-service</module>
         <module>product-service</module>
         <module>notification-service</module>
